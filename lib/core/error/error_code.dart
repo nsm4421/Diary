@@ -1,0 +1,17 @@
+enum ErrorCode {
+  badRequest,
+  unauthorized,
+  forbidden,
+  notFound,
+  conflict,
+  server,
+  network,
+  timeout,
+  cache,
+  database,
+  storage,
+  parsing,
+  validation,
+  cancelled,
+  unknown,
+}

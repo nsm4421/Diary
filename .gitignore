@@ -1,6 +1,12 @@
 pubspec.lock
 android/
 ios/
+**.g.dart
+**.freezed.dart
+**.config.dart
+**.gr.dart
+devtools_options.yaml
+
 # Miscellaneous
 *.class
 *.log
