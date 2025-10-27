@@ -9,19 +9,17 @@ typedef FutureEither<T> = Future<Either<Failure, T>>;
 typedef FutureCallback<T> = Future<T> Function();
 
 @lazySingleton
-class ErrorHandler {
-  const ErrorHandler();
-
+mixin class ErrorHandlerMiIn {
   FutureEither<T> guard<T>(FutureCallback<T> run) async {
     try {
-      final result = await run();
-      return Right(result);
+      return Right(await run());
     } on AppException catch (exception) {
-      return Left(Failure.fromException(exception));
+      return Failure.fromException(exception).toLeft();
     } catch (error, stackTrace) {
-      return Left(
-        Failure.unknown(message: error.toString(), stackTrace: stackTrace),
-      );
+      return Failure.unknown(
+        message: error.toString(),
+        stackTrace: stackTrace,
+      ).toLeft();
     }
   }
 }
