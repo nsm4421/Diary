@@ -4,6 +4,7 @@ import 'package:diary/data/datasoure/local/diary/dto.dart';
 import 'package:diary/data/datasoure/local/diary/local_diary_datasource.dart';
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:logger/logger.dart';
 
 class _DiarySeed {
   final String id;
@@ -20,6 +21,7 @@ class _DiarySeed {
 void main() {
   late LocalDatabase db;
   late LocalDatabaseDao dao;
+  late Logger logger;
   late LocalDiaryDataSource dataSource;
   var autoId = 0;
 
@@ -59,7 +61,8 @@ void main() {
     autoId = 0;
     db = LocalDatabase.test();
     dao = LocalDatabaseDao(db);
-    dataSource = LocalDiaryDataSourceImpl(dao);
+    logger = Logger();
+    dataSource = LocalDiaryDataSourceImpl(dao, logger);
   });
 
   tearDown(() async {
@@ -82,8 +85,8 @@ void main() {
     });
   });
 
-  group('fetchRows', () {
-    test('returns rows ordered by createdAt desc with pagination', () async {
+  group('fetchRowsByCursor', () {
+    test('returns rows ordered by createdAt desc for first page', () async {
       final oldest = await insertDiary(
         id: 'old',
         createdAt: DateTime(2024, 1, 1),
@@ -92,11 +95,39 @@ void main() {
         id: 'mid',
         createdAt: DateTime(2024, 1, 2),
       );
-      await insertDiary(id: 'new', createdAt: DateTime(2024, 1, 3));
+      final newest = await insertDiary(
+        id: 'new',
+        createdAt: DateTime(2024, 1, 3),
+      );
 
-      final rows = await dataSource.fetchRows(limit: 2, offset: 1);
+      final rows = await dataSource.fetchRowsByCursor(
+        limit: 2,
+        cursor: DateTime(2024, 1, 4),
+      );
 
-      expect(rows.map((r) => r.id), [middle.id, oldest.id]);
+      expect(rows.map((r) => r.id), [newest.id, middle.id]);
+    });
+
+    test('returns rows older than provided cursor', () async {
+      final oldest = await insertDiary(
+        id: 'old',
+        createdAt: DateTime(2024, 1, 1),
+      );
+      final middle = await insertDiary(
+        id: 'mid',
+        createdAt: DateTime(2024, 1, 2),
+      );
+      await insertDiary(
+        id: 'new',
+        createdAt: DateTime(2024, 1, 3),
+      );
+
+      final rows = await dataSource.fetchRowsByCursor(
+        limit: 5,
+        cursor: middle.createdAt,
+      );
+
+      expect(rows.map((r) => r.id), [oldest.id]);
     });
   });
 
@@ -134,7 +165,10 @@ void main() {
         createdAt: DateTime(2024, 3, 1),
       );
 
-      final rows = await dataSource.searchByTitle(keyword: ' sun ');
+      final rows = await dataSource.searchByTitle(
+        keyword: ' sun ',
+        cursor: DateTime(2024, 3, 2),
+      );
 
       expect(rows.map((r) => r.id), [latest.id, older.id]);
     });

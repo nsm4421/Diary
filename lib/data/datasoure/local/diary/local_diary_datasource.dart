@@ -1,6 +1,7 @@
 import 'package:diary/data/datasoure/local/database/local_database.dart';
 import 'package:diary/data/datasoure/local/database/local_database_dao.dart';
 
+import 'package:logger/logger.dart';
 import 'package:drift/drift.dart';
 
 import 'dto.dart';
@@ -12,12 +13,15 @@ abstract interface class LocalDiaryDataSource {
 
   Future<DiaryRecord?> findById(String id);
 
-  Future<List<DiaryRecord>> fetchRows({int limit = 20, int offset = 0});
+  Future<Iterable<DiaryRecord>> fetchRowsByCursor({
+    int limit = 20,
+    required DateTime cursor,
+  });
 
-  Future<List<DiaryRecord>> searchByTitle({
+  Future<Iterable<DiaryRecord>> searchByTitle({
     required String keyword,
     int limit = 20,
-    int offset = 0,
+    required DateTime cursor,
   });
 
   Stream<List<DiaryRecord>> watchAll();

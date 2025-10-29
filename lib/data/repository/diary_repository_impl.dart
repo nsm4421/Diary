@@ -48,11 +48,11 @@ class DiaryRepositoryImpl with ErrorHandlerMiIn implements DiaryRepository {
   @override
   Future<Either<Failure, List<DiaryEntry>>> fetchEntries({
     int limit = 20,
-    int offset = 0,
+    required DateTime cursor,
   }) {
     return guard(
       () async => await _localDataSource
-          .fetchRows(limit: limit, offset: offset)
+          .fetchRowsByCursor(limit: limit, cursor: cursor)
           .then(
             (rows) => rows.map((row) => row.toEntity()).toList(growable: false),
           ),
@@ -63,11 +63,11 @@ class DiaryRepositoryImpl with ErrorHandlerMiIn implements DiaryRepository {
   Future<Either<Failure, List<DiaryEntry>>> searchByTitle({
     required String keyword,
     int limit = 20,
-    int offset = 0,
+    required DateTime cursor,
   }) {
     return guard(
       () async => await _localDataSource
-          .searchByTitle(keyword: keyword, limit: limit, offset: offset)
+          .searchByTitle(keyword: keyword, limit: limit, cursor: cursor)
           .then(
             (rows) => rows.map((row) => row.toEntity()).toList(growable: false),
           ),

@@ -9,17 +9,20 @@ import 'package:diary/data/datasoure/local/diary/local_diary_datasource.dart';
 import 'package:diary/data/repository/diary_repository_impl.dart';
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:logger/logger.dart';
 
 void main() {
   late LocalDatabase db;
   late LocalDatabaseDao dao;
+  late Logger logger;
   late LocalDiaryDataSource dataSource;
   late DiaryRepositoryImpl repository;
 
   setUp(() {
     db = LocalDatabase.test();
     dao = LocalDatabaseDao(db);
-    dataSource = LocalDiaryDataSourceImpl(dao);
+    logger = Logger();
+    dataSource = LocalDiaryDataSourceImpl(dao, logger);
     repository = DiaryRepositoryImpl(dataSource);
   });
 
@@ -107,25 +110,59 @@ void main() {
       });
     });
 
-    test('fetchEntries returns ordered entries', () async {
+    test('fetchEntries returns entries ordered by createdAt desc', () async {
       await insertDiary(id: 'old', createdAt: DateTime(2024, 1, 1));
       await insertDiary(id: 'new', createdAt: DateTime(2024, 1, 3));
       await insertDiary(id: 'mid', createdAt: DateTime(2024, 1, 2));
 
-      final result = await repository.fetchEntries(limit: 2, offset: 0);
+      final result = await repository.fetchEntries(
+        limit: 2,
+        cursor: DateTime(2024, 1, 4),
+      );
+
       result.fold((_) => fail('Expected Right'), (entries) {
         expect(entries.map((e) => e.id), ['new', 'mid']);
       });
     });
 
-    test('searchByTitle filters using keyword', () async {
-      await insertDiary(id: 'sunrise', title: 'Morning sun');
-      await insertDiary(id: 'night', title: 'Calm night');
-      await insertDiary(id: 'sunset', title: 'Beautiful Sunset');
+    test('fetchEntries excludes rows newer than cursor', () async {
+      await insertDiary(id: 'old', createdAt: DateTime(2024, 1, 1));
+      await insertDiary(id: 'new', createdAt: DateTime(2024, 1, 3));
+      await insertDiary(id: 'mid', createdAt: DateTime(2024, 1, 2));
 
-      final result = await repository.searchByTitle(keyword: 'sun');
+      final result = await repository.fetchEntries(
+        limit: 5,
+        cursor: DateTime(2024, 1, 3),
+      );
+
       result.fold((_) => fail('Expected Right'), (entries) {
-        expect(entries.map((e) => e.id), containsAll(['sunrise', 'sunset']));
+        expect(entries.map((e) => e.id), ['mid', 'old']);
+      });
+    });
+
+    test('searchByTitle filters using keyword', () async {
+      await insertDiary(
+        id: 'sunrise',
+        title: 'Morning sun',
+        createdAt: DateTime(2024, 1, 1),
+      );
+      await insertDiary(
+        id: 'night',
+        title: 'Calm night',
+        createdAt: DateTime(2024, 1, 3),
+      );
+      await insertDiary(
+        id: 'sunset',
+        title: 'Beautiful Sunset',
+        createdAt: DateTime(2024, 1, 2),
+      );
+
+      final result = await repository.searchByTitle(
+        keyword: 'sun',
+        cursor: DateTime(2024, 1, 4),
+      );
+      result.fold((_) => fail('Expected Right'), (entries) {
+        expect(entries.map((e) => e.id), ['sunset', 'sunrise']);
         expect(entries.map((e) => e.id), isNot(contains('night')));
       });
     });
@@ -209,7 +246,10 @@ class _FailingCreateDataSource implements LocalDiaryDataSource {
   Future<void> delete(String id) => throw UnimplementedError();
 
   @override
-  Future<List<DiaryRecord>> fetchRows({int limit = 20, int offset = 0}) =>
+  Future<List<DiaryRecord>> fetchRowsByCursor({
+    int limit = 20,
+    required DateTime cursor,
+  }) =>
       throw UnimplementedError();
 
   @override
@@ -219,7 +259,7 @@ class _FailingCreateDataSource implements LocalDiaryDataSource {
   Future<List<DiaryRecord>> searchByTitle({
     required String keyword,
     int limit = 20,
-    int offset = 0,
+    required DateTime cursor,
   }) => throw UnimplementedError();
 
   @override
@@ -243,7 +283,10 @@ class _ErrorStreamDiaryDataSource implements LocalDiaryDataSource {
   Future<void> delete(String id) => throw UnimplementedError();
 
   @override
-  Future<List<DiaryRecord>> fetchRows({int limit = 20, int offset = 0}) =>
+  Future<List<DiaryRecord>> fetchRowsByCursor({
+    int limit = 20,
+    required DateTime cursor,
+  }) =>
       throw UnimplementedError();
 
   @override
@@ -253,7 +296,7 @@ class _ErrorStreamDiaryDataSource implements LocalDiaryDataSource {
   Future<List<DiaryRecord>> searchByTitle({
     required String keyword,
     int limit = 20,
-    int offset = 0,
+    required DateTime cursor,
   }) => throw UnimplementedError();
 
   @override
