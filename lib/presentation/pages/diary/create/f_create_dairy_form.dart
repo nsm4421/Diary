@@ -16,15 +16,20 @@ class _FormState extends State<_Form> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController();
-    _contentController = TextEditingController();
+    _titleController = TextEditingController()..addListener(_handleChangeTitle);
+    _contentController = TextEditingController()
+      ..addListener(_handleChangeContent);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _titleController.dispose();
-    _contentController.dispose();
+    _titleController
+      ..removeListener(_handleChangeTitle)
+      ..dispose();
+    _contentController
+      ..removeListener(_handleChangeContent)
+      ..dispose();
   }
 
   String? _validateTitle(String? value) {
@@ -46,6 +51,18 @@ class _FormState extends State<_Form> {
       return '일기 내용은 최대 $kDiaryEntryMaxContentLength자까지 작성할 수 있어요.';
     }
     return null;
+  }
+
+  _handleChangeTitle() {
+    context.read<CreateDiaryCubit>().handleChange(
+      title: _titleController.text.trim(),
+    );
+  }
+
+  _handleChangeContent() {
+    context.read<CreateDiaryCubit>().handleChange(
+      content: _contentController.text.trimRight(),
+    );
   }
 
   @override

@@ -24,6 +24,7 @@ class CreateDiaryPage extends StatelessWidget {
         listener: (context, state) {
           if (state.isSuccess) {
             context.showToast('일기 작성 성공');
+            context.pop();
             // TODO : pop
           } else if (state.isError) {
             context
