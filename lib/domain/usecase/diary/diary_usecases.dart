@@ -3,6 +3,7 @@ import 'package:diary/core/error/failure.dart';
 import 'package:diary/core/value_objects/pageable.dart';
 import 'package:diary/domain/entity/diary_entry.dart';
 import 'package:diary/domain/repository/diary_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
 part 'scenario/create_diary_entry_usecase.dart';
