@@ -108,7 +108,6 @@ class Failure extends Equatable {
       case ErrorCode.validation:
         return '';
       case ErrorCode.unknown:
-      default:
         return '알 수 없는 오류가 발생했습니다.';
     }
   }
