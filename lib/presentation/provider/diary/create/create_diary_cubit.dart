@@ -34,8 +34,10 @@ class CreateDiaryCubit extends Cubit<CreateDiaryState> {
           .then(
             (res) => res.fold(
               (l) => emit(state.copyWith(status: _Status.failure, failure: l)),
-              (r) =>
-                  emit(state.copyWith(status: _Status.success, failure: null)),
+              (r) async {
+                await Future.delayed(Duration(seconds: 1));
+                emit(state.copyWith(status: _Status.success, failure: null));
+              },
             ),
           );
     } catch (e) {

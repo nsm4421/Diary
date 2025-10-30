@@ -17,6 +17,7 @@ class _SubmitButton extends StatelessWidget {
                   _formKey.currentState?.save();
                   final ok = _formKey.currentState?.validate();
                   if (ok == null || !ok) return;
+                  debugPrint('handleSubmit called');
                   await context.read<CreateDiaryCubit>().handleSubmit();
                 },
           child: state.isSubmitting
