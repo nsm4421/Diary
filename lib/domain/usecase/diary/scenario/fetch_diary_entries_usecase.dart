@@ -15,6 +15,11 @@ class FetchDiaryParam {
   factory FetchDiaryParam.title(String title) {
     return FetchDiaryParam(field: _SearchField.title, keyword: title);
   }
+
+  @override
+  String toString() {
+    return 'field:${field.name}|keyword:$keyword';
+  }
 }
 
 class _FetchDiaryEntriesUseCase {
@@ -30,7 +35,8 @@ class _FetchDiaryEntriesUseCase {
     if (limit <= 0) {
       return Failure.validation('조회 개수는 1 이상이어야 합니다.').toLeft();
     }
-
+    debugPrint(param.toString());
+    
     final action = switch (param.field) {
       _SearchField.none => _repository.fetchEntries(
         limit: limit,
@@ -46,7 +52,9 @@ class _FetchDiaryEntriesUseCase {
     return await action.then(
       (res) => res.fold(
         (l) => l.withFriendlyMessage().toLeft(),
-        (r) => Right(
+        (r) {
+          debugPrint('${r.length} diaries fetched');
+          return Right(
           r.isEmpty
               ? Pageable<DiaryEntry, DateTime>.empty()
               : Pageable<DiaryEntry, DateTime>(
@@ -55,7 +63,8 @@ class _FetchDiaryEntriesUseCase {
                       .map((e) => e.createdAt)
                       .reduce((v, e) => v.isAfter(e) ? e : v),
                 ),
-        ),
+        );
+        },
       ),
     );
   }

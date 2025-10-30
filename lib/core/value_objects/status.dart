@@ -1,0 +1,1 @@
+enum DisplayStatus { initial, loading, refreshing, paginated }

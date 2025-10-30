@@ -50,6 +50,8 @@ dependencies:
   path: ^1.9.0
   path_provider: ^2.1.4
   copy_with_extension_gen: ^10.0.1
+  logger: ^2.6.2
+  bloc_concurrency: ^0.2.5
 
 dev_dependencies:
   flutter_test:
