@@ -28,5 +28,25 @@ abstract interface class LocalDiaryDataSource {
 
   Future<DiaryRecord> update(UpdateDiaryRequestDto dto);
 
+  Future<List<DiaryMediaRecord>> fetchMedias(String diaryId);
+
+  Future<DiaryMediaRecord?> findMediaByPath({
+    required String diaryId,
+    required String relativePath,
+  });
+
+  Future<DiaryMediaRecord> upsertMedia({
+    required String diaryId,
+    required CreateDiaryMediaRequestDto media,
+  });
+
+  Future<void> deleteMedia({
+    required String diaryId,
+    required String relativePath,
+    bool ignoreMissing = true,
+  });
+
+  Future<void> deleteAllMedias(String diaryId);
+
   Future<void> delete(String id);
 }

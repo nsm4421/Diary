@@ -6,11 +6,12 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
+import 'schema/diary_media_table.dart';
 import 'schema/diary_table.dart';
 
 part 'local_database.g.dart';
 
-@DriftDatabase(tables: [DiaryRecords])
+@DriftDatabase(tables: [DiaryRecords, DiaryMediaRecords])
 class LocalDatabase extends _$LocalDatabase {
   LocalDatabase._(QueryExecutor executor) : super(executor);
 
