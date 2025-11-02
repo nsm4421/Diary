@@ -5,7 +5,7 @@ const int kDiaryEntryMaxContentLength = 5000;
 const int kDiaryEntryMaxTitleLength = 30;
 
 @CopyWith(copyWithNull: true)
-class DiaryEntry extends Equatable {
+class DiaryEntity extends Equatable {
   final String id;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -14,7 +14,7 @@ class DiaryEntry extends Equatable {
   final String? title;
   final String content;
 
-  const DiaryEntry({
+  const DiaryEntity({
     required this.id,
     required this.createdAt,
     required this.updatedAt,
