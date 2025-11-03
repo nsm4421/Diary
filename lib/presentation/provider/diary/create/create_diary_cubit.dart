@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:math' as math;
+
 import 'package:diary/core/error/failure.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';
 import 'package:flutter/material.dart';
@@ -13,14 +16,41 @@ class CreateDiaryCubit extends Cubit<CreateDiaryState> {
   final DiaryUseCases _diaryUseCases;
   CreateDiaryCubit(this._diaryUseCases) : super(CreateDiaryState());
 
-  void handleChange({String? title, String? content}) {
+  void handleChange({String? title, String? content, List<File>? medias}) {
     emit(
       state.copyWith(
         status: _Status.editing,
         title: title ?? state.title,
         content: content ?? state.content,
+        medias: medias ?? state.medias,
       ),
     );
+  }
+
+  void addMediaFiles(List<File> files) {
+    if (files.isEmpty) {
+      return;
+    }
+    final current = List<File>.from(state.medias);
+    final remaining = math.max(0, 3 - current.length);
+    if (remaining <= 0) {
+      return;
+    }
+    current.addAll(files.take(remaining));
+    handleChange(medias: List<File>.unmodifiable(current));
+  }
+
+  void removeMediaAt(int index) {
+    if (index < 0 || index >= state.medias.length) {
+      return;
+    }
+    final current = List<File>.from(state.medias)..removeAt(index);
+    handleChange(medias: List<File>.unmodifiable(current));
+  }
+
+  void clearMedias() {
+    if (state.medias.isEmpty) return;
+    handleChange(medias: const []);
   }
 
   Future<void> handleSubmit() async {
@@ -30,7 +60,11 @@ class CreateDiaryCubit extends Cubit<CreateDiaryState> {
       emit(state.copyWith(status: _Status.submitting));
 
       await _diaryUseCases
-          .create(title: state.title.trim(), content: state.content.trimRight())
+          .create(
+            title: state.title.trim(),
+            content: state.content.trimRight(),
+            files: state.medias,
+          )
           .then(
             (res) => res.fold(
               (l) => emit(state.copyWith(status: _Status.failure, failure: l)),

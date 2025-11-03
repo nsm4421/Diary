@@ -1,10 +1,13 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:diary/core/error/failure.dart';
 import 'package:diary/core/value_objects/pageable.dart';
 import 'package:diary/domain/entity/diary_entry.dart';
-import 'package:diary/domain/repository/diary_repository.dart';
+import 'package:diary/domain/repository/diary/diary_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:uuid/uuid.dart';
 
 part 'scenario/create_diary_entry_usecase.dart';
 part 'scenario/delete_diary_entry_usecase.dart';

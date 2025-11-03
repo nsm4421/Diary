@@ -11,12 +11,15 @@ class CreateDiaryState with _$CreateDiaryState {
   @override
   final String content;
   @override
+  final List<File> medias;
+  @override
   final Failure? failure;
 
   const CreateDiaryState({
     this.status = _Status.initial,
     this.title = '',
     this.content = '',
+    this.medias = const [],
     this.failure,
   });
 

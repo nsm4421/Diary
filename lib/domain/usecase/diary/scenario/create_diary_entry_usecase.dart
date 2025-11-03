@@ -5,10 +5,11 @@ class _CreateDiaryEntryUseCase {
 
   final DiaryRepository _repository;
 
-  Future<Either<Failure, DiaryEntry>> call({
+  Future<Either<Failure, DiaryEntity>> call({
     String? clientId,
     String? title,
     required String content,
+    List<File> files = const [],
   }) async {
     if (title != null && title.trim().length > kDiaryEntryMaxTitleLength) {
       return Failure.validation(
@@ -22,11 +23,34 @@ class _CreateDiaryEntryUseCase {
       ).toLeft();
     }
 
+    final id = (clientId == null || clientId.trim().isEmpty)
+        ? Uuid().v4()
+        : clientId.trim();
+    List<CreateDiaryMediaRequest> medias = [];
+
+    if (files.isNotEmpty) {
+      debugPrint('[_CreateDiaryEntryUseCase] uploading files on local storage started');
+      final uploadResult =
+          await _repository.uploadMediaFiles(diaryId: id, files: files);
+      final failure = uploadResult.fold<Failure?>(
+        (l) => l,
+        (uploaded) {
+          medias = uploaded;
+          return null;
+        },
+      );
+      if (failure != null) {
+        debugPrint('[_CreateDiaryEntryUseCase] uploading files on local storage fails');
+        return failure.withFriendlyMessage().toLeft();
+      }
+    }
+
     return await _repository
         .create(
-          clientId: clientId?.trim(),
+          clientId: id,
           title: (title == null || title.isEmpty) ? null : title.trim(),
           content: content.trimRight(), // 본문을 DB에 입력할 때는 right trim적용
+          medias: medias,
         )
         .then(
           (res) => res.fold((l) => l.withFriendlyMessage().toLeft(), Right.new),

@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:dartz/dartz.dart';
 import 'package:diary/core/error/app_exception.dart';
 import 'package:diary/core/error/error_handler.dart';
 import 'package:diary/core/error/failure.dart';
 import 'package:diary/core/extension/file_extension.dart';
+import 'package:diary/core/extension/string_extension.dart';
+import 'package:diary/core/utils/app_logger.dart';
 import 'package:diary/data/datasoure/local/database/local_database.dart';
 import 'package:diary/data/datasoure/local/diary/dto.dart';
 import 'package:diary/data/datasoure/local/diary/local_diary_datasource.dart';
@@ -13,10 +16,13 @@ import 'package:diary/data/datasoure/local/diary/local_diary_storage.dart';
 import 'package:diary/data/model/diary/mapper.dart';
 import 'package:diary/domain/entity/diary_entry.dart';
 import 'package:diary/domain/repository/diary/diary_repository.dart';
+import 'package:image/image.dart' as img;
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: DiaryRepository)
-class DiaryRepositoryImpl with ErrorHandlerMiIn implements DiaryRepository {
+class DiaryRepositoryImpl
+    with ErrorHandlerMiIn, AppLoggerMixIn
+    implements DiaryRepository {
   final LocalDiaryDataSource _database;
   final LocalDiaryStorage _storage;
 
@@ -40,6 +46,7 @@ class DiaryRepositoryImpl with ErrorHandlerMiIn implements DiaryRepository {
             ),
           )
           .then((row) => row.toEntity()),
+      logger: logger,
     );
   }
 
@@ -48,6 +55,8 @@ class DiaryRepositoryImpl with ErrorHandlerMiIn implements DiaryRepository {
     return guard(
       () async =>
           await _database.findById(diaryId).then((row) => row?.toEntity()),
+
+      logger: logger,
     );
   }
 
@@ -62,6 +71,7 @@ class DiaryRepositoryImpl with ErrorHandlerMiIn implements DiaryRepository {
           .then(
             (rows) => rows.map((row) => row.toEntity()).toList(growable: false),
           ),
+      logger: logger,
     );
   }
 
@@ -77,6 +87,7 @@ class DiaryRepositoryImpl with ErrorHandlerMiIn implements DiaryRepository {
           .then(
             (rows) => rows.map((row) => row.toEntity()).toList(growable: false),
           ),
+      logger: logger,
     );
   }
 
@@ -127,7 +138,7 @@ class DiaryRepositoryImpl with ErrorHandlerMiIn implements DiaryRepository {
             ),
           )
           .then((row) => row.toEntity());
-    });
+    }, logger: logger);
   }
 
   @override
@@ -137,19 +148,44 @@ class DiaryRepositoryImpl with ErrorHandlerMiIn implements DiaryRepository {
   });
 
   @override
-  Future<Either<Failure, List<String>>> uploadMediaFiles({
+  Future<Either<Failure, List<CreateDiaryMediaRequest>>> uploadMediaFiles({
     required String diaryId,
     required List<File> files,
   }) => guard(() async {
-    final futures = files.asMap().entries.map(
-      (e) async => await _storage.save(
+    final baseIndex = await _database
+        .fetchMedias(diaryId)
+        .then(
+          (res) => res.isEmpty
+              ? 0
+              : res.map((e) => e.sortOrder).reduce(math.max) + 1,
+        );
+
+    final futures = files.asMap().entries.map((e) async {
+      final index = e.key + baseIndex;
+      final file = e.value;
+
+      final bytes = await file.readAsBytes();
+      final relativePath = await _storage.save(
         diaryId: diaryId,
-        bytes: await e.value.readAsBytes(),
-        fileName: e.value.filename,
-      ),
-    );
+        bytes: bytes,
+        fileName: file.filename,
+        index: index,
+      );
+
+      final decoded = img.decodeImage(bytes);
+      return CreateDiaryMediaRequest(
+        relativePath: relativePath,
+        fileName: file.filename,
+        mimeType: file.filename.mimeType,
+        sizeInBytes: bytes.length,
+        width: decoded?.width,
+        height: decoded?.height,
+        sortOrder: index,
+      );
+    });
+
     return await Future.wait(futures);
-  });
+  }, logger: logger);
 
   CreateDiaryMediaRequestDto _toDto(CreateDiaryMediaRequest param) {
     return CreateDiaryMediaRequestDto(

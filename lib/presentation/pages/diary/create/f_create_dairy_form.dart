@@ -98,6 +98,8 @@ class _FormState extends State<_Form> {
               keyboardType: TextInputType.multiline,
               validator: _validateContent,
             ),
+            const SizedBox(height: 16),
+            const _SelectMediaFragment(),
           ],
         ),
       ),

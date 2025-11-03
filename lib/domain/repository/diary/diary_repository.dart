@@ -38,7 +38,7 @@ abstract interface class DiaryRepository {
 
   Future<Either<Failure, void>> delete(String diaryId);
 
-  Future<Either<Failure, List<String>>> uploadMediaFiles({
+  Future<Either<Failure, List<CreateDiaryMediaRequest>>> uploadMediaFiles({
     required String diaryId,
     required List<File> files,
   });
