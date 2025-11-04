@@ -27,7 +27,7 @@ class _FetchDiaryEntriesUseCase {
 
   final DiaryRepository _repository;
 
-  Future<Either<Failure, Pageable<DiaryEntry, DateTime>>> call({
+  Future<Either<Failure, Pageable<DiaryEntity, DateTime>>> call({
     int limit = 20,
     required DateTime cursor,
     required FetchDiaryParam param,
@@ -56,8 +56,8 @@ class _FetchDiaryEntriesUseCase {
           debugPrint('${r.length} diaries fetched');
           return Right(
           r.isEmpty
-              ? Pageable<DiaryEntry, DateTime>.empty()
-              : Pageable<DiaryEntry, DateTime>(
+              ? Pageable<DiaryEntity, DateTime>.empty()
+              : Pageable<DiaryEntity, DateTime>(
                   items: r,
                   nextCursor: r
                       .map((e) => e.createdAt)

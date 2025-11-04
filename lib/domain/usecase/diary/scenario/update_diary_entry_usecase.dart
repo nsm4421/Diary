@@ -5,7 +5,7 @@ class _UpdateDiaryEntryUseCase {
 
   final DiaryRepository _repository;
 
-  Future<Either<Failure, DiaryEntry>> call({
+  Future<Either<Failure, DiaryEntity>> call({
     required String id,
     String? title,
     required String content,
@@ -22,7 +22,7 @@ class _UpdateDiaryEntryUseCase {
 
     return await _repository
         .update(
-          id: id.trim(),
+          diaryId: id.trim(),
           title: (title == null || title.isEmpty) ? null : title,
           content: content.trimRight(), // 본문을 DB에 입력할 때는 right trim적용
         )

@@ -68,7 +68,7 @@ abstract class DisplayBloc<E, C, P>
         ),
         (page) => emit(
           state.copyWith(
-            status: DisplayStatus.initial,
+            status: DisplayStatus.paginated,
             failure: null,
             items: page.items,
             nextCursor: page.nextCursor,
@@ -90,7 +90,7 @@ abstract class DisplayBloc<E, C, P>
         ),
         (page) => emit(
           state.copyWith(
-            status: DisplayStatus.initial,
+            status: DisplayStatus.paginated,
             failure: null,
             items: page.items,
             nextCursor: page.nextCursor,

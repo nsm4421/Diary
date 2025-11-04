@@ -44,13 +44,13 @@ class _ScreenState extends State<_Screen> {
     }
 
     context.read<DisplayDiaryBloc>().add(
-      DisplayEvent<DiaryEntry, FetchDiaryParam>.nextPageRequested(),
+      DisplayEvent<DiaryEntity, FetchDiaryParam>.nextPageRequested(),
     );
   }
 
   Future<void> _handleRefresh() async {
     context.read<DisplayDiaryBloc>().add(
-      DisplayEvent<DiaryEntry, FetchDiaryParam>.refreshed(),
+      DisplayEvent<DiaryEntity, FetchDiaryParam>.refreshed(),
     );
   }
 
@@ -69,7 +69,7 @@ class _ScreenState extends State<_Screen> {
           ),
         ],
       ),
-      body: BlocBuilder<DisplayDiaryBloc, DisplayState<DiaryEntry, DateTime>>(
+      body: BlocBuilder<DisplayDiaryBloc, DisplayState<DiaryEntity, DateTime>>(
         builder: (context, state) {
           return (state.status == DisplayStatus.initial ||
                   state.status == DisplayStatus.loading)

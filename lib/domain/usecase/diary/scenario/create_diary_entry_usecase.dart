@@ -29,18 +29,21 @@ class _CreateDiaryEntryUseCase {
     List<CreateDiaryMediaRequest> medias = [];
 
     if (files.isNotEmpty) {
-      debugPrint('[_CreateDiaryEntryUseCase] uploading files on local storage started');
-      final uploadResult =
-          await _repository.uploadMediaFiles(diaryId: id, files: files);
-      final failure = uploadResult.fold<Failure?>(
-        (l) => l,
-        (uploaded) {
-          medias = uploaded;
-          return null;
-        },
+      debugPrint(
+        '[_CreateDiaryEntryUseCase] uploading files on local storage started',
       );
+      final uploadResult = await _repository.uploadMediaFiles(
+        diaryId: id,
+        files: files,
+      );
+      final failure = uploadResult.fold<Failure?>((l) => l, (uploaded) {
+        medias = uploaded;
+        return null;
+      });
       if (failure != null) {
-        debugPrint('[_CreateDiaryEntryUseCase] uploading files on local storage fails');
+        debugPrint(
+          '[_CreateDiaryEntryUseCase] uploading files on local storage fails',
+        );
         return failure.withFriendlyMessage().toLeft();
       }
     }

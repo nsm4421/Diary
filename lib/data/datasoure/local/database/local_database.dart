@@ -30,5 +30,15 @@ class LocalDatabase extends _$LocalDatabase {
   }
 
   @override
-  int get schemaVersion => 1;
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (m) async => await m.createAll(),
+    onUpgrade: (m, from, to) async {
+      if (from < schemaVersion) {
+        await m.createAll();
+      }
+    },
+  );
+
+  @override
+  int get schemaVersion => 3;
 }

@@ -16,6 +16,8 @@ abstract interface class DiaryRepository {
 
   Future<Either<Failure, DiaryEntity?>> findById(String diaryId);
 
+  Future<Either<Failure, DiaryDetailEntity>> getDiaryDetail(String diaryId);
+
   Future<Either<Failure, List<DiaryEntity>>> fetchEntries({
     int limit = 20,
     required DateTime cursor,

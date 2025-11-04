@@ -25,7 +25,7 @@ class DiaryUseCases {
   _CreateDiaryEntryUseCase get create =>
       _CreateDiaryEntryUseCase(_diaryRepository);
 
-  _GetDiaryEntryUseCase get get => _GetDiaryEntryUseCase(_diaryRepository);
+  _GetDiaryDetailUseCase get getDetail => _GetDiaryDetailUseCase(_diaryRepository);
 
   _FetchDiaryEntriesUseCase get fetch =>
       _FetchDiaryEntriesUseCase(_diaryRepository);
