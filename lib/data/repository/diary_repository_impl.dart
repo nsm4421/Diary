@@ -61,6 +61,22 @@ class DiaryRepositoryImpl
   }
 
   @override
+  Future<Either<Failure, DiaryDetailEntity>> getDiaryDetail(String diaryId) {
+    return guard(() async {
+      final record = await _database.findById(diaryId);
+      if (record == null) {
+        throw Exception('not found exception');
+      }
+      final medias = await _database
+          .fetchMedias(diaryId)
+          .then(
+            (res) => res.map((e) => e.toMediaEntity()).toList(growable: false),
+          );
+      return record.toDetailEntity(medias);
+    }, logger: logger);
+  }
+
+  @override
   Future<Either<Failure, List<DiaryEntity>>> fetchEntries({
     int limit = 20,
     required DateTime cursor,

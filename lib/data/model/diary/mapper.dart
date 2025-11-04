@@ -13,4 +13,31 @@ extension DiaryRecordMapper on DiaryRecord {
       date: date,
     );
   }
+
+  DiaryDetailEntity toDetailEntity(List<DiaryMediaAsset> medias) {
+    return DiaryDetailEntity(
+      id: id,
+      title: title,
+      content: content,
+      isTemp: isTemp,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      date: date,
+      medias: medias,
+    );
+  }
+}
+
+extension DiaryMediaRecordMapper on DiaryMediaRecord {
+  DiaryMediaAsset toMediaEntity() {
+    return DiaryMediaAsset(
+      relativePath: relativePath,
+      fileName: fileName,
+      mimeType: mimeType,
+      sizeInBytes: sizeInBytes,
+      width: width,
+      height: height,
+      sortOrder: sortOrder,
+    );
+  }
 }
