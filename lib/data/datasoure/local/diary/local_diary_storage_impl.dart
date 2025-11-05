@@ -6,6 +6,11 @@ class LocalDiaryStorageImpl implements LocalDiaryStorage {
   LocalDiaryStorageImpl(this._localStorage);
 
   @override
+  String getAbsolutePath(String relativePath) {
+    return p.join(_localStorage.workingDirectory.path, relativePath);
+  }
+
+  @override
   Future<String> save({
     required String diaryId,
     required Uint8List bytes,

@@ -1,7 +1,7 @@
 part of 'p_display_diary.dart';
 
-class _DiariesListFragment extends StatelessWidget {
-  const _DiariesListFragment({required this.controller, required this.diaries});
+class _DiariesList extends StatelessWidget {
+  const _DiariesList({required this.controller, required this.diaries});
 
   final ScrollController controller;
   final List<DiaryEntity> diaries;

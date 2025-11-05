@@ -78,7 +78,7 @@ class _ScreenState extends State<_Screen> {
                   onRefresh: _handleRefresh,
                   child: state.items.isEmpty
                       ? Center(child: Text("작성된 일기가 없습니다"))
-                      : _DiariesListFragment(
+                      : _DiariesList(
                           controller: _scrollController,
                           diaries: state.items,
                         ),

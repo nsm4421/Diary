@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:diary/core/error/failure.dart';
-import 'package:diary/domain/entity/diary_entry.dart';
+import 'package:diary/domain/entity/diary_detail_entity.dart';
+import 'package:diary/domain/entity/diary_entity.dart';
 
 part 'params.dart';
 
@@ -16,7 +17,7 @@ abstract interface class DiaryRepository {
 
   Future<Either<Failure, DiaryEntity?>> findById(String diaryId);
 
-  Future<Either<Failure, DiaryDetailEntity>> getDiaryDetail(String diaryId);
+  Future<Either<Failure, DiaryDetailEntity?>> getDiaryDetail(String diaryId);
 
   Future<Either<Failure, List<DiaryEntity>>> fetchEntries({
     int limit = 20,

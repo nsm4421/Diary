@@ -7,6 +7,8 @@ import 'package:path/path.dart' as p;
 part 'local_diary_storage_impl.dart';
 
 abstract interface class LocalDiaryStorage {
+  String getAbsolutePath(String relativePath);
+
   Future<String> save({
     required String diaryId,
     required Uint8List bytes,

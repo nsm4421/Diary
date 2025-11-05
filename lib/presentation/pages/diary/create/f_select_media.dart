@@ -1,13 +1,13 @@
 part of 'p_create_diary.dart';
 
-class _SelectMediaFragment extends StatefulWidget {
-  const _SelectMediaFragment({super.key});
+class _SelectMedia extends StatefulWidget {
+  const _SelectMedia({super.key});
 
   @override
-  State<_SelectMediaFragment> createState() => _SelectMediaFragmentState();
+  State<_SelectMedia> createState() => _SelectMediaState();
 }
 
-class _SelectMediaFragmentState extends State<_SelectMediaFragment> {
+class _SelectMediaState extends State<_SelectMedia> {
   late final ImagePicker _imagePicker;
   static const int _maxSelectable = 3;
 

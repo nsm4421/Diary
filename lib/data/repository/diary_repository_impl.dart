@@ -14,7 +14,8 @@ import 'package:diary/data/datasoure/local/diary/dto.dart';
 import 'package:diary/data/datasoure/local/diary/local_diary_datasource.dart';
 import 'package:diary/data/datasoure/local/diary/local_diary_storage.dart';
 import 'package:diary/data/model/diary/mapper.dart';
-import 'package:diary/domain/entity/diary_entry.dart';
+import 'package:diary/domain/entity/diary_detail_entity.dart';
+import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/domain/repository/diary/diary_repository.dart';
 import 'package:image/image.dart' as img;
 import 'package:injectable/injectable.dart';
@@ -61,16 +62,23 @@ class DiaryRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, DiaryDetailEntity>> getDiaryDetail(String diaryId) {
+  Future<Either<Failure, DiaryDetailEntity?>> getDiaryDetail(String diaryId) {
     return guard(() async {
       final record = await _database.findById(diaryId);
       if (record == null) {
-        throw Exception('not found exception');
+        return null;
       }
+
       final medias = await _database
           .fetchMedias(diaryId)
           .then(
-            (res) => res.map((e) => e.toMediaEntity()).toList(growable: false),
+            (res) => res
+                .map(
+                  (e) => e.toMediaEntity(
+                    absolutePath: _storage.getAbsolutePath(e.relativePath),
+                  ),
+                )
+                .toList(growable: false),
           );
       return record.toDetailEntity(medias);
     }, logger: logger);

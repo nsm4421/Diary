@@ -1,5 +1,7 @@
 import 'package:diary/data/datasoure/local/database/local_database.dart';
-import 'package:diary/domain/entity/diary_entry.dart';
+import 'package:diary/domain/entity/diary_detail_entity.dart';
+import 'package:diary/domain/entity/diary_entity.dart';
+import 'package:diary/domain/entity/diary_media_asset.dart';
 
 extension DiaryRecordMapper on DiaryRecord {
   DiaryEntity toEntity() {
@@ -29,8 +31,9 @@ extension DiaryRecordMapper on DiaryRecord {
 }
 
 extension DiaryMediaRecordMapper on DiaryMediaRecord {
-  DiaryMediaAsset toMediaEntity() {
+  DiaryMediaAsset toMediaEntity({required String absolutePath}) {
     return DiaryMediaAsset(
+      absolutePath: absolutePath,
       relativePath: relativePath,
       fileName: fileName,
       mimeType: mimeType,

@@ -12,6 +12,8 @@ import 'package:path/path.dart' as p;
 part 'local_storage_datasource_impl.dart';
 
 abstract interface class LocalStorageDataSource {
+  Directory get workingDirectory;
+
   Future<String> save({
     required String relativePath,
     required Uint8List bytes,

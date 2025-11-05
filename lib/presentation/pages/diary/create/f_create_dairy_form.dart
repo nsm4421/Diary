@@ -99,7 +99,7 @@ class _FormState extends State<_Form> {
               validator: _validateContent,
             ),
             const SizedBox(height: 16),
-            const _SelectMediaFragment(),
+            const _SelectMedia(),
           ],
         ),
       ),

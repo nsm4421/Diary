@@ -16,6 +16,10 @@ class LocalStorageDataSourceImpl
   final Logger _logger;
 
   @override
+  Directory get workingDirectory =>
+      Directory(p.join(_baseDirectory.path, _rootFolder));
+
+  @override
   Future<String> save({
     required String relativePath,
     required Uint8List bytes,
