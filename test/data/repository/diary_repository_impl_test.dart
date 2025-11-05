@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:dartz/dartz.dart';
 import 'package:diary/core/error/app_exception.dart';
 import 'package:diary/core/error/error_code.dart';
@@ -6,28 +9,52 @@ import 'package:diary/data/datasoure/local/database/local_database.dart';
 import 'package:diary/data/datasoure/local/database/local_database_dao.dart';
 import 'package:diary/data/datasoure/local/diary/dto.dart';
 import 'package:diary/data/datasoure/local/diary/local_diary_datasource.dart';
+import 'package:diary/data/datasoure/local/diary/local_diary_storage.dart';
+import 'package:diary/data/datasoure/local/storage/local_storage_datasource.dart';
 import 'package:diary/data/repository/diary_repository_impl.dart';
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logger/logger.dart';
+import 'package:path/path.dart' as p;
+import 'package:image/image.dart' as img;
 
 void main() {
   late LocalDatabase db;
   late LocalDatabaseDao dao;
   late Logger logger;
-  late LocalDiaryDataSource dataSource;
+  late LocalDiaryDataSource diaryDataSource;
+  late LocalStorageDataSource storageDataSource;
+  late LocalDiaryStorage diaryStorage;
   late DiaryRepositoryImpl repository;
+  late Directory storageRoot;
+  late Directory inputDir;
 
-  setUp(() {
+  setUp(() async {
     db = LocalDatabase.test();
     dao = LocalDatabaseDao(db);
-    logger = Logger();
-    dataSource = LocalDiaryDataSourceImpl(dao, logger);
-    repository = DiaryRepositoryImpl(dataSource);
+    logger = Logger(
+      level: Level.nothing,
+      printer: SimplePrinter(printTime: false),
+    );
+    diaryDataSource = LocalDiaryDataSourceImpl(dao, logger);
+    storageRoot = await Directory.systemTemp.createTemp('diary_repo_test');
+    storageDataSource = LocalStorageDataSourceImpl(
+      baseDirectory: storageRoot,
+      logger: logger,
+    );
+    diaryStorage = LocalDiaryStorageImpl(storageDataSource);
+    repository = DiaryRepositoryImpl(diaryDataSource, diaryStorage);
+    inputDir = await Directory.systemTemp.createTemp('diary_repo_input');
   });
 
   tearDown(() async {
     await db.close();
+    if (await storageRoot.exists()) {
+      await storageRoot.delete(recursive: true);
+    }
+    if (await inputDir.exists()) {
+      await inputDir.delete(recursive: true);
+    }
   });
 
   Future<void> insertDiary({
@@ -57,6 +84,31 @@ void main() {
   Future<DiaryRecord> recordById(String id) {
     final query = db.select(db.diaryRecords)..where((tbl) => tbl.id.equals(id));
     return query.getSingle();
+  }
+
+  Future<List<DiaryMediaRecord>> mediaRecords(String diaryId) {
+    final query = db.select(db.diaryMediaRecords)
+      ..where((tbl) => tbl.diaryId.equals(diaryId))
+      ..orderBy([(tbl) => OrderingTerm.asc(tbl.sortOrder)]);
+    return query.get();
+  }
+
+  File fileAt(String relativePath) =>
+      File(p.join(storageRoot.path, 'storage', relativePath));
+
+  String absolutePath(String relativePath) =>
+      p.join(storageRoot.path, 'storage', relativePath);
+
+  Future<File> createTempFile(String name, Uint8List bytes) async {
+    final file = File(p.join(inputDir.path, name));
+    await file.create(recursive: true);
+    await file.writeAsBytes(bytes, flush: true);
+    return file;
+  }
+
+  Uint8List imageBytes({int width = 4, int height = 3}) {
+    final image = img.Image(width: width, height: height);
+    return Uint8List.fromList(img.encodePng(image));
   }
 
   Failure expectLeft<E>(Either<Failure, E> either) {
@@ -89,6 +141,7 @@ void main() {
     test('returns Failure when datasource throws AppException', () async {
       final failingRepo = DiaryRepositoryImpl(
         _FailingCreateDataSource(AppException.cache(message: 'failed')),
+        diaryStorage,
       );
 
       final result = await failingRepo.create(content: 'body');
@@ -107,6 +160,59 @@ void main() {
         expect(entry, isNotNull);
         expect(entry!.id, 'find-me');
         expect(entry.title, 'My title');
+      });
+    });
+
+    test('getDiaryDetail returns detail with medias', () async {
+      await insertDiary(id: 'detail-id', title: 'Title');
+      await db.into(db.diaryMediaRecords).insert(
+            DiaryMediaRecordsCompanion.insert(
+              diaryId: 'detail-id',
+              relativePath: 'diary/detail-id/0001_photo.jpg',
+              fileName: 'photo.jpg',
+              sortOrder: const Value(2),
+              width: const Value(400),
+              height: const Value(300),
+            ),
+          );
+      await db.into(db.diaryMediaRecords).insert(
+            DiaryMediaRecordsCompanion.insert(
+              diaryId: 'detail-id',
+              relativePath: 'diary/detail-id/0000_cover.jpg',
+              fileName: 'cover.jpg',
+              sortOrder: const Value(1),
+              sizeInBytes: const Value(1024),
+            ),
+          );
+
+      final result = await repository.getDiaryDetail('detail-id');
+
+      result.fold((_) => fail('Expected Right'), (entry) {
+        expect(entry, isNotNull);
+        final detail = entry!;
+        expect(detail.id, 'detail-id');
+        expect(detail.medias.length, 2);
+        expect(detail.medias.map((m) => m.fileName), ['cover.jpg', 'photo.jpg']);
+        expect(
+          detail.medias.map((m) => m.absolutePath),
+          [
+            absolutePath('diary/detail-id/0000_cover.jpg'),
+            absolutePath('diary/detail-id/0001_photo.jpg'),
+          ],
+        );
+        final cover = detail.medias.first;
+        expect(cover.sizeInBytes, 1024);
+        final photo = detail.medias.last;
+        expect(photo.width, 400);
+        expect(photo.height, 300);
+      });
+    });
+
+    test('getDiaryDetail returns Right(null) when record missing', () async {
+      final result = await repository.getDiaryDetail('missing');
+
+      result.fold((_) => fail('Expected Right'), (entry) {
+        expect(entry, isNull);
       });
     });
 
@@ -173,7 +279,7 @@ void main() {
       await insertDiary(id: 'update-id', title: 'Old', content: 'Old content');
 
       final result = await repository.update(
-        id: 'update-id',
+        diaryId: 'update-id',
         title: 'New title',
         content: 'New content',
       );
@@ -192,6 +298,62 @@ void main() {
 
       final rows = await db.select(db.diaryRecords).get();
       expect(rows, isEmpty);
+    });
+  });
+
+  group('media uploads', () {
+    test(
+      'uploadMediaFiles returns metadata and saves image dimensions',
+      () async {
+        final file = await createTempFile(
+          'sample.png',
+          imageBytes(width: 5, height: 4),
+        );
+
+        final result = await repository.uploadMediaFiles(
+          diaryId: 'media-meta',
+          files: [file],
+        );
+
+        expect(result.isRight(), isTrue);
+        final medias = result.getOrElse(() => fail('upload failed'));
+        expect(medias, hasLength(1));
+        final media = medias.first;
+        expect(media.width, 5);
+        expect(media.height, 4);
+        expect(media.sizeInBytes, greaterThan(0));
+        expect(media.sortOrder, 0);
+
+        final stored = fileAt(media.relativePath);
+        expect(await stored.exists(), isTrue);
+      },
+    );
+
+    test('create persists medias returned from uploadMediaFiles', () async {
+      final file = await createTempFile(
+        'entry.png',
+        imageBytes(width: 2, height: 2),
+      );
+
+      final uploadsEither = await repository.uploadMediaFiles(
+        diaryId: 'new-entry',
+        files: [file],
+      );
+      final uploads = uploadsEither.getOrElse(() => fail('upload failed'));
+
+      final result = await repository.create(
+        clientId: 'new-entry',
+        title: 'entry',
+        content: 'body',
+        medias: uploads,
+      );
+
+      expect(result.isRight(), isTrue);
+
+      final medias = await mediaRecords('new-entry');
+      expect(medias, hasLength(1));
+      expect(medias.first.relativePath, uploads.first.relativePath);
+      expect(medias.first.sortOrder, uploads.first.sortOrder);
     });
   });
 
@@ -216,7 +378,10 @@ void main() {
 
     test('emits Left when datasource stream throws', () async {
       final exception = AppException.cache(message: 'stream failed');
-      final repo = DiaryRepositoryImpl(_ErrorStreamDiaryDataSource(exception));
+      final repo = DiaryRepositoryImpl(
+        _ErrorStreamDiaryDataSource(exception),
+        diaryStorage,
+      );
 
       final failure = await repo
           .watchAll()
@@ -249,8 +414,7 @@ class _FailingCreateDataSource implements LocalDiaryDataSource {
   Future<List<DiaryRecord>> fetchRowsByCursor({
     int limit = 20,
     required DateTime cursor,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<DiaryRecord?> findById(String id) => throw UnimplementedError();
@@ -268,6 +432,32 @@ class _FailingCreateDataSource implements LocalDiaryDataSource {
   @override
   Future<DiaryRecord> update(UpdateDiaryRequestDto dto) =>
       throw UnimplementedError();
+
+  @override
+  Future<List<DiaryMediaRecord>> fetchMedias(String diaryId) =>
+      throw UnimplementedError();
+
+  @override
+  Future<DiaryMediaRecord?> findMediaByPath({
+    required String diaryId,
+    required String relativePath,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<DiaryMediaRecord> upsertMedia({
+    required String diaryId,
+    required CreateDiaryMediaRequestDto media,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<void> deleteMedia({
+    required String diaryId,
+    required String relativePath,
+    bool ignoreMissing = true,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<void> deleteAllMedias(String diaryId) => throw UnimplementedError();
 }
 
 class _ErrorStreamDiaryDataSource implements LocalDiaryDataSource {
@@ -286,8 +476,7 @@ class _ErrorStreamDiaryDataSource implements LocalDiaryDataSource {
   Future<List<DiaryRecord>> fetchRowsByCursor({
     int limit = 20,
     required DateTime cursor,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<DiaryRecord?> findById(String id) => throw UnimplementedError();
@@ -306,4 +495,30 @@ class _ErrorStreamDiaryDataSource implements LocalDiaryDataSource {
   @override
   Future<DiaryRecord> update(UpdateDiaryRequestDto dto) =>
       throw UnimplementedError();
+
+  @override
+  Future<List<DiaryMediaRecord>> fetchMedias(String diaryId) =>
+      throw UnimplementedError();
+
+  @override
+  Future<DiaryMediaRecord?> findMediaByPath({
+    required String diaryId,
+    required String relativePath,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<DiaryMediaRecord> upsertMedia({
+    required String diaryId,
+    required CreateDiaryMediaRequestDto media,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<void> deleteMedia({
+    required String diaryId,
+    required String relativePath,
+    bool ignoreMissing = true,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<void> deleteAllMedias(String diaryId) => throw UnimplementedError();
 }

@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:diary/core/dependency_injection/dependency_injection.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -21,7 +20,7 @@ const List<SeedDiaryEntry> _manualEntries = <SeedDiaryEntry>[
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  configureDependencies();
+  await configureDependencies();
 
   final entries = _manualEntries.isNotEmpty
       ? _manualEntries

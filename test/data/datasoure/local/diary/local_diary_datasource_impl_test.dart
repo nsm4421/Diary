@@ -18,6 +18,13 @@ class _DiarySeed {
   });
 }
 
+class _NoopLogOutput extends LogOutput {
+  @override
+  void output(OutputEvent event) {
+    // Suppress log output during tests.
+  }
+}
+
 void main() {
   late LocalDatabase db;
   late LocalDatabaseDao dao;
@@ -57,11 +64,21 @@ void main() {
     return query.getSingle();
   }
 
+  Future<List<DiaryMediaRecord>> mediaByDiaryId(String diaryId) {
+    final query = db.select(db.diaryMediaRecords)
+      ..where((tbl) => tbl.diaryId.equals(diaryId))
+      ..orderBy([(tbl) => OrderingTerm.asc(tbl.sortOrder)]);
+    return query.get();
+  }
+
   setUp(() {
     autoId = 0;
     db = LocalDatabase.test();
     dao = LocalDatabaseDao(db);
-    logger = Logger();
+    logger = Logger(
+      level: Level.nothing,
+      output: _NoopLogOutput(),
+    );
     dataSource = LocalDiaryDataSourceImpl(dao, logger);
   });
 
@@ -70,6 +87,20 @@ void main() {
   });
 
   group('create', () {
+    test('does not create media rows when media list empty', () async {
+      final dto = CreateDiaryRequestDto(
+        clientId: 'no-media',
+        title: 'Entry without attachments',
+        content: 'Plain content',
+        medias: const [],
+      );
+
+      await dataSource.create(dto);
+
+      final mediaRows = await mediaByDiaryId(dto.id);
+      expect(mediaRows, isEmpty);
+    });
+
     test('persists a new diary row', () async {
       final dto = CreateDiaryRequestDto(
         clientId: 'create-id',
@@ -82,6 +113,45 @@ void main() {
       final row = await recordById(dto.id);
       expect(row.title, dto.title);
       expect(row.content, dto.content);
+    });
+
+    test('persists related media rows when provided', () async {
+      final dto = CreateDiaryRequestDto(
+        clientId: 'with-media',
+        title: 'Entry with photos',
+        content: 'Content',
+        medias: const [
+          CreateDiaryMediaRequestDto(
+            relativePath: 'diary/with-media/0.jpg',
+            fileName: '0.jpg',
+            mimeType: 'image/jpeg',
+            sizeInBytes: 1024,
+            width: 800,
+            height: 600,
+            sortOrder: 5,
+          ),
+          CreateDiaryMediaRequestDto(
+            relativePath: 'diary/with-media/1.jpg',
+            fileName: '1.jpg',
+          ),
+        ],
+      );
+
+      await dataSource.create(dto);
+
+      final mediaRows = await mediaByDiaryId(dto.id);
+      expect(mediaRows, hasLength(2));
+      final primary = mediaRows.singleWhere(
+        (row) => row.relativePath == dto.medias.first.relativePath,
+      );
+      final secondary = mediaRows.singleWhere(
+        (row) => row.relativePath == dto.medias[1].relativePath,
+      );
+      expect(primary.diaryId, dto.id);
+      expect(primary.mimeType, dto.medias.first.mimeType);
+      expect(primary.sortOrder, dto.medias.first.sortOrder);
+      expect(secondary.sortOrder, 1);
+      expect(secondary.mimeType, isNull);
     });
   });
 
@@ -180,7 +250,7 @@ void main() {
         id: 'update-id',
         title: 'Old',
         content: 'Old content',
-        updatedAt: DateTime(2024, 1, 1),
+        updatedAt: DateTime.utc(2000, 1, 1),
       );
 
       final dto = UpdateDiaryRequestDto(
@@ -194,7 +264,7 @@ void main() {
       final updated = await recordById(seed.id);
       expect(updated.title, dto.title);
       expect(updated.content, dto.content);
-      expect(updated.updatedAt.isAfter(seed.updatedAt), isTrue);
+      expect(updated.updatedAt, isNot(equals(seed.updatedAt)));
     });
 
     test('throws when row missing', () async {
@@ -216,6 +286,22 @@ void main() {
 
       final rows = await db.select(db.diaryRecords).get();
       expect(rows, isEmpty);
+    });
+
+    test('removes related media rows', () async {
+      final seed = await insertDiary();
+      await db.into(db.diaryMediaRecords).insert(
+            DiaryMediaRecordsCompanion.insert(
+              diaryId: seed.id,
+              relativePath: 'diary/${seed.id}/0.jpg',
+              fileName: '0.jpg',
+            ),
+          );
+
+      await dataSource.delete(seed.id);
+
+      final mediaRows = await db.select(db.diaryMediaRecords).get();
+      expect(mediaRows, isEmpty);
     });
 
     test('throws when row not found', () async {

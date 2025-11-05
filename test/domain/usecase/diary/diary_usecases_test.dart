@@ -1,12 +1,16 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:diary/core/error/error_code.dart';
 import 'package:diary/core/error/failure.dart';
-import 'package:diary/domain/entity/diary_entry.dart';
-import 'package:diary/domain/repository/diary_repository.dart';
+import 'package:diary/core/value_objects/constraint.dart';
+import 'package:diary/domain/entity/diary_detail_entity.dart';
+import 'package:diary/domain/entity/diary_entity.dart';
+import 'package:diary/domain/repository/diary/diary_repository.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:path/path.dart' as p;
 
 void main() {
   late StubDiaryRepository repository;
@@ -16,6 +20,15 @@ void main() {
     repository = StubDiaryRepository();
     useCases = DiaryUseCases(repository);
   });
+
+  Future<File> createTempImage(String name) async {
+    final dir = await Directory.systemTemp.createTemp('create_usecase');
+    addTearDown(() => dir.delete(recursive: true));
+    final file = File(p.join(dir.path, name));
+    await file.create(recursive: true);
+    await file.writeAsBytes([1, 2, 3, 4], flush: true);
+    return file;
+  }
 
   group('create', () {
     test('returns validation failure when content is empty', () async {
@@ -66,7 +79,12 @@ void main() {
       String? receivedContent;
 
       repository.createHandler =
-          ({String? clientId, String? title, required String content}) async {
+          ({
+            String? clientId,
+            String? title,
+            required String content,
+            List<CreateDiaryMediaRequest> medias = const [],
+          }) async {
             receivedClientId = clientId;
             receivedTitle = title;
             receivedContent = content;
@@ -87,7 +105,12 @@ void main() {
 
     test('maps failure message based on error code', () async {
       repository.createHandler =
-          ({String? clientId, String? title, required String content}) async {
+          ({
+            String? clientId,
+            String? title,
+            required String content,
+            List<CreateDiaryMediaRequest> medias = const [],
+          }) async {
             return Left(
               Failure(code: ErrorCode.network, message: 'raw message'),
             );
@@ -99,6 +122,86 @@ void main() {
       result.fold((failure) {
         expect(failure.code, ErrorCode.network);
         expect(failure.message, '네트워크 연결을 확인해주세요.');
+      }, (_) => fail('Expected Left'));
+    });
+
+    test('uploads media files before creating diary entry', () async {
+      final file = await createTempImage('image.jpg');
+
+      repository.uploadMediaFilesHandler =
+          ({required String diaryId, required List<File> files}) async {
+            expect(diaryId.trim(), isNotEmpty);
+            expect(files, hasLength(1));
+            expect(files.first.path, file.path);
+            return Right([
+              const CreateDiaryMediaRequest(
+                relativePath: 'diary/test/0000_image.jpg',
+                fileName: 'image.jpg',
+                mimeType: 'image/jpeg',
+                sizeInBytes: 4,
+                width: 100,
+                height: 80,
+                sortOrder: 0,
+              ),
+            ]);
+          };
+
+      repository.createHandler =
+          ({
+            String? clientId,
+            String? title,
+            required String content,
+            List<CreateDiaryMediaRequest> medias = const [],
+          }) async {
+            expect(clientId, 'client');
+            expect(title, 'title');
+            expect(content, ' body');
+            expect(medias, hasLength(1));
+            expect(medias.first.relativePath, 'diary/test/0000_image.jpg');
+            return Right(_fakeEntry(id: clientId!));
+          };
+
+      final result = await useCases.create(
+        clientId: ' client ',
+        title: ' title ',
+        content: ' body ',
+        files: [file],
+      );
+
+      expect(result.isRight(), isTrue);
+    });
+
+    test('propagates failure when uploadMediaFiles fails', () async {
+      final file = await createTempImage('image.jpg');
+
+      bool createCalled = false;
+
+      repository.uploadMediaFilesHandler =
+          ({required String diaryId, required List<File> files}) async {
+            return Left(Failure.validation('upload failed'));
+          };
+
+      repository.createHandler =
+          ({
+            String? clientId,
+            String? title,
+            required String content,
+            List<CreateDiaryMediaRequest> medias = const [],
+          }) async {
+            createCalled = true;
+            return Right(_fakeEntry(id: clientId ?? 'id'));
+          };
+
+      final result = await useCases.create(
+        clientId: 'client',
+        content: 'body',
+        files: [file],
+      );
+
+      expect(result.isLeft(), isTrue);
+      expect(createCalled, isFalse);
+      result.fold((failure) {
+        expect(failure.message, 'upload failed');
       }, (_) => fail('Expected Left'));
     });
   });
@@ -132,8 +235,13 @@ void main() {
 
     test('maps repository failures to friendly messages', () async {
       repository.updateHandler =
-          ({required String id, String? title, required String content}) async {
-            expect(id, 'id');
+          ({
+            required String diaryId,
+            String? title,
+            required String content,
+            List<CreateDiaryMediaRequest> medias = const [],
+          }) async {
+            expect(diaryId, 'id');
             return Left(
               Failure(code: ErrorCode.server, message: 'server message'),
             );
@@ -151,7 +259,7 @@ void main() {
 
   group('get', () {
     test('returns validation failure when id is blank', () async {
-      final result = await useCases.get('  ');
+      final result = await useCases.getDetail('  ');
 
       expect(result.isLeft(), isTrue);
       result.fold((failure) {
@@ -161,12 +269,12 @@ void main() {
     });
 
     test('maps repository failure message', () async {
-      repository.findByIdHandler = (id) async {
+      repository.getDiaryDetailHandler = (id) async {
         expect(id, 'id');
         return Left(Failure(code: ErrorCode.notFound, message: 'not found'));
       };
 
-      final result = await useCases.get(' id ');
+      final result = await useCases.getDetail(' id ');
 
       expect(result.isLeft(), isTrue);
       result.fold((failure) {
@@ -233,7 +341,7 @@ void main() {
       expect(result.isRight(), isTrue);
       result.fold((_) => fail('Expected Right'), (pageable) {
         expect(pageable.items.map((e) => e.id), ['a', 'b']);
-        expect(pageable.nextCursor, DateTime(2024, 1, 2).toUtc().toString());
+        expect(pageable.nextCursor, DateTime(2024, 1, 2).toUtc());
       });
     });
 
@@ -308,7 +416,7 @@ void main() {
   });
 }
 
-DiaryEntry _fakeEntry({
+DiaryEntity _fakeEntry({
   required String id,
   String? title,
   String content = 'content',
@@ -317,7 +425,7 @@ DiaryEntry _fakeEntry({
 }) {
   final created = createdAt ?? DateTime.now().toUtc();
   final updated = updatedAt ?? created;
-  return DiaryEntry(
+  return DiaryEntity(
     id: id,
     title: title,
     content: content,
@@ -329,63 +437,92 @@ DiaryEntry _fakeEntry({
 }
 
 class StubDiaryRepository implements DiaryRepository {
-  Future<Either<Failure, DiaryEntry>> Function({
+  Future<Either<Failure, DiaryEntity>> Function({
     String? clientId,
     String? title,
     required String content,
+    List<CreateDiaryMediaRequest> medias,
   })?
   createHandler;
 
-  Future<Either<Failure, DiaryEntry?>> Function(String id)? findByIdHandler;
+  Future<Either<Failure, DiaryEntity?>> Function(String id)? findByIdHandler;
 
-  Future<Either<Failure, List<DiaryEntry>>> Function({
+  Future<Either<Failure, DiaryDetailEntity?>> Function(String id)?
+      getDiaryDetailHandler;
+
+  Future<Either<Failure, List<DiaryEntity>>> Function({
     int limit,
     required DateTime cursor,
   })?
   fetchEntriesHandler;
 
-  Future<Either<Failure, List<DiaryEntry>>> Function({
+  Future<Either<Failure, List<DiaryEntity>>> Function({
     required String keyword,
     int limit,
     required DateTime cursor,
   })?
   searchByTitleHandler;
 
-  Stream<Either<Failure, List<DiaryEntry>>> Function()? watchAllHandler;
+  Stream<Either<Failure, List<DiaryEntity>>> Function()? watchAllHandler;
 
-  Future<Either<Failure, DiaryEntry>> Function({
-    required String id,
+  Future<Either<Failure, DiaryEntity>> Function({
+    required String diaryId,
     String? title,
     required String content,
+    List<CreateDiaryMediaRequest> medias,
   })?
   updateHandler;
 
-  Future<Either<Failure, void>> Function(String id)? deleteHandler;
+  Future<Either<Failure, List<CreateDiaryMediaRequest>>> Function({
+    required String diaryId,
+    required List<File> files,
+  })
+  uploadMediaFilesHandler =
+      ({required String diaryId, required List<File> files}) async {
+        return const Right([]);
+      };
+
+  Future<Either<Failure, void>> Function(String diaryId)? deleteHandler;
 
   @override
-  Future<Either<Failure, DiaryEntry>> create({
+  Future<Either<Failure, DiaryEntity>> create({
     String? clientId,
     String? title,
     required String content,
+    List<CreateDiaryMediaRequest> medias = const [],
   }) {
     final handler = createHandler;
     if (handler == null) {
       throw StateError('createHandler not set');
     }
-    return handler(clientId: clientId, title: title, content: content);
+    return handler(
+      clientId: clientId,
+      title: title,
+      content: content,
+      medias: medias,
+    );
   }
 
   @override
-  Future<Either<Failure, DiaryEntry?>> findById(String id) {
+  Future<Either<Failure, DiaryEntity?>> findById(String diaryId) {
     final handler = findByIdHandler;
     if (handler == null) {
       throw StateError('findByIdHandler not set');
     }
-    return handler(id);
+    return handler(diaryId);
   }
 
   @override
-  Future<Either<Failure, List<DiaryEntry>>> fetchEntries({
+  Future<Either<Failure, DiaryDetailEntity?>> getDiaryDetail(String diaryId) {
+    final handler = getDiaryDetailHandler;
+    if (handler == null) {
+      throw StateError('getDiaryDetailHandler not set');
+    }
+    return handler(diaryId);
+  }
+
+  @override
+  Future<Either<Failure, List<DiaryEntity>>> fetchEntries({
     int limit = 20,
     required DateTime cursor,
   }) {
@@ -397,7 +534,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, List<DiaryEntry>>> searchByTitle({
+  Future<Either<Failure, List<DiaryEntity>>> searchByTitle({
     required String keyword,
     int limit = 20,
     required DateTime cursor,
@@ -410,7 +547,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Stream<Either<Failure, List<DiaryEntry>>> watchAll() {
+  Stream<Either<Failure, List<DiaryEntity>>> watchAll() {
     final handler = watchAllHandler;
     if (handler == null) {
       throw StateError('watchAllHandler not set');
@@ -419,24 +556,38 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, DiaryEntry>> update({
-    required String id,
+  Future<Either<Failure, DiaryEntity>> update({
+    required String diaryId,
     String? title,
     required String content,
+    List<CreateDiaryMediaRequest> medias = const [],
   }) {
     final handler = updateHandler;
     if (handler == null) {
       throw StateError('updateHandler not set');
     }
-    return handler(id: id, title: title, content: content);
+    return handler(
+      diaryId: diaryId,
+      title: title,
+      content: content,
+      medias: medias,
+    );
   }
 
   @override
-  Future<Either<Failure, void>> delete(String id) {
+  Future<Either<Failure, void>> delete(String diaryId) {
     final handler = deleteHandler;
     if (handler == null) {
       throw StateError('deleteHandler not set');
     }
-    return handler(id);
+    return handler(diaryId);
+  }
+
+  @override
+  Future<Either<Failure, List<CreateDiaryMediaRequest>>> uploadMediaFiles({
+    required String diaryId,
+    required List<File> files,
+  }) {
+    return uploadMediaFilesHandler(diaryId: diaryId, files: files);
   }
 }
