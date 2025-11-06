@@ -71,81 +71,90 @@ class _SelectMediaState extends State<_SelectMedia> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return BlocBuilder<CreateDiaryCubit, CreateDiaryState>(
       buildWhen: (previous, current) => previous.medias != current.medias,
       builder: (context, state) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text('사진', style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(width: 8),
-                Text(
-                  '최대 ${_maxSelectable}장',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(
-                      context,
-                    ).textTheme.bodySmall?.color?.withAlpha(70),
+        return Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            color: colorScheme.surface.withAlpha(242),
+            border: Border.all(color: colorScheme.onSurface.withAlpha(13)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.photo_library_rounded,
+                    color: colorScheme.secondary,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: [
-                ...List.generate(
-                  state.medias.length,
-                  (index) => Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.file(
-                          state.medias[index],
-                          width: 96,
-                          height: 96,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Positioned(
-                        top: -8,
-                        right: -8,
-                        child: IconButton.filled(
-                          style: IconButton.styleFrom(
-                            backgroundColor: Colors.black.withAlpha(60),
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size(28, 28),
-                            padding: EdgeInsets.zero,
-                          ),
-                          onPressed: () {
-                            context.read<CreateDiaryCubit>().removeMediaAt(
-                              index,
-                            );
-                          },
-                          icon: const Icon(Icons.close, size: 18),
-                        ),
-                      ),
-                    ],
+                  const SizedBox(width: 8),
+                  Text(
+                    '사진',
+                    style: textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                    ),
                   ),
-                ),
-                if (_maxSelectable > state.medias.length)
-                  SizedBox(
-                    width: 96,
-                    height: 96,
-                    child: OutlinedButton.icon(
-                      onPressed: state.isSubmitting ? null : _handleAddMedia,
-                      icon: const Icon(Icons.add_photo_alternate_outlined),
-                      label: Text(
-                        '추가 (${_maxSelectable - state.medias.length})',
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(999),
+                      color: colorScheme.secondary.withAlpha(31),
+                    ),
+                    child: Text(
+                      '최대 ${_maxSelectable}장',
+                      style: textTheme.labelSmall?.copyWith(
+                        color: colorScheme.secondary,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.4,
                       ),
                     ),
                   ),
-              ],
-            ),
-          ],
+                  const Spacer(),
+                  if (state.medias.isNotEmpty)
+                    Text(
+                      '${state.medias.length}/$_maxSelectable',
+                      style: textTheme.labelMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant.withAlpha(204),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                children: [
+                  ...List.generate(
+                    state.medias.length,
+                    (index) => _MediaPreview(
+                      file: state.medias[index],
+                      onRemove: () =>
+                          context.read<CreateDiaryCubit>().removeMediaAt(index),
+                      accent: colorScheme.secondary,
+                    ),
+                  ),
+                  if (_maxSelectable > state.medias.length)
+                    _AddMediaTile(
+                      remaining: _maxSelectable - state.medias.length,
+                      onTap: state.isSubmitting ? null : _handleAddMedia,
+                      accent: colorScheme.secondary,
+                      textTheme: textTheme,
+                    ),
+                ],
+              ),
+            ],
+          ),
         );
       },
     );

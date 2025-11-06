@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:auto_route/auto_route.dart';
 import 'package:diary/core/extension/build_context_extension.dart';
 import 'package:diary/core/value_objects/constraint.dart';
-import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/presentation/provider/diary/create/create_diary_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,9 +12,14 @@ import 'package:image_picker/image_picker.dart';
 part 's_create_diary.dart';
 
 part 'f_create_dairy_form.dart';
+
 part 'f_select_media.dart';
 
 part 'w_submit_button.dart';
+
+part 'w_media_preview.dart';
+
+part 'w_add_media_title.dart';
 
 @RoutePage()
 class CreateDiaryPage extends StatelessWidget {

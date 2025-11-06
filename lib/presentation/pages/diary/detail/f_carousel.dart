@@ -17,8 +17,12 @@ class _MediaCarousel extends StatelessWidget {
 
   static const double _defaultAspectRatio = 4 / 3;
 
+  Color _accentColor(BuildContext context) =>
+      Theme.of(context).colorScheme.secondary;
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -29,88 +33,111 @@ class _MediaCarousel extends StatelessWidget {
             final aspectRatio =
                 _aspectRatioOf(medias[clampedIndex]) ?? _defaultAspectRatio;
 
-            return AspectRatio(aspectRatio: aspectRatio, child: child!);
-          },
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: PageView.builder(
-              controller: controller,
-              onPageChanged: onPageChanged,
-              itemCount: medias.length,
-              itemBuilder: (context, index) {
-                final media = medias[index];
-                final aspectRatio = _aspectRatioOf(media);
-                final isLandscape = aspectRatio != null
-                    ? aspectRatio >= 1
-                    : true;
-
-                return ColoredBox(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest.withAlpha(30),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.file(
-                        File(media.absolutePath),
-                        fit: isLandscape ? BoxFit.cover : BoxFit.contain,
-                        alignment: Alignment.center,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Center(
-                            child: Icon(
-                              Icons.broken_image_outlined,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
-                              size: 48,
-                            ),
-                          );
-                        },
-                      ),
-                      if (media.width != null && media.height != null)
-                        Positioned(
-                          bottom: 12,
-                          right: 12,
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.surface.withOpacity(0.8),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              child: Text(
-                                '${media.width} × ${media.height}',
-                                style: Theme.of(context).textTheme.labelSmall
-                                    ?.copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
+            return AspectRatio(
+              aspectRatio: aspectRatio,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(32),
+                  border: Border.all(
+                    color: colorScheme.onPrimary.withAlpha(26),
+                    width: 1.2,
                   ),
-                );
-              },
-            ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _accentColor(context).withAlpha(46),
+                      blurRadius: 32,
+                      offset: const Offset(0, 20),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(32),
+                  child: child!,
+                ),
+              ),
+            );
+          },
+          child: PageView.builder(
+            controller: controller,
+            onPageChanged: onPageChanged,
+            itemCount: medias.length,
+            itemBuilder: (context, index) {
+              final media = medias[index];
+              final aspectRatio = _aspectRatioOf(media);
+              final isLandscape = aspectRatio != null ? aspectRatio >= 1 : true;
+
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  ColoredBox(
+                    color: colorScheme.surfaceContainerHighest.withAlpha(61),
+                    child: Image.file(
+                      File(media.absolutePath),
+                      fit: isLandscape ? BoxFit.cover : BoxFit.contain,
+                      alignment: Alignment.center,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Center(
+                          child: Icon(
+                            Icons.broken_image_outlined,
+                            color: colorScheme.onSurfaceVariant,
+                            size: 48,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 16,
+                    right: 16,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: colorScheme.surface.withAlpha(217),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: colorScheme.onSurface.withAlpha(26),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.image,
+                              size: 16,
+                              color: _accentColor(context),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${media.width ?? '-'} × ${media.height ?? '-'}',
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(
+                                    color: colorScheme.onSurface,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
 
         // indicator
         if (medias.length > 1) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Center(
             child: ValueListenableBuilder<int>(
               valueListenable: currentPage,
               builder: (context, selected, _) {
+                final accent = _accentColor(context);
                 return Wrap(
                   spacing: 8,
                   children: List.generate(medias.length, (index) {
@@ -120,15 +147,24 @@ class _MediaCarousel extends StatelessWidget {
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 180),
                         curve: Curves.easeOut,
-                        width: isSelected ? 16 : 8,
-                        height: 8,
+                        width: isSelected ? 20 : 10,
+                        height: 10,
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? Theme.of(context).colorScheme.primary
+                              ? accent
                               : Theme.of(
                                   context,
-                                ).colorScheme.onSurfaceVariant.withAlpha(40),
-                          borderRadius: BorderRadius.circular(4),
+                                ).colorScheme.onSurfaceVariant.withAlpha(60),
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: isSelected
+                              ? [
+                                  BoxShadow(
+                                    color: accent.withAlpha(102),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ]
+                              : null,
                         ),
                       ),
                     );

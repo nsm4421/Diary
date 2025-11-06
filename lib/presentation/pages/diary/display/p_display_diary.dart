@@ -16,6 +16,10 @@ part 's_display_diary.dart';
 
 part 'f_diaries_list.dart';
 
+part 'w_diary_card.dart';
+
+part 'w_empty_state.dart';
+
 @RoutePage()
 class DisplayDiaryPage extends StatelessWidget {
   const DisplayDiaryPage({super.key});

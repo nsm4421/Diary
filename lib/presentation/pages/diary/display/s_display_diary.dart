@@ -56,34 +56,100 @@ class _ScreenState extends State<_Screen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text('일기 목록'),
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        titleSpacing: 0,
+        title: Row(
+          children: [
+            Hero(
+              tag: 'diary-logo',
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: colorScheme.onPrimary.withAlpha(31),
+                  border: Border.all(
+                    color: colorScheme.onPrimary.withAlpha(51),
+                    width: 1,
+                  ),
+                ),
+                child: Icon(
+                  Icons.menu_book_rounded,
+                  color: colorScheme.onPrimary,
+                  size: 22,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'My Diary',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: colorScheme.onPrimary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
         actions: [
+          IconButton(
+            onPressed: () => context.router.push(const SearchDiaryRoute()),
+            icon: Icon(Icons.search_rounded, color: colorScheme.onPrimary),
+          ),
+          IconButton(
+            onPressed: () => context.router.push(const SettingsRoute()),
+            icon: Icon(Icons.settings_rounded, color: colorScheme.onPrimary),
+          ),
           IconButton(
             onPressed: () {
               context.router.push(CreateDiaryRoute());
             },
-            icon: const Icon(Icons.add_circle_outline_rounded),
+            icon: Icon(Icons.edit_note_rounded, color: colorScheme.onPrimary),
           ),
         ],
       ),
-      body: BlocBuilder<DisplayDiaryBloc, DisplayState<DiaryEntity, DateTime>>(
-        builder: (context, state) {
-          return (state.status == DisplayStatus.initial ||
-                  state.status == DisplayStatus.loading)
-              ? Center(child: CircularProgressIndicator())
-              : RefreshIndicator(
-                  onRefresh: _handleRefresh,
-                  child: state.items.isEmpty
-                      ? Center(child: Text("작성된 일기가 없습니다"))
-                      : _DiariesList(
-                          controller: _scrollController,
-                          diaries: state.items,
-                        ),
-                );
-        },
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              colorScheme.primary,
+              colorScheme.primaryContainer,
+              Theme.of(context).scaffoldBackgroundColor,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child:
+              BlocBuilder<
+                DisplayDiaryBloc,
+                DisplayState<DiaryEntity, DateTime>
+              >(
+                builder: (context, state) {
+                  if (state.status == DisplayStatus.initial ||
+                      state.status == DisplayStatus.loading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  return RefreshIndicator(
+                    color: colorScheme.onPrimary,
+                    backgroundColor: colorScheme.primary,
+                    onRefresh: _handleRefresh,
+                    child: state.items.isEmpty
+                        ? const _EmptyState()
+                        : _DiariesList(
+                            controller: _scrollController,
+                            diaries: state.items,
+                          ),
+                  );
+                },
+              ),
+        ),
       ),
     );
   }

@@ -8,65 +8,79 @@ class _DiariesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
+    final colorScheme = Theme.of(context).colorScheme;
+    return ListView.builder(
       controller: controller,
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      itemCount: diaries.length,
-      separatorBuilder: (_, __) => const Divider(height: 1),
+      padding: EdgeInsets.fromLTRB(
+        20,
+        16,
+        20,
+        32 + MediaQuery.of(context).padding.bottom,
+      ),
+      itemCount: diaries.length + 1,
       itemBuilder: (context, index) {
-        if (index >= diaries.length) {
-          return const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Center(child: CircularProgressIndicator()),
-          );
+        if (index == 0) {
+          return const _ListHeader();
         }
 
-        final diary = diaries[index];
-        final trimmedTitle = diary.title?.trim();
-        final String? effectiveTitle =
-            (trimmedTitle != null && trimmedTitle.isNotEmpty)
-            ? trimmedTitle
-            : null;
-
+        final diary = diaries[index - 1];
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: GestureDetector(
-            onTap: () {
-              // 상세페이지로 이동
-              context.router.push(DiaryDetailRoute(diaryId: diary.id));
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (effectiveTitle != null) ...[
-                  Text(
-                    effectiveTitle,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 6),
-                ],
-                Text(
-                  diary.content,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 6),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    diary.createdAt.toLocal().yyyymmdd,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          padding: const EdgeInsets.only(top: 16),
+          child: _DiaryCard(
+            diary: diary,
+            accent: colorScheme.secondary,
           ),
         );
       },
+    );
+  }
+}
+
+class _ListHeader extends StatelessWidget {
+  const _ListHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        gradient: LinearGradient(
+          colors: [
+            colorScheme.onPrimary.withAlpha(36),
+            colorScheme.onPrimary.withAlpha(20),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        border: Border.all(
+          color: colorScheme.onPrimary.withAlpha(56),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '오늘의 기억',
+            style: textTheme.titleMedium?.copyWith(
+              color: colorScheme.onPrimary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '감정과 순간을 간직할 수 있도록\n매일의 이야기를 기록해보세요.',
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onPrimary.withAlpha(209),
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

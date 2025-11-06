@@ -67,38 +67,131 @@ class _FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Form(
       key: widget._formKey,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.only(bottom: 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextFormField(
-              controller: _titleController,
-              decoration: const InputDecoration(
-                labelText: '제목 (선택)',
-                hintText: '오늘의 기분을 한 단어로 남겨볼까요?',
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(28),
+                color: colorScheme.surface.withAlpha(242),
+                border: Border.all(
+                  color: colorScheme.onSurface.withAlpha(13),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.primary.withAlpha(41),
+                    blurRadius: 26,
+                    offset: const Offset(0, 18),
+                  ),
+                ],
               ),
-              textInputAction: TextInputAction.next,
-              maxLength: kDiaryEntryMaxTitleLength,
-              validator: _validateTitle,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _contentController,
-              decoration: const InputDecoration(
-                labelText: '내용',
-                hintText: '오늘 하루를 기록해보세요.',
-                alignLabelWithHint: true,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '제목 (선택)',
+                    style: textTheme.labelLarge?.copyWith(
+                      color: colorScheme.onSurfaceVariant.withAlpha(230),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _titleController,
+                    decoration: InputDecoration(
+                      hintText: '오늘의 기분을 한 단어로 남겨볼까요?',
+                      filled: true,
+                      fillColor: colorScheme.surfaceVariant.withAlpha(77),
+                      counterText: '',
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 14,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(18),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(18),
+                        borderSide: BorderSide(
+                          color: colorScheme.primary.withAlpha(20),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(18),
+                        borderSide: BorderSide(
+                          color: colorScheme.primary.withAlpha(179),
+                        ),
+                      ),
+                    ),
+                    style: textTheme.titleMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                    textInputAction: TextInputAction.next,
+                    maxLength: kDiaryEntryMaxTitleLength,
+                    validator: _validateTitle,
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    '내용',
+                    style: textTheme.labelLarge?.copyWith(
+                      color: colorScheme.onSurfaceVariant.withAlpha(230),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _contentController,
+                    decoration: InputDecoration(
+                      hintText: '오늘 하루를 기록해보세요.',
+                      alignLabelWithHint: true,
+                      filled: true,
+                      fillColor: colorScheme.surfaceVariant.withAlpha(77),
+                      counterText: '',
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 18,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(22),
+                        borderSide: BorderSide.none,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(22),
+                        borderSide: BorderSide(
+                          color: colorScheme.primary.withAlpha(20),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(22),
+                        borderSide: BorderSide(
+                          color: colorScheme.primary.withAlpha(179),
+                        ),
+                      ),
+                    ),
+                    style: textTheme.bodyLarge?.copyWith(
+                      color: colorScheme.onSurface.withAlpha(242),
+                      height: 1.5,
+                    ),
+                    maxLines: null,
+                    minLines: 10,
+                    maxLength: kDiaryEntryMaxContentLength,
+                    keyboardType: TextInputType.multiline,
+                    validator: _validateContent,
+                  ),
+                ],
               ),
-              maxLines: null,
-              minLines: 10,
-              maxLength: kDiaryEntryMaxContentLength,
-              keyboardType: TextInputType.multiline,
-              validator: _validateContent,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             const _SelectMedia(),
           ],
         ),
