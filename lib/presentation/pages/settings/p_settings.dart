@@ -1,11 +1,15 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:diary/presentation/provider/setting/app_setting_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 's_settings.dart';
 
 part 'w_setting_title.dart';
 
 part 'w_gradient_button.dart';
+
+part 'f_dark_mode_switch.dart';
 
 @RoutePage()
 class SettingsPage extends StatelessWidget {

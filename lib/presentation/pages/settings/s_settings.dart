@@ -8,7 +8,6 @@ class _Screen extends StatefulWidget {
 }
 
 class __ScreenState extends State<_Screen> {
-  bool _darkMode = false;
   bool _lockEnabled = false;
   bool _backupReminder = true;
 
@@ -16,6 +15,9 @@ class __ScreenState extends State<_Screen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final appSettingState = context.watch<AppSettingCubit>().state;
+    final isDarkModeSwitchDisabled =
+        appSettingState.isLoading || appSettingState.isUpdating;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -96,18 +98,7 @@ class __ScreenState extends State<_Screen> {
                   Expanded(
                     child: ListView(
                       children: [
-                        _SettingTile(
-                          icon: Icons.dark_mode_rounded,
-                          title: '다크 모드',
-                          subtitle: '앱 전체를 어두운 테마로 전환해요.',
-                          trailing: Switch(
-                            value: _darkMode,
-                            onChanged: (value) {
-                              setState(() => _darkMode = value);
-                              // TODO: propagate theme change to app
-                            },
-                          ),
-                        ),
+                        _DarkModeSwitch(),
                         _SettingTile(
                           icon: Icons.lock_outline_rounded,
                           title: '비밀번호 잠금',
