@@ -1,10 +1,11 @@
-import 'package:diary/data/datasoure/local/database/local_database.dart';
-import 'package:diary/data/datasoure/local/database/local_database_dao.dart';
-import 'package:diary/data/datasoure/local/diary/dto.dart';
-import 'package:diary/data/datasoure/local/diary/local_diary_datasource.dart';
+import 'package:diary/data/datasoure/database/dao/local_database.dart';
+import 'package:diary/data/datasoure/database/dao/local_database_dao.dart';
+import 'package:diary/data/datasoure/database/dto.dart';
+import 'package:diary/data/datasoure/database/local_diary_db_datasource.dart';
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:logger/logger.dart';
+
+import '../../../helpers/mock_logger.dart';
 
 class _DiarySeed {
   final String id;
@@ -18,18 +19,11 @@ class _DiarySeed {
   });
 }
 
-class _NoopLogOutput extends LogOutput {
-  @override
-  void output(OutputEvent event) {
-    // Suppress log output during tests.
-  }
-}
-
 void main() {
   late LocalDatabase db;
   late LocalDatabaseDao dao;
-  late Logger logger;
-  late LocalDiaryDataSource dataSource;
+  late MockLogger logger;
+  late LocalDiaryDbDataSource dataSource;
   var autoId = 0;
 
   Future<_DiarySeed> insertDiary({
@@ -75,11 +69,8 @@ void main() {
     autoId = 0;
     db = LocalDatabase.test();
     dao = LocalDatabaseDao(db);
-    logger = Logger(
-      level: Level.nothing,
-      output: _NoopLogOutput(),
-    );
-    dataSource = LocalDiaryDataSourceImpl(dao, logger);
+    logger = MockLogger();
+    dataSource = LocalDiaryDbSourceImpl(dao, logger);
   });
 
   tearDown(() async {

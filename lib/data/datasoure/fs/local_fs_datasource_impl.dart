@@ -1,9 +1,9 @@
-part of 'local_storage_datasource.dart';
+part of 'local_fs_datasource.dart';
 
-class LocalStorageDataSourceImpl
+class LocalFileSystemDataSourceImpl
     with ImageUtilMixIn, FsUtilMixIn
-    implements LocalStorageDataSource {
-  LocalStorageDataSourceImpl({
+    implements LocalFileSystemDataSource {
+  LocalFileSystemDataSourceImpl({
     required Directory baseDirectory,
     String rootFolder = 'storage',
     required Logger logger,

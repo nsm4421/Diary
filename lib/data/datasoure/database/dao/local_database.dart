@@ -6,8 +6,8 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
-import 'schema/diary_media_table.dart';
-import 'schema/diary_table.dart';
+import '../schema/diary_media_table.dart';
+import '../schema/diary_table.dart';
 
 part 'local_database.g.dart';
 

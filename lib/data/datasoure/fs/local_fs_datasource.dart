@@ -9,9 +9,9 @@ import 'dart:typed_data';
 import 'package:logger/logger.dart';
 import 'package:path/path.dart' as p;
 
-part 'local_storage_datasource_impl.dart';
+part 'local_fs_datasource_impl.dart';
 
-abstract interface class LocalStorageDataSource {
+abstract interface class LocalFileSystemDataSource {
   Directory get workingDirectory;
 
   Future<String> save({

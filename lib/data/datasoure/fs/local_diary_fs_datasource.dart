@@ -1,12 +1,12 @@
 import 'dart:typed_data';
 
 import 'package:diary/core/value_objects/storage.dart';
-import 'package:diary/data/datasoure/local/storage/local_storage_datasource.dart';
+import 'package:diary/data/datasoure/fs/local_fs_datasource.dart';
 import 'package:path/path.dart' as p;
 
-part 'local_diary_storage_impl.dart';
+part 'local_diary_fs_impl.dart';
 
-abstract interface class LocalDiaryStorage {
+abstract interface class LocalDiaryFsDataSource {
   String getAbsolutePath(String relativePath);
 
   Future<String> save({

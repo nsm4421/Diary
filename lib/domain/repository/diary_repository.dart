@@ -5,7 +5,7 @@ import 'package:diary/core/error/failure.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
 
-part 'params.dart';
+part 'diary_repository_params.dart';
 
 abstract interface class DiaryRepository {
   Future<Either<Failure, DiaryEntity>> create({

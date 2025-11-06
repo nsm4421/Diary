@@ -1,9 +1,9 @@
-part of 'local_diary_storage.dart';
+part of 'local_diary_fs_datasource.dart';
 
-class LocalDiaryStorageImpl implements LocalDiaryStorage {
-  final LocalStorageDataSource _localStorage;
+class LocalDiaryFsStorageImpl implements LocalDiaryFsDataSource {
+  final LocalFileSystemDataSource _localStorage;
 
-  LocalDiaryStorageImpl(this._localStorage);
+  LocalDiaryFsStorageImpl(this._localStorage);
 
   @override
   String getAbsolutePath(String relativePath) {
@@ -50,13 +50,19 @@ class LocalDiaryStorageImpl implements LocalDiaryStorage {
     required int index,
     required String fileName,
   }) {
-    final extension = p.extension(fileName).toLowerCase();
-    final baseName = p.basenameWithoutExtension(fileName);
+    final trimmed = fileName.trim();
+    var extension = p.extension(trimmed).toLowerCase();
+    final baseName = p.basenameWithoutExtension(trimmed).trim();
+    final isDotFile =
+        extension.isEmpty && trimmed.startsWith('.') && trimmed.length > 1;
+    if (isDotFile) {
+      extension = trimmed.toLowerCase();
+    }
     final prefix = '${index.toString().padLeft(4, '0')}_';
     return p.join(
       'diary',
       diaryId,
-      '$prefix${baseName.isEmpty ? 'media' : baseName}$extension',
+      '$prefix${(isDotFile || baseName.isEmpty) ? 'media' : baseName}$extension',
     );
   }
 }

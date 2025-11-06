@@ -9,14 +9,14 @@ import 'package:diary/core/error/failure.dart';
 import 'package:diary/core/extension/file_extension.dart';
 import 'package:diary/core/extension/string_extension.dart';
 import 'package:diary/core/utils/app_logger.dart';
-import 'package:diary/data/datasoure/local/database/local_database.dart';
-import 'package:diary/data/datasoure/local/diary/dto.dart';
-import 'package:diary/data/datasoure/local/diary/local_diary_datasource.dart';
-import 'package:diary/data/datasoure/local/diary/local_diary_storage.dart';
+import 'package:diary/data/datasoure/database/dao/local_database.dart';
+import 'package:diary/data/datasoure/database/dto.dart';
+import 'package:diary/data/datasoure/database/local_diary_db_datasource.dart';
+import 'package:diary/data/datasoure/fs/local_diary_fs_datasource.dart';
 import 'package:diary/data/model/diary/mapper.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
-import 'package:diary/domain/repository/diary/diary_repository.dart';
+import 'package:diary/domain/repository/diary_repository.dart';
 import 'package:image/image.dart' as img;
 import 'package:injectable/injectable.dart';
 
@@ -24,8 +24,8 @@ import 'package:injectable/injectable.dart';
 class DiaryRepositoryImpl
     with ErrorHandlerMiIn, AppLoggerMixIn
     implements DiaryRepository {
-  final LocalDiaryDataSource _database;
-  final LocalDiaryStorage _storage;
+  final LocalDiaryDbDataSource _database;
+  final LocalDiaryFsDataSource _storage;
 
   DiaryRepositoryImpl(this._database, this._storage);
 

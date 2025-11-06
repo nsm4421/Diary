@@ -5,12 +5,12 @@ import 'package:dartz/dartz.dart';
 import 'package:diary/core/error/app_exception.dart';
 import 'package:diary/core/error/error_code.dart';
 import 'package:diary/core/error/failure.dart';
-import 'package:diary/data/datasoure/local/database/local_database.dart';
-import 'package:diary/data/datasoure/local/database/local_database_dao.dart';
-import 'package:diary/data/datasoure/local/diary/dto.dart';
-import 'package:diary/data/datasoure/local/diary/local_diary_datasource.dart';
-import 'package:diary/data/datasoure/local/diary/local_diary_storage.dart';
-import 'package:diary/data/datasoure/local/storage/local_storage_datasource.dart';
+import 'package:diary/data/datasoure/database/dao/local_database.dart';
+import 'package:diary/data/datasoure/database/dao/local_database_dao.dart';
+import 'package:diary/data/datasoure/database/dto.dart';
+import 'package:diary/data/datasoure/database/local_diary_db_datasource.dart';
+import 'package:diary/data/datasoure/fs/local_diary_fs_datasource.dart';
+import 'package:diary/data/datasoure/fs/local_fs_datasource.dart';
 import 'package:diary/data/repository/diary_repository_impl.dart';
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
@@ -22,9 +22,9 @@ void main() {
   late LocalDatabase db;
   late LocalDatabaseDao dao;
   late Logger logger;
-  late LocalDiaryDataSource diaryDataSource;
-  late LocalStorageDataSource storageDataSource;
-  late LocalDiaryStorage diaryStorage;
+  late LocalDiaryDbDataSource diaryDataSource;
+  late LocalFileSystemDataSource storageDataSource;
+  late LocalDiaryFsDataSource diaryStorage;
   late DiaryRepositoryImpl repository;
   late Directory storageRoot;
   late Directory inputDir;
@@ -36,13 +36,13 @@ void main() {
       level: Level.nothing,
       printer: SimplePrinter(printTime: false),
     );
-    diaryDataSource = LocalDiaryDataSourceImpl(dao, logger);
+    diaryDataSource = LocalDiaryDbSourceImpl(dao, logger);
     storageRoot = await Directory.systemTemp.createTemp('diary_repo_test');
-    storageDataSource = LocalStorageDataSourceImpl(
+    storageDataSource = LocalFileSystemDataSourceImpl(
       baseDirectory: storageRoot,
       logger: logger,
     );
-    diaryStorage = LocalDiaryStorageImpl(storageDataSource);
+    diaryStorage = LocalDiaryFsStorageImpl(storageDataSource);
     repository = DiaryRepositoryImpl(diaryDataSource, diaryStorage);
     inputDir = await Directory.systemTemp.createTemp('diary_repo_input');
   });
@@ -398,7 +398,7 @@ void main() {
   });
 }
 
-class _FailingCreateDataSource implements LocalDiaryDataSource {
+class _FailingCreateDataSource implements LocalDiaryDbDataSource {
   final AppException exception;
 
   _FailingCreateDataSource(this.exception);
@@ -460,7 +460,7 @@ class _FailingCreateDataSource implements LocalDiaryDataSource {
   Future<void> deleteAllMedias(String diaryId) => throw UnimplementedError();
 }
 
-class _ErrorStreamDiaryDataSource implements LocalDiaryDataSource {
+class _ErrorStreamDiaryDataSource implements LocalDiaryDbDataSource {
   final AppException exception;
 
   _ErrorStreamDiaryDataSource(this.exception);

@@ -1,4 +1,4 @@
-import 'package:diary/data/datasoure/local/database/local_database.dart';
+import 'package:diary/data/datasoure/database/dao/local_database.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/domain/entity/diary_media_asset.dart';

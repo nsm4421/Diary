@@ -2,23 +2,24 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:diary/core/value_objects/storage.dart';
-import 'package:diary/data/datasoure/local/storage/local_storage_datasource.dart';
+import 'package:diary/data/datasoure/fs/local_fs_datasource.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:image/image.dart' as img;
-import 'package:logger/logger.dart';
 import 'package:path/path.dart' as p;
+import 'package:image/image.dart' as img;
+
+import '../../../helpers/mock_logger.dart';
 
 void main() {
   late Directory baseDir;
-  late LocalStorageDataSource storage;
+  late LocalFileSystemDataSource storage;
   late Directory rootDir;
 
   setUp(() async {
     baseDir = await Directory.systemTemp.createTemp('local_storage_test');
-    storage = LocalStorageDataSourceImpl(
+    storage = LocalFileSystemDataSourceImpl(
       baseDirectory: baseDir,
       rootFolder: 'root',
-      logger: Logger(level: Level.nothing),
+      logger: MockLogger(),
     );
     rootDir = Directory(p.join(baseDir.path, 'root'));
   });

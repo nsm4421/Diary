@@ -1,14 +1,14 @@
-import 'package:diary/data/datasoure/local/database/local_database.dart';
-import 'package:diary/data/datasoure/local/database/local_database_dao.dart';
+import 'package:diary/data/datasoure/database/dao/local_database.dart';
+import 'package:diary/data/datasoure/database/dao/local_database_dao.dart';
 
 import 'package:logger/logger.dart';
 import 'package:drift/drift.dart';
 
 import 'dto.dart';
 
-part 'local_diary_datasource_impl.dart';
+part 'local_diary_db_datasource_impl.dart';
 
-abstract interface class LocalDiaryDataSource {
+abstract interface class LocalDiaryDbDataSource {
   Future<DiaryRecord> create(CreateDiaryRequestDto dto);
 
   Future<DiaryRecord?> findById(String id);

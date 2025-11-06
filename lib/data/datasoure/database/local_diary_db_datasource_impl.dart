@@ -1,9 +1,9 @@
-part of 'local_diary_datasource.dart';
+part of 'local_diary_db_datasource.dart';
 
-class LocalDiaryDataSourceImpl implements LocalDiaryDataSource {
+class LocalDiaryDbSourceImpl implements LocalDiaryDbDataSource {
   final LocalDatabaseDao _dao;
   final Logger _logger;
-  LocalDiaryDataSourceImpl(this._dao, this._logger);
+  LocalDiaryDbSourceImpl(this._dao, this._logger);
 
   @override
   Future<DiaryRecord> create(CreateDiaryRequestDto dto) async {

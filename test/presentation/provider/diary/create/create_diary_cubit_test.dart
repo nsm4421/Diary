@@ -4,7 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:diary/core/error/failure.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
-import 'package:diary/domain/repository/diary/diary_repository.dart';
+import 'package:diary/domain/repository/diary_repository.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';
 import 'package:diary/presentation/provider/diary/create/create_diary_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';

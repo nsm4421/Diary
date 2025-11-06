@@ -1,4 +1,4 @@
-import 'package:diary/data/datasoure/local/database/local_database.dart';
+import 'package:diary/data/datasoure/database/dao/local_database.dart';
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 

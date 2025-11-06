@@ -1,7 +1,7 @@
-import 'package:diary/data/datasoure/local/database/schema/diary_media_table.dart';
+import 'package:diary/data/datasoure/database/schema/diary_media_table.dart';
 import 'package:drift/drift.dart';
 import 'local_database.dart';
-import 'schema/diary_table.dart';
+import '../schema/diary_table.dart';
 
 part 'local_database_dao.g.dart';
 
