@@ -1,23 +1,20 @@
 part of 'p_settings.dart';
 
 class _Screen extends StatefulWidget {
-  const _Screen({super.key});
+  const _Screen();
 
   @override
   State<_Screen> createState() => __ScreenState();
 }
 
 class __ScreenState extends State<_Screen> {
-  bool _lockEnabled = false;
   bool _backupReminder = true;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final appSettingState = context.watch<AppSettingCubit>().state;
-    final isDarkModeSwitchDisabled =
-        appSettingState.isLoading || appSettingState.isUpdating;
+    final passwordState = context.watch<PasswordLockCubit>().state;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -102,15 +99,21 @@ class __ScreenState extends State<_Screen> {
                         _SettingTile(
                           icon: Icons.lock_outline_rounded,
                           title: '비밀번호 잠금',
-                          subtitle: '앱 실행 시 비밀번호로 보호해요.',
-                          trailing: Switch(
-                            value: _lockEnabled,
-                            onChanged: (value) {
-                              setState(() => _lockEnabled = value);
-                              // TODO: implement lock workflow
-                            },
+                          subtitle: passwordState.hasPassword
+                              ? '앱 실행 시 비밀번호가 설정되어 있어요.'
+                              : '앱 실행 시 비밀번호로 보호해요.',
+                          trailing: FilledButton.tonal(
+                            onPressed: passwordState.isBusy
+                                ? null
+                                : () async {
+                                    await context.router.push(
+                                      const PasswordSetupRoute(),
+                                    );
+                                  },
+                            child: Text('설정하기'),
                           ),
                         ),
+
                         _SettingTile(
                           icon: Icons.cloud_upload_outlined,
                           title: '백업 알림',
