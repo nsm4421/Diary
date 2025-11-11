@@ -85,13 +85,6 @@ class __ScreenState extends State<_Screen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'My Diary 환경설정',
-                    style: textTheme.titleMedium?.copyWith(
-                      color: colorScheme.onPrimary.withAlpha(230),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
                   const SizedBox(height: 16),
                   Expanded(
                     child: ListView(
@@ -103,7 +96,7 @@ class __ScreenState extends State<_Screen> {
                           subtitle: passwordState.isLocked
                               ? '앱 실행 시 비밀번호가 설정되어 있어요.'
                               : '앱 실행 시 비밀번호로 보호해요.',
-                          trailing: FilledButton.tonal(
+                          trailing: IconButton(
                             onPressed: isPasswordBusy
                                 ? null
                                 : () async {
@@ -111,7 +104,8 @@ class __ScreenState extends State<_Screen> {
                                       const PasswordSetupRoute(),
                                     );
                                   },
-                            child: Text('설정하기'),
+                            tooltip: '잠금설정',
+                            icon: Icon(Icons.arrow_forward_outlined),
                           ),
                         ),
 
@@ -126,14 +120,6 @@ class __ScreenState extends State<_Screen> {
                               // TODO: implement backup reminder scheduling
                             },
                           ),
-                        ),
-                        const SizedBox(height: 24),
-                        _GradientButton(
-                          label: '데이터 내보내기',
-                          icon: Icons.ios_share_rounded,
-                          onPressed: () {
-                            // TODO: implement export flow
-                          },
                         ),
                       ],
                     ),

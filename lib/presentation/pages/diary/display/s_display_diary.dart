@@ -87,7 +87,7 @@ class _ScreenState extends State<_Screen> {
             ),
             const SizedBox(width: 12),
             Text(
-              'My Diary',
+              '나의 일기',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: colorScheme.onPrimary,
                 fontWeight: FontWeight.w700,
