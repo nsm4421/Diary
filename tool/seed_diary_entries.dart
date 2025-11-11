@@ -5,6 +5,7 @@ import 'package:diary/core/dependency_injection/dependency_injection.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get_it/get_it.dart';
 
 const int _seedCount = int.fromEnvironment('SEED_COUNT', defaultValue: 12);
 
@@ -26,7 +27,7 @@ Future<void> main(List<String> args) async {
       ? _manualEntries
       : _generateEntries(_seedCount > 0 ? _seedCount : 12);
 
-  final seeder = _DiarySeeder(getIt<DiaryUseCases>());
+  final seeder = _DiarySeeder(GetIt.instance<DiaryUseCases>());
   final result = await seeder.seed(entries);
 
   debugPrint('--- Diary seeding completed ---');

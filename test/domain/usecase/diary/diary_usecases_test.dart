@@ -5,10 +5,12 @@ import 'package:dartz/dartz.dart';
 import 'package:diary/core/error/error_code.dart';
 import 'package:diary/core/error/failure.dart';
 import 'package:diary/core/value_objects/constraint.dart';
+import 'package:diary/core/value_objects/diary.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/domain/repository/diary_repository.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
@@ -369,6 +371,36 @@ void main() {
         expect(failure.message, '저장된 데이터를 불러오는 중 문제가 발생했습니다.');
       }, (_) => fail('Expected Left'));
     });
+
+    test('maps repository failure message for date range search', () async {
+      repository.searchByDateRangeHandler =
+          ({
+            required DateTime start,
+            required DateTime end,
+            int limit = 20,
+            required DateTime cursor,
+          }) async {
+            expect(start, DateTime(2024, 3, 1));
+            expect(end, DateTime(2024, 3, 31));
+            expect(cursor, DateTime(2024, 4, 1));
+            return Left(Failure(code: ErrorCode.cache, message: 'range issue'));
+          };
+
+      final result = await useCases.fetch(
+        cursor: DateTime(2024, 4, 1),
+        limit: 5,
+        param: FetchDiaryParam.dateRange(
+          start: DateTime(2024, 3, 1),
+          end: DateTime(2024, 3, 31),
+        ),
+      );
+
+      expect(result.isLeft(), isTrue);
+      result.fold((failure) {
+        expect(failure.code, ErrorCode.cache);
+        expect(failure.message, '저장된 데이터를 불러오는 중 문제가 발생했습니다.');
+      }, (_) => fail('Expected Left'));
+    });
   });
 
   group('delete', () {
@@ -448,7 +480,7 @@ class StubDiaryRepository implements DiaryRepository {
   Future<Either<Failure, DiaryEntity?>> Function(String id)? findByIdHandler;
 
   Future<Either<Failure, DiaryDetailEntity?>> Function(String id)?
-      getDiaryDetailHandler;
+  getDiaryDetailHandler;
 
   Future<Either<Failure, List<DiaryEntity>>> Function({
     int limit,
@@ -462,6 +494,19 @@ class StubDiaryRepository implements DiaryRepository {
     required DateTime cursor,
   })?
   searchByTitleHandler;
+  Future<Either<Failure, List<DiaryEntity>>> Function({
+    required DateTime start,
+    required DateTime end,
+    int limit,
+    required DateTime cursor,
+  })?
+  searchByDateRangeHandler;
+  Future<Either<Failure, List<DiaryEntity>>> Function({
+    required String keyword,
+    int limit,
+    required DateTime cursor,
+  })?
+  searchByContentHandler;
 
   Stream<Either<Failure, List<DiaryEntity>>> Function()? watchAllHandler;
 
@@ -522,7 +567,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> fetchEntries({
+  Future<Either<Failure, List<DiaryEntity>>> fetchDiaries({
     int limit = 20,
     required DateTime cursor,
   }) {
@@ -544,6 +589,33 @@ class StubDiaryRepository implements DiaryRepository {
       throw StateError('searchByTitleHandler not set');
     }
     return handler(keyword: keyword, limit: limit, cursor: cursor);
+  }
+
+  @override
+  Future<Either<Failure, List<DiaryEntity>>> searchByContent({
+    required String keyword,
+    int limit = 20,
+    required DateTime cursor,
+  }) {
+    final handler = searchByContentHandler;
+    if (handler == null) {
+      throw StateError('searchByContentHandler not set');
+    }
+    return handler(keyword: keyword, limit: limit, cursor: cursor);
+  }
+
+  @override
+  Future<Either<Failure, List<DiaryEntity>>> searchByDateRange({
+    required DateTime start,
+    required DateTime end,
+    int limit = 20,
+    required DateTime cursor,
+  }) {
+    final handler = searchByDateRangeHandler;
+    if (handler == null) {
+      throw StateError('searchByDateRangeHandler not set');
+    }
+    return handler(start: start, end: end, limit: limit, cursor: cursor);
   }
 
   @override

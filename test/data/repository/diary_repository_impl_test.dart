@@ -5,6 +5,8 @@ import 'package:dartz/dartz.dart';
 import 'package:diary/core/error/app_exception.dart';
 import 'package:diary/core/error/error_code.dart';
 import 'package:diary/core/error/failure.dart';
+import 'package:diary/core/extension/datetime_extension.dart';
+import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/data/datasoure/database/dao/local_database.dart';
 import 'package:diary/data/datasoure/database/dao/local_database_dao.dart';
 import 'package:diary/data/datasoure/database/dto.dart';
@@ -13,15 +15,16 @@ import 'package:diary/data/datasoure/fs/local_diary_fs_datasource.dart';
 import 'package:diary/data/datasoure/fs/local_fs_datasource.dart';
 import 'package:diary/data/repository/diary_repository_impl.dart';
 import 'package:drift/drift.dart' hide isNull, isNotNull;
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:logger/logger.dart';
 import 'package:path/path.dart' as p;
 import 'package:image/image.dart' as img;
+import '../../helpers/mock_logger.dart';
 
 void main() {
   late LocalDatabase db;
   late LocalDatabaseDao dao;
-  late Logger logger;
+  late MockLogger logger;
   late LocalDiaryDbDataSource diaryDataSource;
   late LocalFileSystemDataSource storageDataSource;
   late LocalDiaryFsDataSource diaryStorage;
@@ -32,10 +35,7 @@ void main() {
   setUp(() async {
     db = LocalDatabase.test();
     dao = LocalDatabaseDao(db);
-    logger = Logger(
-      level: Level.nothing,
-      printer: SimplePrinter(printTime: false),
-    );
+    logger = MockLogger();
     diaryDataSource = LocalDiaryDbSourceImpl(dao, logger);
     storageRoot = await Directory.systemTemp.createTemp('diary_repo_test');
     storageDataSource = LocalFileSystemDataSourceImpl(
@@ -76,7 +76,7 @@ void main() {
             content: content,
             createdAt: Value(created),
             updatedAt: Value(updated),
-            date: Value(created.toIso8601String()),
+            date: Value(created.yyyymmdd),
           ),
         );
   }
@@ -221,7 +221,7 @@ void main() {
       await insertDiary(id: 'new', createdAt: DateTime(2024, 1, 3));
       await insertDiary(id: 'mid', createdAt: DateTime(2024, 1, 2));
 
-      final result = await repository.fetchEntries(
+      final result = await repository.fetchDiaries(
         limit: 2,
         cursor: DateTime(2024, 1, 4),
       );
@@ -236,7 +236,7 @@ void main() {
       await insertDiary(id: 'new', createdAt: DateTime(2024, 1, 3));
       await insertDiary(id: 'mid', createdAt: DateTime(2024, 1, 2));
 
-      final result = await repository.fetchEntries(
+      final result = await repository.fetchDiaries(
         limit: 5,
         cursor: DateTime(2024, 1, 3),
       );
@@ -270,6 +270,34 @@ void main() {
       result.fold((_) => fail('Expected Right'), (entries) {
         expect(entries.map((e) => e.id), ['sunset', 'sunrise']);
         expect(entries.map((e) => e.id), isNot(contains('night')));
+      });
+    });
+
+    test('searchByDateRange filters inclusively by date field', () async {
+      await insertDiary(
+        id: 'jan-01',
+        title: 'New Year',
+        createdAt: DateTime(2024, 1, 1),
+      );
+      await insertDiary(
+        id: 'jan-10',
+        title: 'Mid January',
+        createdAt: DateTime(2024, 1, 10),
+      );
+      await insertDiary(
+        id: 'feb-01',
+        title: 'February start',
+        createdAt: DateTime(2024, 2, 1),
+      );
+
+      final result = await repository.searchByDateRange(
+        start: DateTime(2024, 1, 5),
+        end: DateTime(2024, 2, 1),
+        cursor: DateTime(2024, 2, 15),
+      );
+
+      result.fold((_) => fail('Expected Right'), (entries) {
+        expect(entries.map((e) => e.id), ['feb-01', 'jan-10']);
       });
     });
   });
@@ -411,7 +439,7 @@ class _FailingCreateDataSource implements LocalDiaryDbDataSource {
   Future<void> delete(String id) => throw UnimplementedError();
 
   @override
-  Future<List<DiaryRecord>> fetchRowsByCursor({
+  Future<Iterable<DiaryRecord>> fetchRowsByCursor({
     int limit = 20,
     required DateTime cursor,
   }) => throw UnimplementedError();
@@ -420,8 +448,23 @@ class _FailingCreateDataSource implements LocalDiaryDbDataSource {
   Future<DiaryRecord?> findById(String id) => throw UnimplementedError();
 
   @override
-  Future<List<DiaryRecord>> searchByTitle({
+  Future<Iterable<DiaryRecord>> searchByTitle({
     required String keyword,
+    int limit = 20,
+    required DateTime cursor,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<Iterable<DiaryRecord>> searchByContent({
+    required String keyword,
+    int limit = 20,
+    required DateTime cursor,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<Iterable<DiaryRecord>> searchByDateRange({
+    required DateTime start,
+    required DateTime end,
     int limit = 20,
     required DateTime cursor,
   }) => throw UnimplementedError();
@@ -473,7 +516,7 @@ class _ErrorStreamDiaryDataSource implements LocalDiaryDbDataSource {
   Future<void> delete(String id) => throw UnimplementedError();
 
   @override
-  Future<List<DiaryRecord>> fetchRowsByCursor({
+  Future<Iterable<DiaryRecord>> fetchRowsByCursor({
     int limit = 20,
     required DateTime cursor,
   }) => throw UnimplementedError();
@@ -482,8 +525,23 @@ class _ErrorStreamDiaryDataSource implements LocalDiaryDbDataSource {
   Future<DiaryRecord?> findById(String id) => throw UnimplementedError();
 
   @override
-  Future<List<DiaryRecord>> searchByTitle({
+  Future<Iterable<DiaryRecord>> searchByTitle({
     required String keyword,
+    int limit = 20,
+    required DateTime cursor,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<Iterable<DiaryRecord>> searchByContent({
+    required String keyword,
+    int limit = 20,
+    required DateTime cursor,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<Iterable<DiaryRecord>> searchByDateRange({
+    required DateTime start,
+    required DateTime end,
     int limit = 20,
     required DateTime cursor,
   }) => throw UnimplementedError();

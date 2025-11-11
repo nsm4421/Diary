@@ -7,6 +7,7 @@ import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/domain/repository/diary_repository.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';
 import 'package:diary/presentation/provider/diary/create/create_diary_cubit.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
@@ -223,7 +224,7 @@ class StubDiaryRepository implements DiaryRepository {
       throw UnimplementedError();
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> fetchEntries({
+  Future<Either<Failure, List<DiaryEntity>>> fetchDiaries({
     int limit = 20,
     required DateTime cursor,
   }) => throw UnimplementedError();
@@ -231,6 +232,21 @@ class StubDiaryRepository implements DiaryRepository {
   @override
   Future<Either<Failure, List<DiaryEntity>>> searchByTitle({
     required String keyword,
+    int limit = 20,
+    required DateTime cursor,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<Either<Failure, List<DiaryEntity>>> searchByContent({
+    required String keyword,
+    int limit = 20,
+    required DateTime cursor,
+  }) => throw UnimplementedError();
+
+  @override
+  Future<Either<Failure, List<DiaryEntity>>> searchByDateRange({
+    required DateTime start,
+    required DateTime end,
     int limit = 20,
     required DateTime cursor,
   }) => throw UnimplementedError();
