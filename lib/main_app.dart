@@ -1,9 +1,9 @@
+import 'package:diary/presentation/provider/security/password_lock/password_lock_cubit.dart';
 import 'package:diary/presentation/provider/setting/app_setting_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
-import 'core/dependency_injection/dependency_injection.dart';
 import 'presentation/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 
@@ -15,7 +15,10 @@ class MainApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AppSettingCubit>(
-          create: (_) => getIt<AppSettingCubit>()..init(),
+          create: (_) => GetIt.instance<AppSettingCubit>()..init(),
+        ),
+        BlocProvider<PasswordLockCubit>(
+          create: (_) => GetIt.instance<PasswordLockCubit>()..init(),
         ),
       ],
       child: BlocBuilder<AppSettingCubit, AppSettingState>(

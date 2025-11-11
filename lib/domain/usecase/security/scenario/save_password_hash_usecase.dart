@@ -1,9 +1,10 @@
 part of '../security_usecases.dart';
 
 class _SavePasswordHashUseCase {
-  _SavePasswordHashUseCase(this._repository);
+  _SavePasswordHashUseCase(this._repository, {this.logger});
 
   final PasswordRepository _repository;
+  final Logger? logger;
 
   Future<Either<Failure, Unit>> call({required String hash}) async {
     final trimmed = hash.trim();
@@ -15,6 +16,7 @@ class _SavePasswordHashUseCase {
       await _repository.savePasswordHash(trimmed);
       return const Right(unit);
     } catch (error, stackTrace) {
+      logger?.e(error, stackTrace: stackTrace);
       return Failure.unknown(
         message: error.toString(),
         stackTrace: stackTrace,

@@ -1,15 +1,17 @@
 part of '../security_usecases.dart';
 
 class _ClearPasswordUseCase {
-  _ClearPasswordUseCase(this._repository);
+  _ClearPasswordUseCase(this._repository, {this.logger});
 
   final PasswordRepository _repository;
+  final Logger? logger;
 
   Future<Either<Failure, Unit>> call() async {
     try {
       await _repository.clearPassword();
       return const Right(unit);
     } catch (error, stackTrace) {
+      logger?.e(error, stackTrace: stackTrace);
       return Failure.unknown(
         message: error.toString(),
         stackTrace: stackTrace,

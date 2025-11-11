@@ -15,6 +15,7 @@ class __ScreenState extends State<_Screen> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final passwordState = context.watch<PasswordLockCubit>().state;
+    final isPasswordBusy = passwordState.isLoading;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -99,11 +100,11 @@ class __ScreenState extends State<_Screen> {
                         _SettingTile(
                           icon: Icons.lock_outline_rounded,
                           title: '비밀번호 잠금',
-                          subtitle: passwordState.hasPassword
+                          subtitle: passwordState.isLocked
                               ? '앱 실행 시 비밀번호가 설정되어 있어요.'
                               : '앱 실행 시 비밀번호로 보호해요.',
                           trailing: FilledButton.tonal(
-                            onPressed: passwordState.isBusy
+                            onPressed: isPasswordBusy
                                 ? null
                                 : () async {
                                     await context.router.push(
