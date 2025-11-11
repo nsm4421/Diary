@@ -9,8 +9,9 @@ class Pageable<T, C> {
     return Pageable<T, C>(total: total);
   }
 
-  factory Pageable.from(List<T> items) {
-    return Pageable<T, C>(items: items);
+  factory Pageable.from(List<T> items, {C Function(List<T>)? cursorCallback}) {
+    final nextCursor = cursorCallback == null ? null : cursorCallback(items);
+    return Pageable<T, C>(items: items, nextCursor: nextCursor);
   }
 
   Pageable<T, C> copyWithNextCursor(C? nextCursor) {

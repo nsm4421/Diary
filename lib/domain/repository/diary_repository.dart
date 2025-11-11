@@ -19,13 +19,26 @@ abstract interface class DiaryRepository {
 
   Future<Either<Failure, DiaryDetailEntity?>> getDiaryDetail(String diaryId);
 
-  Future<Either<Failure, List<DiaryEntity>>> fetchEntries({
+  Future<Either<Failure, List<DiaryEntity>>> fetchDiaries({
     int limit = 20,
     required DateTime cursor,
   });
 
   Future<Either<Failure, List<DiaryEntity>>> searchByTitle({
     required String keyword,
+    int limit = 20,
+    required DateTime cursor,
+  });
+
+  Future<Either<Failure, List<DiaryEntity>>> searchByContent({
+    required String keyword,
+    int limit = 20,
+    required DateTime cursor,
+  });
+
+  Future<Either<Failure, List<DiaryEntity>>> searchByDateRange({
+    required DateTime start,
+    required DateTime end,
     int limit = 20,
     required DateTime cursor,
   });

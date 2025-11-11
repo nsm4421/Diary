@@ -1,6 +1,6 @@
+import 'package:diary/core/extension/datetime_extension.dart';
 import 'package:diary/data/datasoure/database/dao/local_database.dart';
 import 'package:diary/data/datasoure/database/dao/local_database_dao.dart';
-
 import 'package:logger/logger.dart';
 import 'package:drift/drift.dart';
 
@@ -20,6 +20,19 @@ abstract interface class LocalDiaryDbDataSource {
 
   Future<Iterable<DiaryRecord>> searchByTitle({
     required String keyword,
+    int limit = 20,
+    required DateTime cursor,
+  });
+
+  Future<Iterable<DiaryRecord>> searchByContent({
+    required String keyword,
+    int limit = 20,
+    required DateTime cursor,
+  });
+
+  Future<Iterable<DiaryRecord>> searchByDateRange({
+    required DateTime start,
+    required DateTime end,
     int limit = 20,
     required DateTime cursor,
   });

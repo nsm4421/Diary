@@ -3,6 +3,7 @@ part of 'local_diary_db_datasource.dart';
 class LocalDiaryDbSourceImpl implements LocalDiaryDbDataSource {
   final LocalDatabaseDao _dao;
   final Logger _logger;
+
   LocalDiaryDbSourceImpl(this._dao, this._logger);
 
   @override
@@ -71,6 +72,46 @@ class LocalDiaryDbSourceImpl implements LocalDiaryDbDataSource {
     try {
       return await (_dao.select(_dao.db.diaryRecords)
             ..where((tbl) => tbl.title.like('%${keyword.trim()}%'))
+            ..where((tbl) => tbl.createdAt.isSmallerThanValue(cursor))
+            ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)])
+            ..limit(limit))
+          .get();
+    } catch (e, st) {
+      _logger.e(e, stackTrace: st);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<DiaryRecord>> searchByContent({
+    required String keyword,
+    int limit = 20,
+    required DateTime cursor,
+  }) async {
+    try {
+      return await (_dao.select(_dao.db.diaryRecords)
+            ..where((tbl) => tbl.content.like('%${keyword.trim()}%'))
+            ..where((tbl) => tbl.createdAt.isSmallerThanValue(cursor))
+            ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)])
+            ..limit(limit))
+          .get();
+    } catch (e, st) {
+      _logger.e(e, stackTrace: st);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<DiaryRecord>> searchByDateRange({
+    required DateTime start,
+    required DateTime end,
+    int limit = 20,
+    required DateTime cursor,
+  }) async {
+    try {
+      return await (_dao.select(_dao.db.diaryRecords)
+            ..where((tbl) => tbl.date.isBiggerOrEqualValue(start.yyyymmdd))
+            ..where((tbl) => tbl.date.isSmallerOrEqualValue(end.yyyymmdd))
             ..where((tbl) => tbl.createdAt.isSmallerThanValue(cursor))
             ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)])
             ..limit(limit))
@@ -180,25 +221,22 @@ class LocalDiaryDbSourceImpl implements LocalDiaryDbDataSource {
           relativePath: media.relativePath,
         );
         if (existing == null) {
-          await _dao.into(_dao.db.diaryMediaRecords).insert(
-                media.toInsertable(diaryId: diaryId),
-              );
+          await _dao
+              .into(_dao.db.diaryMediaRecords)
+              .insert(media.toInsertable(diaryId: diaryId));
         } else {
           final query = _dao.update(_dao.db.diaryMediaRecords)
             ..where((tbl) => tbl.id.equals(existing.id));
           await query.write(
-            media.toUpdateCompanion(
-              fallbackSortOrder: existing.sortOrder,
-            ),
+            media.toUpdateCompanion(fallbackSortOrder: existing.sortOrder),
           );
         }
 
-        return (_dao.select(_dao.db.diaryMediaRecords)
-              ..where(
-                (tbl) =>
-                    tbl.diaryId.equals(diaryId) &
-                    tbl.relativePath.equals(media.relativePath),
-              ))
+        return (_dao.select(_dao.db.diaryMediaRecords)..where(
+              (tbl) =>
+                  tbl.diaryId.equals(diaryId) &
+                  tbl.relativePath.equals(media.relativePath),
+            ))
             .getSingle();
       });
     } catch (e, st) {
@@ -235,9 +273,9 @@ class LocalDiaryDbSourceImpl implements LocalDiaryDbDataSource {
   @override
   Future<void> deleteAllMedias(String diaryId) async {
     try {
-      await (_dao.delete(_dao.db.diaryMediaRecords)
-            ..where((tbl) => tbl.diaryId.equals(diaryId)))
-          .go();
+      await (_dao.delete(
+        _dao.db.diaryMediaRecords,
+      )..where((tbl) => tbl.diaryId.equals(diaryId))).go();
     } catch (e, st) {
       _logger.e(e, stackTrace: st);
       rethrow;

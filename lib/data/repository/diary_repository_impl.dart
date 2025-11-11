@@ -9,6 +9,7 @@ import 'package:diary/core/error/failure.dart';
 import 'package:diary/core/extension/file_extension.dart';
 import 'package:diary/core/extension/string_extension.dart';
 import 'package:diary/core/utils/app_logger.dart';
+import 'package:diary/core/value_objects/diary.dart';
 import 'package:diary/data/datasoure/database/dao/local_database.dart';
 import 'package:diary/data/datasoure/database/dto.dart';
 import 'package:diary/data/datasoure/database/local_diary_db_datasource.dart';
@@ -16,6 +17,7 @@ import 'package:diary/data/datasoure/fs/local_diary_fs_datasource.dart';
 import 'package:diary/data/model/diary/mapper.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
+
 import 'package:diary/domain/repository/diary_repository.dart';
 import 'package:image/image.dart' as img;
 import 'package:injectable/injectable.dart';
@@ -85,7 +87,7 @@ class DiaryRepositoryImpl
   }
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> fetchEntries({
+  Future<Either<Failure, List<DiaryEntity>>> fetchDiaries({
     int limit = 20,
     required DateTime cursor,
   }) {
@@ -108,6 +110,44 @@ class DiaryRepositoryImpl
     return guard(
       () async => await _database
           .searchByTitle(keyword: keyword, limit: limit, cursor: cursor)
+          .then(
+            (rows) => rows.map((row) => row.toEntity()).toList(growable: false),
+          ),
+      logger: logger,
+    );
+  }
+
+  @override
+  Future<Either<Failure, List<DiaryEntity>>> searchByContent({
+    required String keyword,
+    int limit = 20,
+    required DateTime cursor,
+  }) {
+    return guard(
+      () async => await _database
+          .searchByContent(keyword: keyword, limit: limit, cursor: cursor)
+          .then(
+            (rows) => rows.map((row) => row.toEntity()).toList(growable: false),
+          ),
+      logger: logger,
+    );
+  }
+
+  @override
+  Future<Either<Failure, List<DiaryEntity>>> searchByDateRange({
+    required DateTime start,
+    required DateTime end,
+    int limit = 20,
+    required DateTime cursor,
+  }) {
+    return guard(
+      () async => await _database
+          .searchByDateRange(
+            start: start,
+            end: end,
+            limit: limit,
+            cursor: cursor,
+          )
           .then(
             (rows) => rows.map((row) => row.toEntity()).toList(growable: false),
           ),

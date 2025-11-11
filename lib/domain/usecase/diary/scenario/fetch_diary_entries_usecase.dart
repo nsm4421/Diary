@@ -1,70 +1,56 @@
 part of '../diary_usecases.dart';
 
-enum _SearchField { none, title }
-
-class FetchDiaryParam {
-  final _SearchField field;
-  final String keyword;
-
-  FetchDiaryParam({this.field = _SearchField.none, required this.keyword});
-
-  factory FetchDiaryParam.none() {
-    return FetchDiaryParam(field: _SearchField.none, keyword: '');
-  }
-
-  factory FetchDiaryParam.title(String title) {
-    return FetchDiaryParam(field: _SearchField.title, keyword: title);
-  }
-
-  @override
-  String toString() {
-    return 'field:${field.name}|keyword:$keyword';
-  }
-}
-
-class _FetchDiaryEntriesUseCase {
-  _FetchDiaryEntriesUseCase(this._repository);
+class _FetchDiariesUseCase {
+  _FetchDiariesUseCase(this._repository);
 
   final DiaryRepository _repository;
 
   Future<Either<Failure, Pageable<DiaryEntity, DateTime>>> call({
     int limit = 20,
     required DateTime cursor,
-    required FetchDiaryParam param,
+    FetchDiaryParam? param,
   }) async {
     if (limit <= 0) {
       return Failure.validation('조회 개수는 1 이상이어야 합니다.').toLeft();
     }
-    debugPrint(param.toString());
-    
-    final action = switch (param.field) {
-      _SearchField.none => _repository.fetchEntries(
+
+    final effectiveParam = param ?? FetchDiaryParam.none();
+    final action = switch (effectiveParam.kind) {
+      SearchDiaryKind.none => _repository.fetchDiaries(
         limit: limit,
         cursor: cursor,
       ),
-      _SearchField.title => _repository.searchByTitle(
+      SearchDiaryKind.title => _repository.searchByTitle(
         limit: limit,
         cursor: cursor,
-        keyword: param.keyword,
+        keyword: (effectiveParam as FetchDiaryByTitleParamValue).title,
+      ),
+      SearchDiaryKind.content => _repository.searchByTitle(
+        limit: limit,
+        cursor: cursor,
+        keyword: (effectiveParam as FetchDiaryByContentParamValue).content,
+      ),
+      SearchDiaryKind.dateRange => _repository.searchByDateRange(
+        limit: limit,
+        cursor: cursor,
+        start: (effectiveParam as FetchDiaryByDateRangeParamValue).start,
+        end: (effectiveParam).end,
       ),
     };
 
     return await action.then(
       (res) => res.fold(
-        (l) => l.withFriendlyMessage().toLeft(),
-        (r) {
-          debugPrint('${r.length} diaries fetched');
-          return Right(
-          r.isEmpty
+        (failure) => failure.withFriendlyMessage().toLeft(),
+        (entities) => Right(
+          entities.isEmpty
               ? Pageable<DiaryEntity, DateTime>.empty()
-              : Pageable<DiaryEntity, DateTime>(
-                  items: r,
-                  nextCursor: r
+              : Pageable<DiaryEntity, DateTime>.from(
+                  entities,
+                  cursorCallback: (entities) => entities
                       .map((e) => e.createdAt)
-                      .reduce((v, e) => v.isAfter(e) ? e : v),
+                      .reduce((prev, curr) => prev.isAfter(curr) ? curr : prev),
                 ),
-        );
-        },
+        ),
       ),
     );
   }
