@@ -7,29 +7,30 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'display_state.dart';
+
 part 'display_event.dart';
+
 part 'display_bloc.freezed.dart';
 
 // E : Entity, C : cursor data type, P : param type
-abstract class DisplayBloc<E, C, P>
-    extends Bloc<DisplayEvent<E, P>, DisplayState<E, C>> {
+abstract class DisplayBloc<E, C>
+    extends Bloc<DisplayEvent<E>, DisplayState<E, C>> {
   final int pageSize;
   final bool prependOnUpsert;
 
   DisplayBloc({this.pageSize = 20, this.prependOnUpsert = true})
     : super(DisplayState<E, C>()) {
-    on<_Started<E, P>>(_onStarted, transformer: restartable());
-    on<_Refreshed<E, P>>(_onRefreshed, transformer: restartable());
-    on<_NextPageRequested<E, P>>(_onNextPageRequested, transformer: droppable());
-    on<_Upserted<E, P>>(_onUpserted);
-    on<_Removed<E, P>>(_onRemoved);
+    on<_Started<E>>(_onStarted, transformer: restartable());
+    on<_Refreshed<E>>(_onRefreshed, transformer: restartable());
+    on<_NextPageRequested<E>>(_onNextPageRequested, transformer: droppable());
+    on<_Upserted<E>>(_onUpserted);
+    on<_Removed<E>>(_onRemoved);
   }
 
   @protected
-  Future<Either<Failure, Pageable<E,C>>> fetch({
+  Future<Either<Failure, Pageable<E, C>>> fetch({
     required C cursor,
     int limit = 30,
-    P? param
   });
 
   @protected
@@ -52,8 +53,8 @@ abstract class DisplayBloc<E, C, P>
   }
 
   Future<void> _onStarted(
-    _Started<E, P> event,
-    Emitter<DisplayState<E,C>> emit,
+    _Started<E> event,
+    Emitter<DisplayState<E, C>> emit,
   ) async {
     emit(state.copyWith(status: DisplayStatus.loading, failure: null));
     await fetch(cursor: initialCursor(), limit: pageSize).then(
@@ -68,7 +69,7 @@ abstract class DisplayBloc<E, C, P>
         ),
         (page) => emit(
           state.copyWith(
-            status: DisplayStatus.paginated,
+            status: DisplayStatus.initial,
             failure: null,
             items: page.items,
             nextCursor: page.nextCursor,
@@ -79,8 +80,8 @@ abstract class DisplayBloc<E, C, P>
   }
 
   Future<void> _onRefreshed(
-    _Refreshed<E, P> event,
-    Emitter<DisplayState<E,C>> emit,
+    _Refreshed<E> event,
+    Emitter<DisplayState<E, C>> emit,
   ) async {
     emit(state.copyWith(status: DisplayStatus.refreshing, failure: null));
     await fetch(cursor: initialCursor(), limit: pageSize).then(
@@ -90,7 +91,7 @@ abstract class DisplayBloc<E, C, P>
         ),
         (page) => emit(
           state.copyWith(
-            status: DisplayStatus.paginated,
+            status: DisplayStatus.initial,
             failure: null,
             items: page.items,
             nextCursor: page.nextCursor,
@@ -101,8 +102,8 @@ abstract class DisplayBloc<E, C, P>
   }
 
   Future<void> _onNextPageRequested(
-    _NextPageRequested<E, P> event,
-    Emitter<DisplayState<E,C>> emit,
+    _NextPageRequested<E> event,
+    Emitter<DisplayState<E, C>> emit,
   ) async {
     if (state.isEnd ||
         state.status == DisplayStatus.loading ||
@@ -136,11 +137,11 @@ abstract class DisplayBloc<E, C, P>
     );
   }
 
-  void _onUpserted(_Upserted<E, P> event, Emitter<DisplayState<E,C>> emit) {
+  void _onUpserted(_Upserted<E> event, Emitter<DisplayState<E, C>> emit) {
     emit(state.copyWith(items: reorderAfterUpsert(state.items, event.item)));
   }
 
-  void _onRemoved(_Removed<E, P> event, Emitter<DisplayState<E,C>> emit) {
+  void _onRemoved(_Removed<E> event, Emitter<DisplayState<E, C>> emit) {
     emit(
       state.copyWith(
         items: state.items

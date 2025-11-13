@@ -29,12 +29,16 @@ class _ScreenState extends State<_Screen> {
     if (!_scrollController.hasClients) {
       debugPrint('scroll controller can not find its client');
       return;
-    } else if (context.read<DisplayDiaryBloc>().state.isEnd ||
-        context.read<DisplayDiaryBloc>().state.status !=
-            DisplayStatus.paginated) {
-      debugPrint('scroll request dropped');
-
-      return;
+    } else {
+      final bloc = context.read<DisplayDiaryBloc>();
+      final current = bloc.state;
+      if (current.isEnd ||
+          current.status == DisplayStatus.paginated ||
+          current.status == DisplayStatus.loading ||
+          current.status == DisplayStatus.refreshing) {
+        debugPrint('scroll request dropped');
+        return;
+      }
     }
     final position = _scrollController.position;
     if (position.maxScrollExtent <= 0 ||
@@ -44,14 +48,12 @@ class _ScreenState extends State<_Screen> {
     }
 
     context.read<DisplayDiaryBloc>().add(
-      DisplayEvent<DiaryEntity, FetchDiaryParam>.nextPageRequested(),
+      DisplayEvent<DiaryEntity>.nextPageRequested(),
     );
   }
 
   Future<void> _handleRefresh() async {
-    context.read<DisplayDiaryBloc>().add(
-      DisplayEvent<DiaryEntity, FetchDiaryParam>.refreshed(),
-    );
+    context.read<DisplayDiaryBloc>().add(DisplayEvent<DiaryEntity>.refreshed());
   }
 
   @override
@@ -131,8 +133,9 @@ class _ScreenState extends State<_Screen> {
                 DisplayState<DiaryEntity, DateTime>
               >(
                 builder: (context, state) {
-                  if (state.status == DisplayStatus.initial ||
-                      state.status == DisplayStatus.loading) {
+                  if (state.items.isEmpty &&
+                      (state.status == DisplayStatus.loading ||
+                          state.status == DisplayStatus.initial)) {
                     return const Center(child: CircularProgressIndicator());
                   }
 

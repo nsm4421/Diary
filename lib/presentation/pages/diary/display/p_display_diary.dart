@@ -29,7 +29,7 @@ class DisplayDiaryPage extends StatelessWidget {
     return BlocProvider(
       create: (_) =>
           GetIt.instance<DisplayDiaryBloc>()
-            ..add(DisplayEvent<DiaryEntity, FetchDiaryParam>.started()),
+            ..add(DisplayEvent<DiaryEntity>.started()),
       child: _Screen(),
     );
   }

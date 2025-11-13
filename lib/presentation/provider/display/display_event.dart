@@ -1,15 +1,15 @@
 part of 'display_bloc.dart';
 
-// E : Entity, P : param type
+// E : Entity
 @freezed
-class DisplayEvent<E, P> with _$DisplayEvent<E, P> {
-  const factory DisplayEvent.started([P? param]) = _Started<E, P>;
+class DisplayEvent<E> with _$DisplayEvent<E> {
+  const factory DisplayEvent.started() = _Started<E>;
 
-  const factory DisplayEvent.refreshed([P? param]) = _Refreshed<E, P>;
+  const factory DisplayEvent.refreshed() = _Refreshed<E>;
 
-  const factory DisplayEvent.nextPageRequested([P? param]) = _NextPageRequested<E, P>;
+  const factory DisplayEvent.nextPageRequested() = _NextPageRequested<E>;
 
-  const factory DisplayEvent.upserted(E item) = _Upserted<E, P>;
+  const factory DisplayEvent.upserted(E item) = _Upserted<E>;
 
-  const factory DisplayEvent.removed(String id) = _Removed<E, P>;
+  const factory DisplayEvent.removed(String id) = _Removed<E>;
 }

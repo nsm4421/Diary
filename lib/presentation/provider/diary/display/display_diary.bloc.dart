@@ -8,22 +8,23 @@ import 'package:diary/presentation/provider/display/display_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
-class DisplayDiaryBloc
-    extends DisplayBloc<DiaryEntity, DateTime, FetchDiaryParam> {
+class DisplayDiaryBloc extends DisplayBloc<DiaryEntity, DateTime> {
   final DiaryUseCases _diaryUseCases;
+  late final FetchDiaryParam _param;
 
-  DisplayDiaryBloc(this._diaryUseCases);
+  DisplayDiaryBloc(@factoryParam FetchDiaryParam? param, this._diaryUseCases) {
+    _param = param ?? FetchDiaryParam.none();
+  }
 
   @override
   Future<Either<Failure, Pageable<DiaryEntity, DateTime>>> fetch({
     required DateTime cursor,
     int limit = 30,
-    FetchDiaryParam? param,
   }) async {
     return await _diaryUseCases.fetch.call(
       cursor: cursor,
       limit: limit,
-      param: param,
+      param: _param,
     );
   }
 
