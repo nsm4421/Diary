@@ -52,6 +52,8 @@ class FetchDiaryByDateRangeParamValue extends FetchDiaryParam {
   FetchDiaryByDateRangeParamValue({required this.start, required this.end})
     : super(SearchDiaryKind.dateRange);
 
+  String get label => '${start.yyyymmdd}~${end.yyyymmdd}';
+
   @override
   String toString() =>
       'dateRange search param:${start.yyyymmdd}~${end.yyyymmdd}';
