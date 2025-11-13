@@ -9,16 +9,13 @@ class _SubmitButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CreateDiaryCubit, CreateDiaryState>(
       builder: (context, state) {
-        final colorScheme = Theme.of(context).colorScheme;
-        final textTheme = Theme.of(context).textTheme;
-
         return SizedBox(
           width: double.infinity,
           child: FilledButton(
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 18),
-              backgroundColor: colorScheme.onPrimary,
-              foregroundColor: colorScheme.primary,
+              backgroundColor: context.colorScheme.onPrimary,
+              foregroundColor: context.colorScheme.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
@@ -40,7 +37,7 @@ class _SubmitButton extends StatelessWidget {
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        colorScheme.primary,
+                        context.colorScheme.primary,
                       ),
                     ),
                   )
@@ -49,13 +46,13 @@ class _SubmitButton extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.check_circle_rounded,
-                        color: colorScheme.primary,
+                        color: context.colorScheme.primary,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         '기록 저장하기',
-                        style: textTheme.titleMedium?.copyWith(
-                          color: colorScheme.primary,
+                        style: context.textTheme.titleMedium?.copyWith(
+                          color: context.colorScheme.primary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),

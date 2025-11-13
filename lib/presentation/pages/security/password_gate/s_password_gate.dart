@@ -35,8 +35,8 @@ class __ScreenState extends State<_Screen> {
         }
       },
       builder: (context, state) {
-        final colorScheme = Theme.of(context).colorScheme;
-        final textTheme = Theme.of(context).textTheme;
+        final colorScheme = context.colorScheme;
+        final textTheme = context.textTheme;
         final isBusy = state.isLoading;
 
         return Scaffold(
@@ -46,7 +46,7 @@ class __ScreenState extends State<_Screen> {
             surfaceTintColor: Colors.transparent,
             leading: Icon(
               Icons.lock_outline,
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: context.colorScheme.onPrimary,
             ),
             title: Text(
               '비밀번호 잠금',

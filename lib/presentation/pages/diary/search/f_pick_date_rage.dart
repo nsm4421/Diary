@@ -53,8 +53,8 @@ class _PickDateRangeState extends State<_PickDateRange> {
 
   @override
   Widget build(BuildContext context) {
-    final helperStyle = Theme.of(context).textTheme.bodySmall?.copyWith(
-      color: Theme.of(context).colorScheme.onSurfaceVariant,
+    final helperStyle = context.textTheme.bodySmall?.copyWith(
+      color: context.colorScheme.onSurfaceVariant,
     );
 
     return BlocListener<SearchDiaryCubit, FetchDiaryParam>(
@@ -68,7 +68,7 @@ class _PickDateRangeState extends State<_PickDateRange> {
       },
       child: Card(
         elevation: 0,
-        color: Theme.of(context).colorScheme.surface,
+        color: context.colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -96,7 +96,7 @@ class _PickDateRangeState extends State<_PickDateRange> {
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Icon(
                       Icons.east_rounded,
-                      color: Theme.of(context).colorScheme.outline,
+                      color: context.colorScheme.outline,
                     ),
                   ),
                   Expanded(
@@ -114,7 +114,7 @@ class _PickDateRangeState extends State<_PickDateRange> {
                 label: const Text('기간 선택하기'),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  textStyle: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -128,7 +128,7 @@ class _PickDateRangeState extends State<_PickDateRange> {
                 label: const Text('기간 검색'),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  textStyle: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -153,7 +153,7 @@ class _DatePreview extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+        border: Border.all(color: context.colorScheme.outlineVariant),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -161,8 +161,8 @@ class _DatePreview extends StatelessWidget {
         children: [
           Text(
             label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            style: context.textTheme.bodySmall?.copyWith(
+              color: context.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 6),

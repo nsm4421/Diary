@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:diary/core/extension/build_context_extension.dart';
 import 'package:diary/presentation/provider/security/password_lock/password_lock_cubit.dart';
 import 'package:diary/presentation/provider/setting/app_setting_cubit.dart';
 import 'package:diary/presentation/router/app_router.dart';

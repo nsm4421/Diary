@@ -54,8 +54,8 @@ class _SearchTitleState extends State<_SearchTitle> {
 
   @override
   Widget build(BuildContext context) {
-    final helperStyle = Theme.of(context).textTheme.bodySmall?.copyWith(
-      color: Theme.of(context).colorScheme.onSurfaceVariant,
+    final helperStyle = context.textTheme.bodySmall?.copyWith(
+      color: context.colorScheme.onSurfaceVariant,
     );
     return BlocListener<SearchDiaryCubit, FetchDiaryParam>(
       listenWhen: (previous, current) =>
@@ -76,7 +76,7 @@ class _SearchTitleState extends State<_SearchTitle> {
       },
       child: Card(
         elevation: 0,
-        color: Theme.of(context).colorScheme.surface,
+        color: context.colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -112,13 +112,13 @@ class _SearchTitleState extends State<_SearchTitle> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(18),
                     borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.outlineVariant,
+                      color: context.colorScheme.outlineVariant,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(18),
                     borderSide: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: context.colorScheme.primary,
                       width: 1.8,
                     ),
                   ),
@@ -133,7 +133,7 @@ class _SearchTitleState extends State<_SearchTitle> {
                 onPressed: _isReady ? _handleSearch : null,
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  textStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  textStyle: context.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),

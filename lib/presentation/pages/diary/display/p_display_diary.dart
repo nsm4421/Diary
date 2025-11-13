@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:diary/core/value_objects/diary.dart';
+import 'package:diary/core/extension/build_context_extension.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/presentation/components/diary/diary_preview_card.dart';
 import 'package:diary/presentation/provider/diary/display/display_diary.bloc.dart';

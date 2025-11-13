@@ -1,3 +1,4 @@
+import 'package:diary/core/extension/build_context_extension.dart';
 import 'package:diary/core/extension/datetime_extension.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +19,12 @@ class DiaryPreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     final trimmedTitle = diary.title?.trim();
-    final effectiveTitle =
-        (trimmedTitle != null && trimmedTitle.isNotEmpty) ? trimmedTitle : null;
+    final effectiveTitle = (trimmedTitle != null && trimmedTitle.isNotEmpty)
+        ? trimmedTitle
+        : null;
 
     return Material(
       color: Colors.transparent,
@@ -58,7 +60,11 @@ class DiaryPreviewCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.circle, size: 10, color: accent.withAlpha(217)),
+                      Icon(
+                        Icons.circle,
+                        size: 10,
+                        color: accent.withAlpha(217),
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         diary.createdAt.toLocal().yyyymmdd,

@@ -58,7 +58,7 @@ class _ScreenState extends State<_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
     return Scaffold(
       extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: true,
@@ -90,7 +90,7 @@ class _ScreenState extends State<_Screen> {
             const SizedBox(width: 12),
             Text(
               '나의 일기',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              style: context.textTheme.titleLarge?.copyWith(
                 color: colorScheme.onPrimary,
                 fontWeight: FontWeight.w700,
               ),

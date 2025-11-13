@@ -52,7 +52,7 @@ class _DiariesListState extends State<_DiariesList> {
     final diaries = widget.state.items;
     final isLoadingMore =
         widget.state.status == DisplayStatus.paginated && diaries.isNotEmpty;
-    final paddingBottom = 16 + MediaQuery.of(context).padding.bottom;
+    final paddingBottom = 16 + context.padding.bottom;
 
     return ListView.separated(
       controller: _scrollController,
@@ -94,15 +94,16 @@ class _DiariesListState extends State<_DiariesList> {
                           diary.title?.trim().isEmpty ?? true
                               ? '제목 없음'
                               : diary.title!.trim(),
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.w700),
+                          style: context.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         dateLabel,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        style: context.textTheme.bodySmall?.copyWith(
+                          color: context.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -112,10 +113,10 @@ class _DiariesListState extends State<_DiariesList> {
                     subtitle,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    style: context.textTheme.bodyMedium?.copyWith(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.8),
+                      ).colorScheme.onSurface.withAlpha(204),
                     ),
                   ),
                 ],

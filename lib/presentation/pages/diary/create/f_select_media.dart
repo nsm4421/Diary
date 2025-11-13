@@ -71,9 +71,6 @@ class _SelectMediaState extends State<_SelectMedia> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
     return BlocBuilder<CreateDiaryCubit, CreateDiaryState>(
       buildWhen: (previous, current) => previous.medias != current.medias,
       builder: (context, state) {
@@ -81,8 +78,10 @@ class _SelectMediaState extends State<_SelectMedia> {
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(28),
-            color: colorScheme.surface.withAlpha(242),
-            border: Border.all(color: colorScheme.onSurface.withAlpha(13)),
+            color: context.colorScheme.surface.withAlpha(242),
+            border: Border.all(
+              color: context.colorScheme.onSurface.withAlpha(13),
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,14 +90,14 @@ class _SelectMediaState extends State<_SelectMedia> {
                 children: [
                   Icon(
                     Icons.photo_library_rounded,
-                    color: colorScheme.secondary,
+                    color: context.colorScheme.secondary,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     '사진',
-                    style: textTheme.titleMedium?.copyWith(
+                    style: context.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: colorScheme.onSurface,
+                      color: context.colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -109,12 +108,12 @@ class _SelectMediaState extends State<_SelectMedia> {
                     ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(999),
-                      color: colorScheme.secondary.withAlpha(31),
+                      color: context.colorScheme.secondary.withAlpha(31),
                     ),
                     child: Text(
                       '최대 ${_maxSelectable}장',
-                      style: textTheme.labelSmall?.copyWith(
-                        color: colorScheme.secondary,
+                      style: context.textTheme.labelSmall?.copyWith(
+                        color: context.colorScheme.secondary,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.4,
                       ),
@@ -124,8 +123,10 @@ class _SelectMediaState extends State<_SelectMedia> {
                   if (state.medias.isNotEmpty)
                     Text(
                       '${state.medias.length}/$_maxSelectable',
-                      style: textTheme.labelMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant.withAlpha(204),
+                      style: context.textTheme.labelMedium?.copyWith(
+                        color: context.colorScheme.onSurfaceVariant.withAlpha(
+                          204,
+                        ),
                       ),
                     ),
                 ],
@@ -141,15 +142,15 @@ class _SelectMediaState extends State<_SelectMedia> {
                       file: state.medias[index],
                       onRemove: () =>
                           context.read<CreateDiaryCubit>().removeMediaAt(index),
-                      accent: colorScheme.secondary,
+                      accent: context.colorScheme.secondary,
                     ),
                   ),
                   if (_maxSelectable > state.medias.length)
                     _AddMediaTile(
                       remaining: _maxSelectable - state.medias.length,
                       onTap: state.isSubmitting ? null : _handleAddMedia,
-                      accent: colorScheme.secondary,
-                      textTheme: textTheme,
+                      accent: context.colorScheme.secondary,
+                      textTheme: context.textTheme,
                     ),
                 ],
               ),

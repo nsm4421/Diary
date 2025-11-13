@@ -92,6 +92,25 @@
 - `handleSubmit uploads media files and emits success` 제출 시 업로드·저장 흐름이 정상 완료되고 성공 상태가 되는지 검증합니다.
 - `handleSubmit surfaces failure when uploadMediaFiles fails` 업로드 실패가 에러 상태로 반영되고 저장이 중단되는지 확인합니다.
 
+### `test/presentation/provider/diary/search/search_diary_cubit_test.dart`
+- `initial state is title search with empty keyword` 기본 상태와 kind가 올바른지 확인합니다.
+- `updateTitle trims value and is restored after switching kinds` 입력값 공백 제거 및 캐시 복원을 검증합니다.
+- `updateContent and updateDateRange cache their params` 본문/기간 값이 kind 전환 후에도 유지되는지 확인합니다.
+
+### `test/presentation/provider/diary/display/display_diary_bloc_test.dart`
+- `started loads first page and exposes next cursor` 초기 로딩이 항목과 다음 커서를 올바르게 설정하는지 확인합니다.
+- `next page appends results and stops when end reached` 무한 스크롤 요청이 중복 없이 페이지를 추가하고, 더 이상 데이터가 없을 때 중단되는지 검증합니다.
+
+### `test/presentation/provider/security/password_setup/password_setup_cubit_test.dart`
+- `init` 이 저장된 해시 유무에 따라 `hasExistingPassword` 를 설정하는지 검증합니다.
+- `setPassword` 가 성공적으로 해시를 저장하고 오류 시 메시지를 노출하는지 확인합니다.
+- `clearPassword` 가 해시 삭제와 오류 전파를 모두 다루는지 확인합니다.
+
+### `test/presentation/provider/security/password_lock/password_lock_cubit_test.dart`
+- `init` 가 저장된 해시를 불러와 `hasPassword` 와 초기 화면 분기를 결정하는지 검증합니다.
+- `submit` 이 잠금 해제 성공/실패(남은 횟수 감소 포함)를 모두 처리하는지 확인합니다.
+- `clearPassword` 가 해시를 제거하고 상태 플래그를 재설정하는지 확인합니다.
+
 ## 실행 방법
 
 ```bash
@@ -99,5 +118,9 @@ flutter test test/data/datasoure/local/diary/local_diary_datasource_impl_test.da
 flutter test test/data/datasoure/local/storage/local_storage_datasource_impl_test.dart
 flutter test test/data/repository/diary_repository_impl_test.dart
 flutter test test/domain/usecase/diary/diary_usecases_test.dart
+flutter test test/presentation/provider/diary/display/display_diary_bloc_test.dart
 flutter test test/presentation/provider/diary/create/create_diary_cubit_test.dart
+flutter test test/presentation/provider/diary/search/search_diary_cubit_test.dart
+flutter test test/presentation/provider/security/password_setup/password_setup_cubit_test.dart
+flutter test test/presentation/provider/security/password_lock/password_lock_cubit_test.dart
 ```

@@ -19,7 +19,7 @@ class _Screen extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Theme.of(context).colorScheme.onPrimary.withAlpha(31),
+                  color: context.colorScheme.onPrimary.withAlpha(31),
                   border: Border.all(
                     color: Theme.of(
                       context,
@@ -29,7 +29,7 @@ class _Screen extends StatelessWidget {
                 ),
                 child: Icon(
                   Icons.menu_book_rounded,
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: context.colorScheme.onPrimary,
                   size: 22,
                 ),
               ),
@@ -46,7 +46,7 @@ class _Screen extends StatelessWidget {
       ),
       body: BlocBuilder<SearchDiaryCubit, FetchDiaryParam>(
         builder: (context, state) {
-          final topInset = MediaQuery.of(context).padding.top + kToolbarHeight;
+          final topInset = context.padding.top + kToolbarHeight;
           return SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             padding: EdgeInsets.fromLTRB(16, topInset + 12, 16, 24),

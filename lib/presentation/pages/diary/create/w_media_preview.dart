@@ -31,10 +31,7 @@ class _MediaPreview extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(24),
-            child: Image.file(
-              file,
-              fit: BoxFit.cover,
-            ),
+            child: Image.file(file, fit: BoxFit.cover),
           ),
         ),
         Positioned(

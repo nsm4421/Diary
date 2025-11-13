@@ -17,12 +17,11 @@ class _MediaCarousel extends StatelessWidget {
 
   static const double _defaultAspectRatio = 4 / 3;
 
-  Color _accentColor(BuildContext context) =>
-      Theme.of(context).colorScheme.secondary;
+  Color _accentColor(BuildContext context) => context.colorScheme.secondary;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -113,11 +112,10 @@ class _MediaCarousel extends StatelessWidget {
                             const SizedBox(width: 8),
                             Text(
                               '${media.width ?? '-'} × ${media.height ?? '-'}',
-                              style: Theme.of(context).textTheme.labelSmall
-                                  ?.copyWith(
-                                    color: colorScheme.onSurface,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              style: context.textTheme.labelSmall?.copyWith(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),

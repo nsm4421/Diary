@@ -12,8 +12,8 @@ class __ScreenState extends State<_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     final passwordState = context.watch<PasswordLockCubit>().state;
     final isPasswordBusy = passwordState.isLoading;
 

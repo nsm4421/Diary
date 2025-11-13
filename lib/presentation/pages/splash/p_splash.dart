@@ -5,6 +5,7 @@ import 'package:diary/presentation/provider/security/password_lock/password_lock
 import 'package:diary/presentation/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:diary/core/extension/build_context_extension.dart';
 
 const _kSplashDisplayDuration = Duration(milliseconds: 1600);
 
@@ -55,8 +56,8 @@ class _SplashPageState extends State<SplashPage>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
 
     return BlocListener<PasswordLockCubit, PasswordLockState>(
       listenWhen: (previous, current) => previous != current,

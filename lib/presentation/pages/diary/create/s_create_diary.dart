@@ -18,9 +18,6 @@ class _ScreenState extends State<_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -35,15 +32,15 @@ class _ScreenState extends State<_Screen> {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: colorScheme.onPrimary.withAlpha(31),
+                  color: context.colorScheme.onPrimary.withAlpha(31),
                   border: Border.all(
-                    color: colorScheme.onPrimary.withAlpha(51),
+                    color: context.colorScheme.onPrimary.withAlpha(51),
                     width: 1,
                   ),
                 ),
                 child: Icon(
                   Icons.menu_book_rounded,
-                  color: colorScheme.onPrimary,
+                  color: context.colorScheme.onPrimary,
                   size: 22,
                 ),
               ),
@@ -51,14 +48,14 @@ class _ScreenState extends State<_Screen> {
             const SizedBox(width: 12),
             Text(
               '새 일기 작성',
-              style: textTheme.titleLarge?.copyWith(
-                color: colorScheme.onPrimary,
+              style: context.textTheme.titleLarge?.copyWith(
+                color: context.colorScheme.onPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),
           ],
         ),
-        iconTheme: IconThemeData(color: colorScheme.onPrimary),
+        iconTheme: IconThemeData(color: context.colorScheme.onPrimary),
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
@@ -68,8 +65,8 @@ class _ScreenState extends State<_Screen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    colorScheme.primary,
-                    colorScheme.primaryContainer,
+                    context.colorScheme.primary,
+                    context.colorScheme.primaryContainer,
                     Theme.of(context).scaffoldBackgroundColor,
                   ],
                   begin: Alignment.topCenter,
@@ -83,7 +80,7 @@ class _ScreenState extends State<_Screen> {
               child: Icon(
                 Icons.auto_stories_outlined,
                 size: 140,
-                color: colorScheme.onPrimary.withAlpha(20),
+                color: context.colorScheme.onPrimary.withAlpha(20),
               ),
             ),
             Positioned(
@@ -92,27 +89,30 @@ class _ScreenState extends State<_Screen> {
               child: Icon(
                 Icons.edit_note_outlined,
                 size: 120,
-                color: colorScheme.onPrimary.withAlpha(20),
+                color: context.colorScheme.onPrimary.withAlpha(20),
               ),
             ),
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '오늘의 마음을 기록해볼까요?',
-                      style: textTheme.titleMedium?.copyWith(
-                        color: colorScheme.onPrimary.withAlpha(230),
+                      style: context.textTheme.titleMedium?.copyWith(
+                        color: context.colorScheme.onPrimary.withAlpha(230),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       '감정과 순간을 솔직하게 남겨보세요.',
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onPrimary.withAlpha(179),
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: context.colorScheme.onPrimary.withAlpha(179),
                       ),
                     ),
                     const SizedBox(height: 24),

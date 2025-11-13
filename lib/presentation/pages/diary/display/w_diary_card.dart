@@ -7,8 +7,8 @@ class _DiaryCard extends StatelessWidget {
   final Color accent;
 
   Future<void> _handleModal(BuildContext context) async {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
 
     await showDialog<void>(
       context: context,

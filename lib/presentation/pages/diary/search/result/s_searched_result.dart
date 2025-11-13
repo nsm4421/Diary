@@ -16,7 +16,7 @@ class _Screen extends StatelessWidget {
             (_) => Icons.title_rounded,
           },
           size: 16,
-          color: Theme.of(context).colorScheme.primary,
+          color: context.colorScheme.primary,
         ),
         title: Text(
           switch (_param.kind) {
@@ -26,8 +26,8 @@ class _Screen extends StatelessWidget {
               (_param as FetchDiaryByDateRangeParamValue).label,
             (_) => (_param as FetchDiaryByTitleParamValue).title,
           },
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.9),
+          style: context.textTheme.titleMedium?.copyWith(
+            color: context.colorScheme.onSurface.withAlpha(230),
             fontWeight: FontWeight.w600,
           ),
           overflow: TextOverflow.ellipsis,

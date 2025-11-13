@@ -8,6 +8,7 @@ import 'package:diary/domain/entity/diary_media_asset.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:diary/core/extension/build_context_extension.dart';
 
 part 's_diary_detail.dart';
 
@@ -65,7 +66,7 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
       return Center(
         child: Text(
           _failure?.message ?? 'ERROR',
-          style: Theme.of(context).textTheme.labelLarge,
+          style: context.textTheme.labelLarge,
         ),
       );
     }

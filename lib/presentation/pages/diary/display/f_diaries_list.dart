@@ -8,16 +8,11 @@ class _DiariesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
     return ListView.builder(
       controller: controller,
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.fromLTRB(
-        20,
-        16,
-        20,
-        32 + MediaQuery.of(context).padding.bottom,
-      ),
+      padding: EdgeInsets.fromLTRB(20, 16, 20, 32 + context.padding.bottom),
       itemCount: diaries.length + 1,
       itemBuilder: (context, index) {
         if (index == 0) {
@@ -27,10 +22,7 @@ class _DiariesList extends StatelessWidget {
         final diary = diaries[index - 1];
         return Padding(
           padding: const EdgeInsets.only(top: 16),
-          child: _DiaryCard(
-            diary: diary,
-            accent: colorScheme.secondary,
-          ),
+          child: _DiaryCard(diary: diary, accent: colorScheme.secondary),
         );
       },
     );
@@ -42,8 +34,8 @@ class _ListHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
@@ -57,9 +49,7 @@ class _ListHeader extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        border: Border.all(
-          color: colorScheme.onPrimary.withAlpha(56),
-        ),
+        border: Border.all(color: colorScheme.onPrimary.withAlpha(56)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

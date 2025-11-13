@@ -113,7 +113,7 @@ class _PasswordBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -134,7 +134,7 @@ class _PasswordBackground extends StatelessWidget {
             child: Icon(
               Icons.password_rounded,
               size: 140,
-              color: colorScheme.onPrimary.withOpacity(0.12),
+              color: colorScheme.onPrimary.withAlpha(31),
             ),
           ),
           Positioned(
@@ -143,7 +143,7 @@ class _PasswordBackground extends StatelessWidget {
             child: Icon(
               Icons.shield_outlined,
               size: 120,
-              color: colorScheme.onPrimary.withOpacity(0.08),
+              color: colorScheme.onPrimary.withAlpha(20),
             ),
           ),
         ],
@@ -157,8 +157,8 @@ class _PasswordLoadingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = context.colorScheme;
+    final textTheme = context.textTheme;
     return ClipRRect(
       borderRadius: BorderRadius.circular(28),
       child: BackdropFilter(
@@ -167,7 +167,7 @@ class _PasswordLoadingCard extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 36),
           decoration: BoxDecoration(
-            color: colorScheme.surface.withOpacity(0.65),
+            color: colorScheme.surface.withAlpha(166),
             borderRadius: BorderRadius.circular(28),
           ),
           child: Column(
@@ -185,7 +185,7 @@ class _PasswordLoadingCard extends StatelessWidget {
                 '보안 상태를 확인하는 중이에요...',
                 textAlign: TextAlign.center,
                 style: textTheme.titleMedium?.copyWith(
-                  color: colorScheme.onSurface.withOpacity(0.85),
+                  color: colorScheme.onSurface.withAlpha(217),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -253,9 +253,9 @@ class _CreatePasswordFormState extends State<_CreatePasswordForm> {
 
     return Card(
       elevation: 10,
-      shadowColor: colorScheme.primary.withOpacity(0.2),
+      shadowColor: colorScheme.primary.withAlpha(51),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-      color: colorScheme.surface.withOpacity(0.95),
+      color: colorScheme.surface.withAlpha(242),
       child: Padding(
         padding: const EdgeInsets.all(26),
         child: Form(
@@ -405,9 +405,9 @@ class _UpdatePasswordFormState extends State<_UpdatePasswordForm> {
 
     return Card(
       elevation: 10,
-      shadowColor: colorScheme.primary.withOpacity(0.2),
+      shadowColor: colorScheme.primary.withAlpha(51),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-      color: colorScheme.surface.withOpacity(0.95),
+      color: colorScheme.surface.withAlpha(242),
       child: Padding(
         padding: const EdgeInsets.all(26),
         child: Form(
@@ -551,7 +551,7 @@ class _PasswordTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.colorScheme;
     return TextFormField(
       controller: controller,
       enabled: enabled,
@@ -563,8 +563,8 @@ class _PasswordTextField extends StatelessWidget {
         labelText: label,
         filled: true,
         fillColor: enabled
-            ? colorScheme.surfaceVariant.withOpacity(0.95)
-            : colorScheme.surfaceVariant.withOpacity(0.7),
+            ? colorScheme.surfaceVariant.withAlpha(242)
+            : colorScheme.surfaceVariant.withAlpha(179),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(22)),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(22),
@@ -616,9 +616,7 @@ class _ButtonSpinner extends StatelessWidget {
       width: 20,
       child: CircularProgressIndicator.adaptive(
         strokeWidth: 2.2,
-        valueColor: AlwaysStoppedAnimation(
-          Theme.of(context).colorScheme.onPrimary,
-        ),
+        valueColor: AlwaysStoppedAnimation(context.colorScheme.onPrimary),
       ),
     );
   }
