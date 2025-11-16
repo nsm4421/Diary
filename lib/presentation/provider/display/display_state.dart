@@ -7,15 +7,15 @@ class DisplayState<E, C> with _$DisplayState<E, C> {
     this.status = DisplayStatus.initial,
     this.items = const [],
     this.nextCursor,
-    this.failure,
+    this.errorMessage,
   });
 
   final DisplayStatus status;
   final List<E> items;
   final C? nextCursor;
-  final Failure? failure;
+  final String? errorMessage;
 
-  bool get isEmpty => items.isEmpty && failure == null;
+  bool get isEmpty => items.isEmpty && errorMessage == null;
 
   bool get isEnd => nextCursor == null;
 }

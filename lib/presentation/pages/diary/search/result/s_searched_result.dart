@@ -47,9 +47,10 @@ class _Screen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (state.failure != null && state.items.isEmpty) {
+          if (state.errorMessage != null && state.items.isEmpty) {
+            final message = state.errorMessage ?? '문제가 발생했습니다.';
             return _FailureView(
-              message: state.failure?.message ?? '문제가 발생했습니다.',
+              message: message,
               onRetry: () => context.read<DisplayDiaryBloc>().add(
                 const DisplayEvent<DiaryEntity>.started(),
               ),

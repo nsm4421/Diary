@@ -1,5 +1,8 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:diary/core/error/constant/error_code.dart';
+import 'package:diary/core/error/failure/failure.dart';
 import 'package:diary/core/extension/string_extension.dart';
+import 'package:diary/core/value_objects/status.dart';
 import 'package:diary/domain/usecase/security/security_usecases.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,14 +20,14 @@ class PasswordLockCubit extends Cubit<PasswordLockState> {
   String? _cachedHash;
 
   Future<void> init() async {
-    emit(state.copyWith(status: _PasswordLockStatus.loading));
+    emit(state.copyWith(status: PasswordLockStatus.loading));
 
     await _securityUseCases.fetchPasswordHash().then(
       (res) => res.fold(
         (failure) => emit(
           state.copyWith(
-            status: _PasswordLockStatus.idle,
-            errorMessage: failure.message,
+            status: PasswordLockStatus.idle,
+            errorMessage: _failureMessage(failure),
           ),
         ),
         (hashPassword) {
@@ -32,8 +35,8 @@ class PasswordLockCubit extends Cubit<PasswordLockState> {
           emit(
             state.copyWith(
               status: hashPassword == null
-                  ? _PasswordLockStatus.unLocked
-                  : _PasswordLockStatus.locked,
+                  ? PasswordLockStatus.unLocked
+                  : PasswordLockStatus.locked,
               remainingAttempts: _kMaxAttempts,
             ),
           );
@@ -43,13 +46,13 @@ class PasswordLockCubit extends Cubit<PasswordLockState> {
   }
 
   Future<void> submit(String password) async {
-    emit(state.copyWith(status: _PasswordLockStatus.loading));
+    emit(state.copyWith(status: PasswordLockStatus.loading));
 
     // 남은 시도 횟수 검사
     if (state.remainingAttempts == 0) {
       emit(
         state.copyWith(
-          status: _PasswordLockStatus.failure,
+          status: PasswordLockStatus.failure,
           errorMessage: '허용된 시도 횟수를 초과했습니다',
         ),
       );
@@ -60,7 +63,7 @@ class PasswordLockCubit extends Cubit<PasswordLockState> {
     if (password.trim().isEmpty) {
       emit(
         state.copyWith(
-          status: _PasswordLockStatus.failure,
+          status: PasswordLockStatus.failure,
           errorMessage: '비밀번호를 입력해주세요',
         ),
       );
@@ -72,7 +75,7 @@ class PasswordLockCubit extends Cubit<PasswordLockState> {
     if (hashedPassword != _cachedHash) {
       emit(
         state.copyWith(
-          status: _PasswordLockStatus.failure,
+          status: PasswordLockStatus.failure,
           errorMessage: '비밀번호가 일치하지 않습니다',
           remainingAttempts: (state.remainingAttempts - 1).clamp(
             0,
@@ -85,12 +88,21 @@ class PasswordLockCubit extends Cubit<PasswordLockState> {
 
     // 성공
     await Future.delayed(Duration(milliseconds: 500));
-    emit(
-      state.copyWith(status: _PasswordLockStatus.unLocked, errorMessage: ''),
-    );
+    emit(state.copyWith(status: PasswordLockStatus.unLocked, errorMessage: ''));
   }
 
   void resetStatus() {
-    emit(state.copyWith(status: _PasswordLockStatus.locked, errorMessage: ''));
+    emit(state.copyWith(status: PasswordLockStatus.locked, errorMessage: ''));
+  }
+
+  String _failureMessage(Failure failure) {
+    return switch (failure.code) {
+      ErrorCode.validation => failure.description,
+      ErrorCode.storage ||
+      ErrorCode.cache ||
+      ErrorCode.database =>
+        '비밀번호 정보를 확인하지 못했습니다. 잠시 후 다시 시도해주세요.',
+      _ => failure.description,
+    };
   }
 }

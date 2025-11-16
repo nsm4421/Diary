@@ -36,9 +36,11 @@ class CreateDiaryPage extends StatelessWidget {
               ..showToast('일기 작성 성공')
               ..pop();
           } else if (state.isError) {
+            final message =
+                state.errorMessage ?? '알 수 없는 오류가 발생했습니다.';
             context
               ..read<CreateDiaryCubit>().handleChange()
-              ..showToast(state.failure?.message ?? '알수 없는 오류가 발생했습니다');
+              ..showToast(message);
           }
         },
         child: _Screen(),

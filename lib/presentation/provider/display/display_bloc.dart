@@ -1,6 +1,7 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/failure.dart';
+import 'package:diary/core/error/constant/error_code.dart';
+import 'package:diary/core/error/failure/failure.dart';
 import 'package:diary/core/value_objects/pageable.dart';
 import 'package:diary/core/value_objects/status.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,13 +57,13 @@ abstract class DisplayBloc<E, C>
     _Started<E> event,
     Emitter<DisplayState<E, C>> emit,
   ) async {
-    emit(state.copyWith(status: DisplayStatus.loading, failure: null));
+    emit(state.copyWith(status: DisplayStatus.loading, errorMessage: null));
     await fetch(cursor: initialCursor(), limit: pageSize).then(
       (res) => res.fold(
         (failure) => emit(
           state.copyWith(
             status: DisplayStatus.initial,
-            failure: failure,
+            errorMessage: _failureMessage(failure),
             items: const [],
             nextCursor: null,
           ),
@@ -70,7 +71,7 @@ abstract class DisplayBloc<E, C>
         (page) => emit(
           state.copyWith(
             status: DisplayStatus.initial,
-            failure: null,
+            errorMessage: null,
             items: page.items,
             nextCursor: page.nextCursor,
           ),
@@ -83,16 +84,19 @@ abstract class DisplayBloc<E, C>
     _Refreshed<E> event,
     Emitter<DisplayState<E, C>> emit,
   ) async {
-    emit(state.copyWith(status: DisplayStatus.refreshing, failure: null));
+    emit(state.copyWith(status: DisplayStatus.refreshing, errorMessage: null));
     await fetch(cursor: initialCursor(), limit: pageSize).then(
       (res) => res.fold(
         (failure) => emit(
-          state.copyWith(status: DisplayStatus.initial, failure: failure),
+          state.copyWith(
+            status: DisplayStatus.initial,
+            errorMessage: _failureMessage(failure),
+          ),
         ),
         (page) => emit(
           state.copyWith(
             status: DisplayStatus.initial,
-            failure: null,
+            errorMessage: null,
             items: page.items,
             nextCursor: page.nextCursor,
           ),
@@ -112,7 +116,7 @@ abstract class DisplayBloc<E, C>
       return;
     }
 
-    emit(state.copyWith(status: DisplayStatus.paginated, failure: null));
+    emit(state.copyWith(status: DisplayStatus.paginated, errorMessage: null));
 
     await fetch(
       cursor: state.nextCursor ?? initialCursor(),
@@ -120,14 +124,17 @@ abstract class DisplayBloc<E, C>
     ).then(
       (res) => res.fold(
         (failure) => emit(
-          state.copyWith(status: DisplayStatus.initial, failure: failure),
+          state.copyWith(
+            status: DisplayStatus.initial,
+            errorMessage: _failureMessage(failure),
+          ),
         ),
         (page) {
           final merged = _mergeAppendUniqueById(state.items, page.items);
           emit(
             state.copyWith(
               status: DisplayStatus.initial,
-              failure: null,
+              errorMessage: null,
               items: merged,
               nextCursor: page.nextCursor,
             ),
@@ -156,5 +163,27 @@ abstract class DisplayBloc<E, C>
     final existingIds = {for (final e in current) idOf(e)};
     final toAppend = incoming.where((e) => !existingIds.contains(idOf(e)));
     return List<E>.from(current)..addAll(toAppend);
+  }
+
+  String _failureMessage(Failure failure) {
+    return switch (failure.code) {
+      ErrorCode.badRequest => '잘못된 요청입니다.',
+      ErrorCode.unauthorized => '인증이 필요합니다.',
+      ErrorCode.forbidden => '접근 권한이 없습니다.',
+      ErrorCode.notFound => '요청한 데이터를 찾을 수 없습니다.',
+      ErrorCode.conflict => '이미 처리된 요청입니다.',
+      ErrorCode.server =>
+        '데이터를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.',
+      ErrorCode.network => '네트워크 연결을 확인해주세요.',
+      ErrorCode.timeout =>
+        '요청 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.',
+      ErrorCode.cache || ErrorCode.database =>
+        '저장된 데이터를 불러오는 중 문제가 발생했습니다.',
+      ErrorCode.storage => '파일을 처리하는 중 문제가 발생했습니다.',
+      ErrorCode.parsing => '데이터 처리 중 오류가 발생했습니다.',
+      ErrorCode.validation => failure.description,
+      ErrorCode.cancelled => '요청이 취소되었습니다.',
+      ErrorCode.unknown => '알 수 없는 오류가 발생했습니다.',
+    };
   }
 }

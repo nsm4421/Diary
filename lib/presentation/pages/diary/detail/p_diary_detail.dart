@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:diary/core/error/failure.dart';
 import 'package:diary/core/extension/datetime_extension.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_media_asset.dart';
-import 'package:diary/domain/usecase/diary/diary_usecases.dart';
+import 'package:diary/presentation/provider/diary/detail/diary_detail_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:diary/core/extension/build_context_extension.dart';
 
@@ -15,61 +15,29 @@ part 's_diary_detail.dart';
 part 'f_carousel.dart';
 
 @RoutePage()
-class DiaryDetailPage extends StatefulWidget {
+class DiaryDetailPage extends StatelessWidget {
   const DiaryDetailPage(this._diaryId, {super.key});
 
   final String _diaryId;
 
   @override
-  State<DiaryDetailPage> createState() => _DiaryDetailPageState();
-}
-
-class _DiaryDetailPageState extends State<DiaryDetailPage> {
-  DiaryDetailEntity? _diary;
-  late bool _isLoading;
-  Failure? _failure;
-
-  @override
-  initState() {
-    super.initState();
-    _isLoading = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await _handleInit();
-    });
-  }
-
-  _handleInit() async {
-    await GetIt.instance<DiaryUseCases>().getDetail
-        .call(widget._diaryId)
-        .then(
-          (res) => res.fold(
-            (l) {
-              _failure = l;
-            },
-            (r) {
-              _diary = r;
-            },
-          ),
-        )
-        .then((_) {
-          setState(() {
-            _isLoading = false;
-          });
-        });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Center(child: CircularProgressIndicator());
-    } else if (_failure != null || _diary == null) {
-      return Center(
-        child: Text(
-          _failure?.message ?? 'ERROR',
-          style: context.textTheme.labelLarge,
-        ),
-      );
-    }
-    return _Screen(_diary!);
+    return BlocProvider(
+      create: (_) => GetIt.instance<DiaryDetailCubit>(param1: _diaryId),
+      child: BlocBuilder<DiaryDetailCubit, DiaryDetailState>(
+        builder: (context, state) {
+          if (state.isFetched && state.diary != null) {
+            return _Screen(state.diary!);
+          } else if (state.isLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else {
+            final message = state.errorMessage ?? 'ERROR';
+            return Center(
+              child: Text(message, style: context.textTheme.labelLarge),
+            );
+          }
+        },
+      ),
+    );
   }
 }

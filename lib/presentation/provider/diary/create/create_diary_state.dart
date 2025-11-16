@@ -1,11 +1,9 @@
 part of 'create_diary_cubit.dart';
 
-enum _Status { initial, editing, submitting, failure, success }
-
 @freezed
 class CreateDiaryState with _$CreateDiaryState {
   @override
-  final _Status status;
+  final CreateDiaryStatus status;
   @override
   final String title;
   @override
@@ -13,19 +11,19 @@ class CreateDiaryState with _$CreateDiaryState {
   @override
   final List<File> medias;
   @override
-  final Failure? failure;
+  final String errorMessage;
 
   const CreateDiaryState({
-    this.status = _Status.initial,
+    this.status = CreateDiaryStatus.initial,
     this.title = '',
     this.content = '',
     this.medias = const [],
-    this.failure,
+    this.errorMessage = '',
   });
 
-  bool get isSubmitting => status == _Status.submitting;
+  bool get isSubmitting => status == CreateDiaryStatus.submitting;
 
-  bool get isSuccess => status == _Status.success;
+  bool get isSuccess => status == CreateDiaryStatus.success;
 
-  bool get isError => status == _Status.failure;
+  bool get isError => status == CreateDiaryStatus.failure;
 }

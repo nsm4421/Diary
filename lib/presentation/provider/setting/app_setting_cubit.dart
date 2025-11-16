@@ -1,5 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/failure.dart';
+import 'package:diary/core/error/constant/error_code.dart';
+import 'package:diary/core/error/failure/failure.dart';
+import 'package:diary/core/value_objects/status.dart';
 import 'package:diary/domain/usecase/setting/setting_usecases.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -22,25 +24,25 @@ class AppSettingCubit extends Cubit<AppSettingState> {
   }
 
   Future<void> _loadDarkMode() async {
-    emit(state.copyWith(status: _SettingStatus.loading, failure: null));
+    emit(state.copyWith(status: SettingStatus.loading, errorMessage: null));
 
     final Either<Failure, bool> result = await _settingUseCases
         .getDarkModeEnabled();
     result.fold(
       (failure) => emit(
         state.copyWith(
-          status: _SettingStatus.failure,
+          status: SettingStatus.failure,
           themeMode: ThemeMode.system,
-          failure: failure,
+          errorMessage: _failureMessage(failure),
         ),
       ),
       (isEnabled) => emit(
         state
             .copyWith(
-              status: _SettingStatus.ready,
+              status: SettingStatus.ready,
               themeMode: isEnabled ? ThemeMode.dark : ThemeMode.light,
             )
-            .copyWithNull(failure: true),
+            .copyWithNull(errorMessage: true),
       ),
     );
   }
@@ -48,8 +50,8 @@ class AppSettingCubit extends Cubit<AppSettingState> {
   Future<void> updateDarkMode(bool isEnabled) async {
     emit(
       state
-          .copyWith(status: _SettingStatus.updating)
-          .copyWithNull(failure: true),
+          .copyWith(status: SettingStatus.updating)
+          .copyWithNull(errorMessage: true),
     );
 
     await _settingUseCases
@@ -57,26 +59,42 @@ class AppSettingCubit extends Cubit<AppSettingState> {
         .then(
           (res) => res.fold(
             (failure) => emit(
-              state.copyWith(status: _SettingStatus.failure, failure: failure),
+              state.copyWith(
+                status: SettingStatus.failure,
+                errorMessage: _failureMessage(failure),
+              ),
             ),
             (_) => emit(
               state
                   .copyWith(
-                    status: _SettingStatus.ready,
+                    status: SettingStatus.ready,
                     themeMode: isEnabled ? ThemeMode.dark : ThemeMode.light,
                   )
-                  .copyWithNull(failure: true),
+                  .copyWithNull(errorMessage: true),
             ),
           ),
         );
   }
 
   void clearFailure() {
-    if (state.failure == null) return;
+    if (state.errorMessage == null) return;
 
-    final nextStatus = state.status == _SettingStatus.failure
-        ? _SettingStatus.ready
+    final nextStatus = state.status == SettingStatus.failure
+        ? SettingStatus.ready
         : state.status;
-    emit(state.copyWith(status: nextStatus, failure: null));
+    emit(state.copyWith(status: nextStatus, errorMessage: null));
+  }
+
+  String _failureMessage(Failure failure) {
+    return switch (failure.code) {
+      ErrorCode.validation => failure.description,
+      ErrorCode.network || ErrorCode.timeout =>
+        '네트워크 연결을 확인하고 다시 시도해주세요.',
+      ErrorCode.storage ||
+      ErrorCode.cache ||
+      ErrorCode.database =>
+        '설정 정보를 처리하지 못했습니다. 잠시 후 다시 시도해주세요.',
+      _ => failure.description,
+    };
   }
 }
