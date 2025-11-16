@@ -1,8 +1,10 @@
+import 'package:dartz/dartz.dart';
+import 'package:diary/core/error/api/api_error.dart';
+
 abstract interface class PasswordRepository {
-  /// 저장할 비밀번호는 해시 등의 안전한 형태로 전달해주세요.
-  Future<void> savePasswordHash(String hash);
+  Future<Either<ApiError, Unit>> savePasswordHash(String hash);
 
-  Future<String?> fetchPasswordHash();
+  Future<Either<ApiError, String?>> fetchPasswordHash();
 
-  Future<void> clearPassword();
+  Future<Either<ApiError, Unit>> clearPassword();
 }

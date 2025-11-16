@@ -1,5 +1,4 @@
 part of 'local_diary_db_datasource.dart';
-
 class LocalDiaryDbSourceImpl implements LocalDiaryDbDataSource {
   final LocalDatabaseDao _dao;
   final Logger _logger;

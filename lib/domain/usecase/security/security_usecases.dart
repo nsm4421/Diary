@@ -1,12 +1,16 @@
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/failure.dart';
+import 'package:diary/core/error/failure/failure.dart';
+import 'package:diary/core/error/failure/falure_handler.dart';
+import 'package:diary/core/extension/logger_extension.dart';
 import 'package:diary/core/utils/app_logger.dart';
 import 'package:diary/domain/repository/password_repository.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 
 part 'scenario/save_password_hash_usecase.dart';
+
 part 'scenario/fetch_password_hash_usecase.dart';
+
 part 'scenario/clear_password_usecase.dart';
 
 @lazySingleton

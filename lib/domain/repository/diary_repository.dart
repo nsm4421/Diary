@@ -1,60 +1,60 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/failure.dart';
+import 'package:diary/core/error/api/api_error.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
 
 part 'diary_repository_params.dart';
 
 abstract interface class DiaryRepository {
-  Future<Either<Failure, DiaryEntity>> create({
+  Future<Either<ApiError, DiaryEntity>> create({
     String? clientId,
     String? title,
     required String content,
     List<CreateDiaryMediaRequest> medias = const [],
   });
 
-  Future<Either<Failure, DiaryEntity?>> findById(String diaryId);
+  Future<Either<ApiError, DiaryEntity?>> findById(String diaryId);
 
-  Future<Either<Failure, DiaryDetailEntity?>> getDiaryDetail(String diaryId);
+  Future<Either<ApiError, DiaryDetailEntity?>> getDiaryDetail(String diaryId);
 
-  Future<Either<Failure, List<DiaryEntity>>> fetchDiaries({
+  Future<Either<ApiError, List<DiaryEntity>>> fetchDiaries({
     int limit = 20,
     required DateTime cursor,
   });
 
-  Future<Either<Failure, List<DiaryEntity>>> searchByTitle({
+  Future<Either<ApiError, List<DiaryEntity>>> searchByTitle({
     required String keyword,
     int limit = 20,
     required DateTime cursor,
   });
 
-  Future<Either<Failure, List<DiaryEntity>>> searchByContent({
+  Future<Either<ApiError, List<DiaryEntity>>> searchByContent({
     required String keyword,
     int limit = 20,
     required DateTime cursor,
   });
 
-  Future<Either<Failure, List<DiaryEntity>>> searchByDateRange({
+  Future<Either<ApiError, List<DiaryEntity>>> searchByDateRange({
     required DateTime start,
     required DateTime end,
     int limit = 20,
     required DateTime cursor,
   });
 
-  Stream<Either<Failure, List<DiaryEntity>>> watchAll();
+  Stream<Either<ApiError, List<DiaryEntity>>> watchAll();
 
-  Future<Either<Failure, DiaryEntity>> update({
+  Future<Either<ApiError, DiaryEntity>> update({
     required String diaryId,
     String? title,
     required String content,
     List<CreateDiaryMediaRequest> medias = const [],
   });
 
-  Future<Either<Failure, void>> delete(String diaryId);
+  Future<Either<ApiError, void>> delete(String diaryId);
 
-  Future<Either<Failure, List<CreateDiaryMediaRequest>>> uploadMediaFiles({
+  Future<Either<ApiError, List<CreateDiaryMediaRequest>>> uploadMediaFiles({
     required String diaryId,
     required List<File> files,
   });
