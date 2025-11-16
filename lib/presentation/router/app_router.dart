@@ -3,6 +3,7 @@ import 'package:diary/core/value_objects/diary.dart';
 import 'package:diary/presentation/pages/diary/create/p_create_diary.dart';
 import 'package:diary/presentation/pages/diary/detail/p_diary_detail.dart';
 import 'package:diary/presentation/pages/diary/display/p_display_diary.dart';
+import 'package:diary/presentation/pages/diary/edit/p_edit_diary.dart';
 import 'package:diary/presentation/pages/diary/search/result/p_searched_result.dart';
 import 'package:diary/presentation/pages/security/password_gate/p_password_gate.dart';
 import 'package:diary/presentation/pages/security/password_setup/p_password_setup.dart';
@@ -26,6 +27,12 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: DisplayDiaryRoute.page),
     CustomRoute(
       page: CreateDiaryRoute.page,
+      transitionsBuilder: TransitionsBuilders.slideLeftWithFade,
+      duration: _duration,
+      reverseDuration: _duration,
+    ),
+    CustomRoute(
+      page: EditDiaryRoute.page,
       transitionsBuilder: TransitionsBuilders.slideLeftWithFade,
       duration: _duration,
       reverseDuration: _duration,

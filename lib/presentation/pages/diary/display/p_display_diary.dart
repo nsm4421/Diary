@@ -4,7 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:diary/core/extension/build_context_extension.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/presentation/components/diary/diary_preview_card.dart';
-import 'package:diary/presentation/provider/diary/display/display_diary.bloc.dart';
+import 'package:diary/presentation/provider/diary/delete/delete_diary_cubit.dart';
+import 'package:diary/presentation/provider/diary/display/display_diary_bloc.dart';
 import 'package:diary/presentation/provider/display/display_bloc.dart';
 import 'package:diary/presentation/router/app_router.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,8 @@ import 'package:diary/core/constant/status.dart';
 part 's_display_diary.dart';
 
 part 'f_diaries_list.dart';
+
+part 'f_dialog.dart';
 
 part 'w_diary_card.dart';
 

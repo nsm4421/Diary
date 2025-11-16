@@ -8,7 +8,7 @@ import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/repository/diary_repository.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';
-import 'package:diary/presentation/provider/diary/display/display_diary.bloc.dart';
+import 'package:diary/presentation/provider/diary/display/display_diary_bloc.dart';
 import 'package:diary/presentation/provider/display/display_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 

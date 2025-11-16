@@ -23,15 +23,18 @@ class DiaryDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => GetIt.instance<DiaryDetailCubit>(param1: _diaryId),
+      create: (_) => GetIt.instance<DiaryDetailCubit>(param1: _diaryId)..init(),
       child: BlocBuilder<DiaryDetailCubit, DiaryDetailState>(
         builder: (context, state) {
           if (state.isFetched && state.diary != null) {
+            debugPrint('[DiaryDetailPage]show screen');
             return _Screen(state.diary!);
           } else if (state.isLoading) {
+            debugPrint('[DiaryDetailPage]loading');
             return Center(child: CircularProgressIndicator());
           } else {
-            final message = state.errorMessage ?? 'ERROR';
+            debugPrint('[DiaryDetailPage]error');
+            final message = state.errorMessage;
             return Center(
               child: Text(message, style: context.textTheme.labelLarge),
             );

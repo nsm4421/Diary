@@ -21,10 +21,8 @@ class DiaryDetailCubit extends Cubit<DiaryDetailState> {
   final DiaryUseCases _diaryUseCases;
 
   Future<void> init([bool forceRefresh = false]) async {
-    final shouldFetch =
-        forceRefresh ||
-        !state.isFetched && state.diary == null && state.diary!.id != _diaryId;
-    if (shouldFetch) {
+    final shouldFetch = forceRefresh || !state.isFetched && state.diary == null;
+    if (!shouldFetch) {
       return;
     }
 
