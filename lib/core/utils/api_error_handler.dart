@@ -1,9 +1,10 @@
 import 'package:dartz/dartz.dart';
+import 'package:diary/core/constant/api_error_code.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 
-import 'api_error.dart';
-import 'api_exception.dart';
+import '../value_objects/error/api_error.dart';
+import '../value_objects/error/api_exception.dart';
 
 typedef FutureApiResult<T> = Future<Either<ApiError, T>>;
 

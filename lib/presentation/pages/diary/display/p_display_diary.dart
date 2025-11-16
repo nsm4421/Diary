@@ -10,7 +10,7 @@ import 'package:diary/presentation/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:diary/core/value_objects/status.dart';
+import 'package:diary/core/constant/status.dart';
 
 part 's_display_diary.dart';
 

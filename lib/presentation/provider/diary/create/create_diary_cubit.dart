@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:math' as math;
 
-import 'package:diary/core/error/constant/error_code.dart';
-import 'package:diary/core/error/failure/failure.dart';
-import 'package:diary/core/value_objects/status.dart';
+import 'package:diary/core/constant/error_code.dart';
+import 'package:diary/core/value_objects/error/failure.dart';
+import 'package:diary/core/constant/status.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

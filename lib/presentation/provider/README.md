@@ -13,39 +13,32 @@ Cubit 이 존재합니다. 설정 흐름은 `PasswordSetupCubit`, 잠금 해제 
 
 ### `PasswordSetupCubit` (`security/password_setup_cubit.dart`)
 - **상태(PasswordSetupState)**
-  - `status` (`_PasswordSetupStatus`): `idle` (로딩 전), `editing` (안정 상태),
-    `loading` (저장/삭제 중), `success`, `failure`.
-  - `hasExistingPassword` (`bool`): 보안 저장소에 해시가 있는지 여부.
-  - `errorMessage` (`String`): 최근 오류 메시지. 정상 흐름으로 돌아오면 빈 문자열.
+  - `status`(`PasswordSetupStatus`): `idle → editing` 플로우로 진입한 뒤,
+    저장/삭제 중에는 `loading`, 성공 시 `success`, 오류 시 `failure` 로 전환.
+  - `hasExistingPassword`(`bool`): `fetchPasswordHash` 결과가 비어 있지 않은지.
+  - `errorMessage`(`String`): `FailureExtension.message` 값을 그대로 반영하므로
+    서버/저장소 오류에 맞춘 한글 메시지를 볼 수 있음.
 - **주요 동작**
-  1. `init()` 이 `fetchPasswordHash` 를 호출해 초기 로딩 상태를 거친 뒤
-     `hasExistingPassword` 를 업데이트합니다.
-  2. `setPassword(String)` 는 비밀번호를 검증·정규화한 뒤 해시로 저장하고,
-     성공 시 `success` → `resetStatus()` 로 다시 `editing` 으로 전환합니다.
-  3. `clearPassword(String)` 는 현재 비밀번호를 확인한 뒤 저장소에서 제거합니다.
-  4. `resetStatus()` 는 에러 메시지를 지우고 `editing` 으로 되돌려 폼에서 다시 시도할 수 있게 합니다.
+  1. `init()`은 `idle` 상태로 에러를 비우고 나서 `fetchPasswordHash` 로 해시 존재 여부를 파악한다.
+  2. `setPassword(String)`은 입력을 trim/hash 한 뒤 저장하며, 완료되면
+     `success` → `resetStatus()` 흐름으로 돌아와 다시 `editing` 상태를 유지한다.
+  3. `clearPassword(String)`은 저장된 해시를 삭제하고 `hasExistingPassword` 를 false 로 갱신한다.
+  4. `resetStatus()`는 오류 메시지를 비우고 `editing` 상태로 돌려 폼 재입력을 허용한다.
 
 ### `PasswordLockCubit` (`security/password_lock_cubit.dart`)
 - **상태(PasswordLockState)**
-  - `status` (`PasswordLockStatus`): `initial`, `success`, `failure`.
-    성공은 잠금 해제 완료 시에만 사용합니다.
-  - `isInitialized`, `isLoading`, `isChecking`, `isClearing`: 초기 fetch 여부와
-    동시 진행 중인 작업을 추적하는 플래그입니다.
-  - `input`: 사용자가 잠금 해제 화면에서 입력 중인 값.
-  - `remainingAttempts`: 남은 시도 횟수(기본 5회).
-  - `hasPassword`: 저장된 해시 존재 여부.
-  - `failure`: 검증/저장소 오류.
+  - `status`(`PasswordLockStatus`): `idle`(초기) → `loading`(fetch/검증 중) →
+    `locked` 또는 `unLocked` 로 분기하며, 입력 오류/횟수 초과 시 `failure`.
+  - `remainingAttempts`(`int`): `_kMaxAttempts` 기본값(5)에서 시작하여 오답마다 감소.
+  - `errorMessage`(`String`): 마지막 실패 원인을 한글 메시지로 유지.
+  - `isUnlocked`, `isLocked`, `isLoading`, `isFailure` getter 로 분기 처리.
 - **주요 동작**
-  1. `init()` 은 보안 저장소에서 해시를 불러와 `_cachedHash` 를 채우고,
-     비밀번호가 없으면 `hasPassword` 를 `false` 로 두어 화면이 홈으로
-     리디렉션되도록 합니다.
-  2. `updateInput` 은 폼 컨트롤러와 상태를 동기화합니다.
-  3. `submit()` 은 입력값을 해시 후 `_cachedHash` 와 비교해 성공 시
-     `status: success` 로, 실패 시 시도 횟수를 차감하고 `status: failure` 로
-     전환합니다.
-  4. `clearPassword()` 는 잠금 화면에서 직접 비밀번호를 제거해야 할 때 사용하며,
-     완료 후 `hasPassword` 를 `false` 로 돌려보냅니다.
-  5. `resetStatus` 는 오류 메시지를 초기화하여 다시 입력 받을 때 사용합니다.
+  1. `init()`은 `fetchPasswordHash` 결과를 `_cachedHash` 에 저장하고,
+     해시가 없으면 곧바로 `unLocked` 상태로 전환한다.
+  2. `submit()`은 남은 시도/공백 입력을 먼저 검증한 뒤, 해시 비교에 실패하면
+     `remainingAttempts` 를 줄이고 `failure` 로 되돌려 사용자에게 메시지를 노출한다.
+  3. 성공 시 짧은 지연 후 `unLocked` 상태와 빈 `errorMessage` 를 emit 한다.
+  4. `resetStatus()`는 오류 표시 이후 다시 잠금 상태로 돌아갈 때 사용한다.
 
 ## 설정
 
@@ -55,13 +48,13 @@ Cubit 이 존재합니다. 설정 흐름은 `PasswordSetupCubit`, 잠금 해제 
   - `status` (`_SettingStatus`): `initial`, `loading`, `ready`, `updating`,
     `failure`.
   - `themeMode` (`ThemeMode`): 사용자 설정 또는 시스템에서 결정된 테마 모드.
-  - `failure` (`Failure?`): 마지막 오류 정보, 정상 흐름으로 전환되면 초기화됨.
+  - `errorMessage` (`String?`): 마지막 오류를 BLoC 에서 코드 기반 메시지로 변환해 둔 값.
 - **핵심 동작**
   - `_SettingStatus.loading`: 저장된 설정을 읽는 동안 사용.
   - `_SettingStatus.ready`: 초기 로딩 완료 또는 업데이트 성공 이후의 안정 상태.
   - `_SettingStatus.updating`: 설정을 저장하는 동안 낙관적으로 전환.
   - `_SettingStatus.failure`: 저장/로드 실패 시 진입하며, 재시도나
-    `clearFailure` 호출 시 해제.
+    `clearFailure` 호출 시 `errorMessage` 를 비워 원상태로 복원.
   - `isInitial`, `isLoading`, `isDarkMode` 와 같은 getter 로 UI 분기를 단순화.
 
 ## 일기
@@ -73,14 +66,13 @@ Cubit 이 존재합니다. 설정 흐름은 `PasswordSetupCubit`, 잠금 해제 
     `success`.
   - `title` (`String`), `content` (`String`): 작성 중인 내용.
   - `medias` (`List<File>`): 최대 3개의 첨부 파일을 담는 불변 리스트.
-  - `failure` (`Failure?`): 생성 실패 시 채워지는 오류 정보.
+  - `errorMessage` (`String?`): usecase 에서 전달된 `Failure` 를 Cubit 이 메시지로 변환한 결과.
 - **핵심 동작**
   - `_Status.editing`: 사용자가 입력을 시작하면 기본으로 진입하며
     `handleChange` 로 실시간 수정.
   - `_Status.submitting`: 중복 제출을 막기 위해 저장 요청 동안 유지.
   - `_Status.success`: 저장 성공 후 잠시 유지하여 완료 애니메이션 등에 활용.
-  - `_Status.failure`: 도메인/데이터 오류를 담아 UI 가 메시지와 재시도 플로우를
-    제공할 수 있도록 함.
+  - `_Status.failure`: 도메인/데이터 오류를 문자열 메시지로 담아 UI 가 재시도 플로우를 제공하도록 함.
 
 ### `SearchDiaryCubit` (`diary/search/search_diary_cubit.dart`)
 - **상태**: `Cubit` 의 상태 타입은 `FetchDiaryParam` 으로, 현재 검색 kind 와 값을 동시에 나타냅니다.
@@ -116,7 +108,7 @@ Cubit 이 존재합니다. 설정 흐름은 `PasswordSetupCubit`, 잠금 해제 
     `initial`, `loading`, `refreshing`, `paginated`.
   - `items` (`List<E>`): 현재 화면에 누적된 엔티티 목록.
   - `nextCursor` (`C?`): 다음 페이지를 요청할 커서, `null` 이면 더 없음.
-  - `failure` (`Failure?`): 마지막 페치 오류.
+  - `errorMessage` (`String?`): 마지막 페치 오류를 코드 기반 메시지로 변환해 저장.
 - **핵심 동작**
   - `loading` 과 `refreshing` 으로 최초 로딩과 당겨서 새로고침을 구분.
   - `paginated` 는 추가 페이지 로딩 중임을 의미하며 기존 목록은 유지.

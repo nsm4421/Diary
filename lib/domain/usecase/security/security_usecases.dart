@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/failure/failure.dart';
-import 'package:diary/core/error/failure/falure_handler.dart';
+import 'package:diary/core/value_objects/error/failure.dart';
+import 'package:diary/core/utils/falure_handler.dart';
 import 'package:diary/core/extension/logger_extension.dart';
 import 'package:diary/core/utils/app_logger.dart';
 import 'package:diary/domain/repository/password_repository.dart';

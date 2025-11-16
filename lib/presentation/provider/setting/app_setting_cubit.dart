@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/constant/error_code.dart';
-import 'package:diary/core/error/failure/failure.dart';
-import 'package:diary/core/value_objects/status.dart';
+import 'package:diary/core/constant/error_code.dart';
+import 'package:diary/core/value_objects/error/failure.dart';
+import 'package:diary/core/constant/status.dart';
 import 'package:diary/domain/usecase/setting/setting_usecases.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';

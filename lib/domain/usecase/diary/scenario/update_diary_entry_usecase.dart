@@ -28,9 +28,9 @@ class _UpdateDiaryEntryUseCase with FailureHandlerMixin {
       final failure = Failure.validation('일기 내용을 입력해주세요.');
       logger?.useCaseFail(_scope, failure, hint: '입력값 검증');
       return failure.toLeft();
-    } else if (trimmedContent.length > kDiaryEntryMaxContentLength) {
+    } else if (trimmedContent.length > diaryMaxContentLength) {
       final failure = Failure.validation(
-        '일기 내용은 최대 $kDiaryEntryMaxContentLength자까지 작성할 수 있습니다.',
+        '일기 내용은 최대 $diaryMaxContentLength자까지 작성할 수 있습니다.',
       );
       logger?.useCaseFail(_scope, failure, hint: '입력값 검증');
       return failure.toLeft();

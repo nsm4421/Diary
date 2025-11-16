@@ -1,3 +1,5 @@
+import 'package:diary/core/constant/api_error_code.dart';
+
 import 'api_error.dart';
 
 class ApiException implements Exception {

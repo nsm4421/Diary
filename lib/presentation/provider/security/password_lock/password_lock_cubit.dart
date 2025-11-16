@@ -1,8 +1,8 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
-import 'package:diary/core/error/constant/error_code.dart';
-import 'package:diary/core/error/failure/failure.dart';
+import 'package:diary/core/constant/error_code.dart';
+import 'package:diary/core/value_objects/error/failure.dart';
 import 'package:diary/core/extension/string_extension.dart';
-import 'package:diary/core/value_objects/status.dart';
+import 'package:diary/core/constant/status.dart';
 import 'package:diary/domain/usecase/security/security_usecases.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -1,9 +1,9 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/constant/error_code.dart';
-import 'package:diary/core/error/failure/failure.dart';
+import 'package:diary/core/constant/error_code.dart';
+import 'package:diary/core/value_objects/error/failure.dart';
 import 'package:diary/core/value_objects/pageable.dart';
-import 'package:diary/core/value_objects/status.dart';
+import 'package:diary/core/constant/status.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 

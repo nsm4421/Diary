@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/api/api_error.dart';
+import 'package:diary/core/value_objects/error/api_error.dart';
 
 abstract interface class SettingsRepository {
   /// 다크 모드 사용 여부를 불러옵니다.

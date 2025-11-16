@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/api/api_error.dart';
-import 'package:diary/core/error/constant/error_code.dart';
-import 'package:diary/core/value_objects/constraint.dart';
+import 'package:diary/core/constant/api_error_code.dart';
+import 'package:diary/core/value_objects/error/api_error.dart';
+import 'package:diary/core/constant/error_code.dart';
+import 'package:diary/core/constant/constraint.dart';
 import 'package:diary/core/value_objects/diary.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
@@ -43,7 +44,7 @@ void main() {
     });
 
     test('returns validation failure when content exceeds limit', () async {
-      final longContent = 'a' * (kDiaryEntryMaxContentLength + 1);
+      final longContent = 'a' * (diaryMaxContentLength + 1);
 
       final result = await useCases.create(content: longContent);
 
@@ -52,13 +53,13 @@ void main() {
         expect(failure.code, ErrorCode.validation);
         expect(
           failure.message,
-          '일기 내용은 최대 $kDiaryEntryMaxContentLength자까지 작성할 수 있습니다.',
+          '일기 내용은 최대 $diaryMaxContentLength자까지 작성할 수 있습니다.',
         );
       }, (_) => fail('Expected Left'));
     });
 
     test('returns validation failure when title exceeds limit', () async {
-      final longTitle = 'a' * (kDiaryEntryMaxTitleLength + 1);
+      final longTitle = 'a' * (diaryEntryMaxTitleLength + 1);
       final result = await useCases.create(
         title: longTitle,
         content: 'content',
@@ -69,7 +70,7 @@ void main() {
         expect(failure.code, ErrorCode.validation);
         expect(
           failure.message,
-          '제목은 최대 $kDiaryEntryMaxTitleLength자까지 입력할 수 있습니다.',
+          '제목은 최대 $diaryEntryMaxTitleLength자까지 입력할 수 있습니다.',
         );
       }, (_) => fail('Expected Left'));
     });
@@ -230,7 +231,7 @@ void main() {
     test('returns validation failure when content exceeds limit', () async {
       final result = await useCases.update(
         id: 'id',
-        content: 'a' * (kDiaryEntryMaxContentLength + 1),
+        content: 'a' * (diaryMaxContentLength + 1),
       );
 
       expect(result.isLeft(), isTrue);
@@ -238,7 +239,7 @@ void main() {
         expect(failure.code, ErrorCode.validation);
         expect(
           failure.message,
-          '일기 내용은 최대 $kDiaryEntryMaxContentLength자까지 작성할 수 있습니다.',
+          '일기 내용은 최대 $diaryMaxContentLength자까지 작성할 수 있습니다.',
         );
       }, (_) => fail('Expected Left'));
     });

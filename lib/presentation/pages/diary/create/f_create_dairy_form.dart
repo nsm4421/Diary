@@ -36,8 +36,8 @@ class _FormState extends State<_Form> {
     if (value == null || value.trim().isEmpty) {
       return null;
     }
-    if (value.trim().length > kDiaryEntryMaxTitleLength) {
-      return '제목은 최대 $kDiaryEntryMaxTitleLength자까지 입력할 수 있어요.';
+    if (value.trim().length > diaryEntryMaxTitleLength) {
+      return '제목은 최대 $diaryEntryMaxTitleLength자까지 입력할 수 있어요.';
     }
     return null;
   }
@@ -47,8 +47,8 @@ class _FormState extends State<_Form> {
     if (text.isEmpty) {
       return '일기 내용을 입력해주세요.';
     }
-    if (text.length > kDiaryEntryMaxContentLength) {
-      return '일기 내용은 최대 $kDiaryEntryMaxContentLength자까지 작성할 수 있어요.';
+    if (text.length > diaryMaxContentLength) {
+      return '일기 내용은 최대 $diaryMaxContentLength자까지 작성할 수 있어요.';
     }
     return null;
   }
@@ -137,7 +137,7 @@ class _FormState extends State<_Form> {
                       color: context.colorScheme.onSurface,
                     ),
                     textInputAction: TextInputAction.next,
-                    maxLength: kDiaryEntryMaxTitleLength,
+                    maxLength: diaryEntryMaxTitleLength,
                     validator: _validateTitle,
                   ),
                   const SizedBox(height: 20),
@@ -187,7 +187,7 @@ class _FormState extends State<_Form> {
                     ),
                     maxLines: null,
                     minLines: 10,
-                    maxLength: kDiaryEntryMaxContentLength,
+                    maxLength: diaryMaxContentLength,
                     keyboardType: TextInputType.multiline,
                     validator: _validateContent,
                   ),

@@ -1,6 +1,6 @@
-import 'package:diary/core/error/constant/error_code.dart';
-import 'package:diary/core/error/failure/failure.dart';
-import 'package:diary/core/value_objects/status.dart';
+import 'package:diary/core/constant/error_code.dart';
+import 'package:diary/core/value_objects/error/failure.dart';
+import 'package:diary/core/constant/status.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';
 import 'package:equatable/equatable.dart';

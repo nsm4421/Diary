@@ -1,6 +1,6 @@
 import 'package:logger/logger.dart';
 
-import '../error/failure/failure.dart';
+import '../value_objects/error/failure.dart';
 
 extension UseCaseLoggerExtension on Logger {
   void useCaseTrace(String scope, String message) {

@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/failure/failure.dart';
+import 'package:diary/core/value_objects/error/failure.dart';
 import 'package:diary/core/value_objects/diary.dart';
 import 'package:diary/core/value_objects/pageable.dart';
 import 'package:diary/domain/entity/diary_entity.dart';

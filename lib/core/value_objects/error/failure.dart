@@ -1,8 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/constant/error_code_extension.dart';
+import 'package:diary/core/constant/error_code.dart';
+import 'package:diary/core/extension/error_code_extension.dart';
 import 'package:equatable/equatable.dart';
-
-import '../constant/error_code.dart';
 
 class Failure extends Equatable {
   const Failure({

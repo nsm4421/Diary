@@ -1,8 +1,9 @@
 import 'package:dartz/dartz.dart';
+import 'package:diary/core/value_objects/error/api_error.dart';
+import 'package:diary/core/extension/api_error_code_extension.dart';
 import 'package:injectable/injectable.dart';
 
-import '../api/api_error.dart';
-import 'failure.dart';
+import '../value_objects/error/failure.dart';
 
 @lazySingleton
 mixin class FailureHandlerMixin {
@@ -14,9 +15,6 @@ mixin class FailureHandlerMixin {
   }
 
   Failure failureFromApiError(ApiError error) {
-    return Failure.fromCode(
-      error.code.toFailureCode(),
-      details: error,
-    );
+    return Failure.fromCode(error.code.toFailureCode(), details: error);
   }
 }

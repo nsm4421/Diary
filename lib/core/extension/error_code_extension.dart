@@ -1,4 +1,4 @@
-import 'package:diary/core/error/constant/error_code.dart';
+import 'package:diary/core/constant/error_code.dart';
 
 extension ErrorCodeExtension on ErrorCode {
   String get defaultDescription {
