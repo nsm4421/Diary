@@ -37,7 +37,7 @@
 ### `test/data/repository/diary_repository_impl_test.dart`
 - `create`
   - `returns entity and persists row` 새 일기 생성이 성공하고 DB에 반영되는지 검증합니다.
-  - `returns Failure when datasource throws AppException` 데이터소스 예외를 `Failure`로 노출하는지 확인합니다.
+  - `returns ApiError when datasource throws ApiException` 데이터소스 예외를 `ApiError`로 노출하는지 확인합니다.
 - `read operations`
   - `findById returns Right entry when found` 단일 조회가 성공적으로 `Right(entry)`를 반환하는지 검증합니다.
   - `getDiaryDetail returns detail with medias` 상세 조회가 첨부 메타데이터·절대 경로·이미지 크기를 포함하는지 확인합니다.
@@ -53,7 +53,7 @@
   - `create persists medias returned from uploadMediaFiles` 업로드 결과가 일기 생성 시 함께 저장되는지 확인합니다.
 - `watchAll`
   - `emits Right data when datasource stream succeeds` 스트림이 성공 데이터를 방출하는지 검증합니다.
-  - `emits Left when datasource stream throws` 스트림 오류가 `Failure`로 전달되는지 확인합니다.
+  - `emits Left when datasource stream throws` 스트림 오류가 `ApiError`로 전달되는지 확인합니다.
 
 ## Domain Layer
 

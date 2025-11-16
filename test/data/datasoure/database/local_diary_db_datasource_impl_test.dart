@@ -5,7 +5,7 @@ import 'package:diary/data/datasoure/database/local_diary_db_datasource.dart';
 import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../helpers/mock_logger.dart';
+import '../../../mock_logger.dart';
 
 class _DiarySeed {
   final String id;

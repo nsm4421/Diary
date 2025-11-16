@@ -1,15 +1,23 @@
+import 'package:dartz/dartz.dart';
+import 'package:diary/core/error/api/api_error.dart';
 import 'package:diary/domain/repository/password_repository.dart';
 import 'package:diary/domain/usecase/security/security_usecases.dart';
 import 'package:diary/presentation/provider/security/password_setup/password_setup_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../../../mock_logger.dart';
+
 void main() {
   late FakePasswordRepository repository;
+  late SecurityUseCases securityUseCases;
+  late MockLogger logger;
   late PasswordSetupCubit cubit;
 
   setUp(() {
     repository = FakePasswordRepository();
-    cubit = PasswordSetupCubit(SecurityUseCases(repository));
+    logger = MockLogger();
+    securityUseCases = SecurityUseCases(repository)..setLogger(logger);
+    cubit = PasswordSetupCubit(securityUseCases);
   });
 
   tearDown(() async {
@@ -50,7 +58,10 @@ void main() {
     });
 
     test('surfaces failure when repository throws', () async {
-      repository.saveError = Exception('boom');
+      repository.saveError = const ApiError(
+        code: ApiErrorCode.server,
+        message: 'boom',
+      );
       await cubit.init();
 
       await cubit.setPassword('1234');
@@ -73,7 +84,10 @@ void main() {
 
     test('emits failure when repository throws', () async {
       repository.storedHash = 'secure';
-      repository.clearError = Exception('fail');
+      repository.clearError = const ApiError(
+        code: ApiErrorCode.server,
+        message: 'fail',
+      );
       await cubit.init();
 
       await cubit.clearPassword('1234');
@@ -86,25 +100,27 @@ void main() {
 
 class FakePasswordRepository implements PasswordRepository {
   String? storedHash;
-  Object? saveError;
-  Object? fetchError;
-  Object? clearError;
+  ApiError? saveError;
+  ApiError? fetchError;
+  ApiError? clearError;
 
   @override
-  Future<void> savePasswordHash(String hash) async {
-    if (saveError != null) throw saveError!;
+  Future<Either<ApiError, Unit>> savePasswordHash(String hash) async {
+    if (saveError != null) return Left(saveError!);
     storedHash = hash;
+    return const Right(unit);
   }
 
   @override
-  Future<String?> fetchPasswordHash() async {
-    if (fetchError != null) throw fetchError!;
-    return storedHash;
+  Future<Either<ApiError, String?>> fetchPasswordHash() async {
+    if (fetchError != null) return Left(fetchError!);
+    return Right(storedHash);
   }
 
   @override
-  Future<void> clearPassword() async {
-    if (clearError != null) throw clearError!;
+  Future<Either<ApiError, Unit>> clearPassword() async {
+    if (clearError != null) return Left(clearError!);
     storedHash = null;
+    return const Right(unit);
   }
 }

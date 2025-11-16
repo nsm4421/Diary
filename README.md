@@ -1,6 +1,37 @@
 # Diary App
 
-Offline-first personal journal built with Flutter, Drift, and a layered architecture. Entries live in a local SQLite database, attachments are stored on disk, and the whole stack is covered by unit tests across data, domain, and presentation layers.
+Flutter 로 구현한 오프라인 일기장 애플리케이션입니다. 네트워크 연결 유무와 관계없이 일기를 작성하고, 첨부 미디어를 로컬에 저장하며, 데이터/도메인/UI 레이어를 명확히 분리해 테스트 커버리지를 유지하는 것이 목표입니다.
+
+## 프로젝트 목적
+- **완전한 오프라인 경험**: Drift 기반 SQLite와 파일 시스템을 활용해 네트워크가 없는 환경에서도 일기와 미디어를 읽고 쓸 수 있습니다.
+- **안전한 개인 공간**: Secure Storage 로 비밀번호 해시를 저장하고, `PasswordLockCubit`/`PasswordSetupCubit` 으로 잠금 플로우를 제공해 사생활을 보호합니다.
+- **예측 가능한 유지보수**: data → domain → presentation 계층을 분리하고, 각 레이어별 테스트를 추가해 회귀를 최소화합니다.
+- **검색과 페이징 최적화**: 제목/본문/날짜 범위 검색과 커서 기반 페이지네이션으로 원하는 기록을 빠르게 찾을 수 있습니다.
+
+## 주요 기술 스택
+- **플랫폼**: Flutter 3 (Dart 3.9), iOS/Android 동시 타깃.
+- **데이터베이스**: Drift + `sqlite3_flutter_libs` 로 로컬 SQL 테이블/DAO 관리.
+- **스토리지**: 
+  - SharedPreferences (환경 설정 저장),
+  - Flutter Secure Storage (비밀번호 해시 저장),
+  - `LocalFileSystemDataSource` (미디어 파일 저장).
+- **상태 관리 & DI**: `flutter_bloc`/`bloc_concurrency` + injectable/get_it 조합, AutoRoute 네비게이션.
+- **유틸리티**: `image` 패키지(메타데이터 추출), `dartz` (Either), `equatable`, `copy_with_extension`, PrettyPrinter logger.
+- **테스트**: flutter_test, mocktail, Drift in-memory DB, 커스텀 `MockLogger`.
+
+## 프로젝트 구조
+```
+lib/
+  core/        # 에러/로깅/확장 등 공통 모듈
+  data/        # 데이터소스 + Repository 구현
+  domain/      # 엔티티, 값 객체, UseCase, Repository 인터페이스
+  presentation/# UI, Cubit/BLoC, Router
+test/          # 레이어별 단위 테스트 + 헬퍼
+tool/          # 시드 스크립트 등 부가 도구
+```
+- **data**: Drift DAO, 파일/보안 스토리지, SharedPreferences 등을 추상화한 datasource 와 repository 가 위치합니다.
+- **domain**: UI와 데이터 사이에서 계약을 정의하고, validation 및 Failure 변환을 담당하는 유즈케이스 계층입니다.
+- **presentation**: Cubit/BLoC 을 통해 상태를 관리하고, AutoRoute 기반 화면을 구성합니다. `provider/README.md` 에서 상태 객체를 추가 설명합니다.
 
 ## Highlights
 - Offline storage via Drift + local file system, so entries and media are available without a network connection.
@@ -129,6 +160,10 @@ flutter test test/presentation/provider/security/password_lock/password_lock_cub
 
 Refer to `test/README.md` for the full matrix and behavioural notes for each spec file.
 
+### Test Utilities
+
+- `test/mock_logger.dart` centralizes a `MockLogger` that runs with `Level.nothing` so failure-path specs can swap it in and keep `Logger`/`PrettyPrinter` output out of the console.
+
 ## Seed Local Data
 
 Populate the local database with demo entries and attachments:
@@ -153,8 +188,8 @@ Edit `_manualEntries` in `tool/seed_diary_entries.dart` to craft deterministic f
 - dartz for `Either`, equatable/copy_with_extension for value objects.
 
 ## Error Handling
-- `ErrorHandlerMixIn` wraps repository calls with a `guard` helper to convert thrown `AppException`s into typed `Failure`s.
-- Use cases enrich these failures with user-friendly messages before returning to the UI.
+- `ErrorHandlerMixIn` wraps repository calls with a `guard` helper to convert thrown `ApiException`s into typed `ApiError`s.
+- Use cases translate those API errors into user-friendly `Failure`s before returning to the UI.
 
 ## License
 

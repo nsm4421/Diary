@@ -2,15 +2,14 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/error_code.dart';
-import 'package:diary/core/error/failure.dart';
+import 'package:diary/core/error/api/api_error.dart';
+import 'package:diary/core/error/constant/error_code.dart';
 import 'package:diary/core/value_objects/constraint.dart';
 import 'package:diary/core/value_objects/diary.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/domain/repository/diary_repository.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 
@@ -114,7 +113,10 @@ void main() {
             List<CreateDiaryMediaRequest> medias = const [],
           }) async {
             return Left(
-              Failure(code: ErrorCode.network, message: 'raw message'),
+              const ApiError(
+                code: ApiErrorCode.network,
+                message: 'raw message',
+              ),
             );
           };
 
@@ -180,7 +182,12 @@ void main() {
 
       repository.uploadMediaFilesHandler =
           ({required String diaryId, required List<File> files}) async {
-            return Left(Failure.validation('upload failed'));
+            return Left(
+              const ApiError(
+                code: ApiErrorCode.storage,
+                message: 'upload failed',
+              ),
+            );
           };
 
       repository.createHandler =
@@ -203,7 +210,8 @@ void main() {
       expect(result.isLeft(), isTrue);
       expect(createCalled, isFalse);
       result.fold((failure) {
-        expect(failure.message, 'upload failed');
+        expect(failure.code, ErrorCode.storage);
+        expect(failure.message, '파일을 처리하는 중 문제가 발생했습니다.');
       }, (_) => fail('Expected Left'));
     });
   });
@@ -245,7 +253,10 @@ void main() {
           }) async {
             expect(diaryId, 'id');
             return Left(
-              Failure(code: ErrorCode.server, message: 'server message'),
+              const ApiError(
+                code: ApiErrorCode.server,
+                message: 'server message',
+              ),
             );
           };
 
@@ -273,7 +284,12 @@ void main() {
     test('maps repository failure message', () async {
       repository.getDiaryDetailHandler = (id) async {
         expect(id, 'id');
-        return Left(Failure(code: ErrorCode.notFound, message: 'not found'));
+        return Left(
+          const ApiError(
+            code: ApiErrorCode.notFound,
+            message: 'not found',
+          ),
+        );
       };
 
       final result = await useCases.getDetail(' id ');
@@ -306,7 +322,12 @@ void main() {
           ({int limit = 20, required DateTime cursor}) async {
             expect(limit, 10);
             expect(cursor, DateTime(2024, 1, 4));
-            return Left(Failure(code: ErrorCode.cache, message: 'cache issue'));
+            return Left(
+              const ApiError(
+                code: ApiErrorCode.cache,
+                message: 'cache issue',
+              ),
+            );
           };
 
       final result = await useCases.fetch(
@@ -356,7 +377,12 @@ void main() {
           }) async {
             expect(keyword, 'keyword');
             expect(cursor, DateTime(2024, 2, 1));
-            return Left(Failure(code: ErrorCode.database, message: 'db issue'));
+            return Left(
+              const ApiError(
+                code: ApiErrorCode.database,
+                message: 'db issue',
+              ),
+            );
           };
 
       final result = await useCases.fetch(
@@ -383,7 +409,12 @@ void main() {
             expect(start, DateTime(2024, 3, 1));
             expect(end, DateTime(2024, 3, 31));
             expect(cursor, DateTime(2024, 4, 1));
-            return Left(Failure(code: ErrorCode.cache, message: 'range issue'));
+            return Left(
+              const ApiError(
+                code: ApiErrorCode.cache,
+                message: 'range issue',
+              ),
+            );
           };
 
       final result = await useCases.fetch(
@@ -417,7 +448,12 @@ void main() {
     test('maps repository failure message', () async {
       repository.deleteHandler = (id) async {
         expect(id, 'id');
-        return Left(Failure(code: ErrorCode.storage, message: 'storage issue'));
+        return Left(
+          const ApiError(
+            code: ApiErrorCode.storage,
+            message: 'storage issue',
+          ),
+        );
       };
 
       final result = await useCases.delete(' id ');
@@ -425,7 +461,7 @@ void main() {
       expect(result.isLeft(), isTrue);
       result.fold((failure) {
         expect(failure.code, ErrorCode.storage);
-        expect(failure.message, '저장된 데이터를 불러오는 중 문제가 발생했습니다.');
+        expect(failure.message, '파일을 처리하는 중 문제가 발생했습니다.');
       }, (_) => fail('Expected Left'));
     });
   });
@@ -434,7 +470,12 @@ void main() {
     test('maps failure emitted by repository', () async {
       repository.watchAllHandler = () {
         return Stream.value(
-          Left(Failure(code: ErrorCode.timeout, message: 'timeout')),
+          Left(
+            const ApiError(
+              code: ApiErrorCode.timeout,
+              message: 'timeout',
+            ),
+          ),
         );
       };
 
@@ -469,7 +510,7 @@ DiaryEntity _fakeEntry({
 }
 
 class StubDiaryRepository implements DiaryRepository {
-  Future<Either<Failure, DiaryEntity>> Function({
+  Future<Either<ApiError, DiaryEntity>> Function({
     String? clientId,
     String? title,
     required String content,
@@ -477,40 +518,40 @@ class StubDiaryRepository implements DiaryRepository {
   })?
   createHandler;
 
-  Future<Either<Failure, DiaryEntity?>> Function(String id)? findByIdHandler;
+  Future<Either<ApiError, DiaryEntity?>> Function(String id)? findByIdHandler;
 
-  Future<Either<Failure, DiaryDetailEntity?>> Function(String id)?
+  Future<Either<ApiError, DiaryDetailEntity?>> Function(String id)?
   getDiaryDetailHandler;
 
-  Future<Either<Failure, List<DiaryEntity>>> Function({
+  Future<Either<ApiError, List<DiaryEntity>>> Function({
     int limit,
     required DateTime cursor,
   })?
   fetchEntriesHandler;
 
-  Future<Either<Failure, List<DiaryEntity>>> Function({
+  Future<Either<ApiError, List<DiaryEntity>>> Function({
     required String keyword,
     int limit,
     required DateTime cursor,
   })?
   searchByTitleHandler;
-  Future<Either<Failure, List<DiaryEntity>>> Function({
+  Future<Either<ApiError, List<DiaryEntity>>> Function({
     required DateTime start,
     required DateTime end,
     int limit,
     required DateTime cursor,
   })?
   searchByDateRangeHandler;
-  Future<Either<Failure, List<DiaryEntity>>> Function({
+  Future<Either<ApiError, List<DiaryEntity>>> Function({
     required String keyword,
     int limit,
     required DateTime cursor,
   })?
   searchByContentHandler;
 
-  Stream<Either<Failure, List<DiaryEntity>>> Function()? watchAllHandler;
+  Stream<Either<ApiError, List<DiaryEntity>>> Function()? watchAllHandler;
 
-  Future<Either<Failure, DiaryEntity>> Function({
+  Future<Either<ApiError, DiaryEntity>> Function({
     required String diaryId,
     String? title,
     required String content,
@@ -518,7 +559,7 @@ class StubDiaryRepository implements DiaryRepository {
   })?
   updateHandler;
 
-  Future<Either<Failure, List<CreateDiaryMediaRequest>>> Function({
+  Future<Either<ApiError, List<CreateDiaryMediaRequest>>> Function({
     required String diaryId,
     required List<File> files,
   })
@@ -527,10 +568,10 @@ class StubDiaryRepository implements DiaryRepository {
         return const Right([]);
       };
 
-  Future<Either<Failure, void>> Function(String diaryId)? deleteHandler;
+  Future<Either<ApiError, void>> Function(String diaryId)? deleteHandler;
 
   @override
-  Future<Either<Failure, DiaryEntity>> create({
+  Future<Either<ApiError, DiaryEntity>> create({
     String? clientId,
     String? title,
     required String content,
@@ -549,7 +590,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, DiaryEntity?>> findById(String diaryId) {
+  Future<Either<ApiError, DiaryEntity?>> findById(String diaryId) {
     final handler = findByIdHandler;
     if (handler == null) {
       throw StateError('findByIdHandler not set');
@@ -558,7 +599,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, DiaryDetailEntity?>> getDiaryDetail(String diaryId) {
+  Future<Either<ApiError, DiaryDetailEntity?>> getDiaryDetail(String diaryId) {
     final handler = getDiaryDetailHandler;
     if (handler == null) {
       throw StateError('getDiaryDetailHandler not set');
@@ -567,7 +608,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> fetchDiaries({
+  Future<Either<ApiError, List<DiaryEntity>>> fetchDiaries({
     int limit = 20,
     required DateTime cursor,
   }) {
@@ -579,7 +620,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> searchByTitle({
+  Future<Either<ApiError, List<DiaryEntity>>> searchByTitle({
     required String keyword,
     int limit = 20,
     required DateTime cursor,
@@ -592,7 +633,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> searchByContent({
+  Future<Either<ApiError, List<DiaryEntity>>> searchByContent({
     required String keyword,
     int limit = 20,
     required DateTime cursor,
@@ -605,7 +646,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> searchByDateRange({
+  Future<Either<ApiError, List<DiaryEntity>>> searchByDateRange({
     required DateTime start,
     required DateTime end,
     int limit = 20,
@@ -619,7 +660,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Stream<Either<Failure, List<DiaryEntity>>> watchAll() {
+  Stream<Either<ApiError, List<DiaryEntity>>> watchAll() {
     final handler = watchAllHandler;
     if (handler == null) {
       throw StateError('watchAllHandler not set');
@@ -628,7 +669,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, DiaryEntity>> update({
+  Future<Either<ApiError, DiaryEntity>> update({
     required String diaryId,
     String? title,
     required String content,
@@ -647,7 +688,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, void>> delete(String diaryId) {
+  Future<Either<ApiError, void>> delete(String diaryId) {
     final handler = deleteHandler;
     if (handler == null) {
       throw StateError('deleteHandler not set');
@@ -656,7 +697,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, List<CreateDiaryMediaRequest>>> uploadMediaFiles({
+  Future<Either<ApiError, List<CreateDiaryMediaRequest>>> uploadMediaFiles({
     required String diaryId,
     required List<File> files,
   }) {

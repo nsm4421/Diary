@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/failure.dart';
+import 'package:diary/core/error/api/api_error.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/domain/repository/diary_repository.dart';
@@ -117,7 +117,12 @@ void main() {
 
     repository.uploadMediaFilesHandler =
         ({required String diaryId, required List<File> files}) async {
-          return Left(Failure.validation('upload failed'));
+          return Left(
+            const ApiError(
+              code: ApiErrorCode.storage,
+              message: 'upload failed',
+            ),
+          );
         };
 
     repository.createHandler =
@@ -145,12 +150,13 @@ void main() {
     await cubit.handleSubmit();
 
     expect(cubit.state.isError, isTrue);
+    expect(cubit.state.errorMessage, isNotEmpty);
     expect(createCalled, isFalse);
   });
 }
 
 class StubDiaryRepository implements DiaryRepository {
-  Future<Either<Failure, DiaryEntity>> Function({
+  Future<Either<ApiError, DiaryEntity>> Function({
     String? clientId,
     String? title,
     required String content,
@@ -158,25 +164,25 @@ class StubDiaryRepository implements DiaryRepository {
   })?
   createHandler;
 
-  Future<Either<Failure, DiaryEntity?>> Function(String diaryId)?
+  Future<Either<ApiError, DiaryEntity?>> Function(String diaryId)?
   findByIdHandler;
 
-  Future<Either<Failure, List<DiaryEntity>>> Function({
+  Future<Either<ApiError, List<DiaryEntity>>> Function({
     int limit,
     required DateTime cursor,
   })?
   fetchEntriesHandler;
 
-  Future<Either<Failure, List<DiaryEntity>>> Function({
+  Future<Either<ApiError, List<DiaryEntity>>> Function({
     required String keyword,
     int limit,
     required DateTime cursor,
   })?
   searchByTitleHandler;
 
-  Stream<Either<Failure, List<DiaryEntity>>> Function()? watchAllHandler;
+  Stream<Either<ApiError, List<DiaryEntity>>> Function()? watchAllHandler;
 
-  Future<Either<Failure, DiaryEntity>> Function({
+  Future<Either<ApiError, DiaryEntity>> Function({
     required String diaryId,
     String? title,
     required String content,
@@ -184,7 +190,7 @@ class StubDiaryRepository implements DiaryRepository {
   })?
   updateHandler;
 
-  Future<Either<Failure, List<CreateDiaryMediaRequest>>> Function({
+  Future<Either<ApiError, List<CreateDiaryMediaRequest>>> Function({
     required String diaryId,
     required List<File> files,
   })
@@ -193,10 +199,10 @@ class StubDiaryRepository implements DiaryRepository {
         return const Right([]);
       };
 
-  Future<Either<Failure, void>> Function(String diaryId)? deleteHandler;
+  Future<Either<ApiError, void>> Function(String diaryId)? deleteHandler;
 
   @override
-  Future<Either<Failure, DiaryEntity>> create({
+  Future<Either<ApiError, DiaryEntity>> create({
     String? clientId,
     String? title,
     required String content,
@@ -215,35 +221,35 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, DiaryEntity?>> findById(String diaryId) =>
+  Future<Either<ApiError, DiaryEntity?>> findById(String diaryId) =>
       throw UnimplementedError();
 
   @override
-  Future<Either<Failure, DiaryDetailEntity?>> getDiaryDetail(String diaryId) =>
+  Future<Either<ApiError, DiaryDetailEntity?>> getDiaryDetail(String diaryId) =>
       throw UnimplementedError();
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> fetchDiaries({
+  Future<Either<ApiError, List<DiaryEntity>>> fetchDiaries({
     int limit = 20,
     required DateTime cursor,
   }) => throw UnimplementedError();
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> searchByTitle({
+  Future<Either<ApiError, List<DiaryEntity>>> searchByTitle({
     required String keyword,
     int limit = 20,
     required DateTime cursor,
   }) => throw UnimplementedError();
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> searchByContent({
+  Future<Either<ApiError, List<DiaryEntity>>> searchByContent({
     required String keyword,
     int limit = 20,
     required DateTime cursor,
   }) => throw UnimplementedError();
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> searchByDateRange({
+  Future<Either<ApiError, List<DiaryEntity>>> searchByDateRange({
     required DateTime start,
     required DateTime end,
     int limit = 20,
@@ -251,10 +257,11 @@ class StubDiaryRepository implements DiaryRepository {
   }) => throw UnimplementedError();
 
   @override
-  Stream<Either<Failure, List<DiaryEntity>>> watchAll() => const Stream.empty();
+  Stream<Either<ApiError, List<DiaryEntity>>> watchAll() =>
+      const Stream.empty();
 
   @override
-  Future<Either<Failure, DiaryEntity>> update({
+  Future<Either<ApiError, DiaryEntity>> update({
     required String diaryId,
     String? title,
     required String content,
@@ -273,11 +280,11 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, void>> delete(String diaryId) =>
+  Future<Either<ApiError, void>> delete(String diaryId) =>
       throw UnimplementedError();
 
   @override
-  Future<Either<Failure, List<CreateDiaryMediaRequest>>> uploadMediaFiles({
+  Future<Either<ApiError, List<CreateDiaryMediaRequest>>> uploadMediaFiles({
     required String diaryId,
     required List<File> files,
   }) {

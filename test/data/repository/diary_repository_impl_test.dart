@@ -2,9 +2,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/app_exception.dart';
-import 'package:diary/core/error/error_code.dart';
-import 'package:diary/core/error/failure.dart';
+import 'package:diary/core/error/api/api_error.dart';
+import 'package:diary/core/error/api/api_exception.dart';
 import 'package:diary/core/extension/datetime_extension.dart';
 import 'package:diary/data/datasoure/database/dao/local_database.dart';
 import 'package:diary/data/datasoure/database/dao/local_database_dao.dart';
@@ -17,7 +16,7 @@ import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:image/image.dart' as img;
-import '../../helpers/mock_logger.dart';
+import '../../mock_logger.dart';
 
 void main() {
   late LocalDatabase db;
@@ -41,7 +40,8 @@ void main() {
       logger: logger,
     );
     diaryStorage = LocalDiaryFsStorageImpl(storageDataSource);
-    repository = DiaryRepositoryImpl(diaryDataSource, diaryStorage);
+    repository = DiaryRepositoryImpl(diaryDataSource, diaryStorage)
+      ..setLogger(logger);
     inputDir = await Directory.systemTemp.createTemp('diary_repo_input');
   });
 
@@ -109,9 +109,9 @@ void main() {
     return Uint8List.fromList(img.encodePng(image));
   }
 
-  Failure expectLeft<E>(Either<Failure, E> either) {
+  ApiError expectLeft<E>(Either<ApiError, E> either) {
     return either.fold(
-      (failure) => failure,
+      (error) => error,
       (_) => fail('Expected Left but got Right'),
     );
   }
@@ -136,16 +136,16 @@ void main() {
       expect(row.content, 'First body');
     });
 
-    test('returns Failure when datasource throws AppException', () async {
+    test('returns ApiError when datasource throws ApiException', () async {
       final failingRepo = DiaryRepositoryImpl(
-        _FailingCreateDataSource(AppException.cache(message: 'failed')),
+        _FailingCreateDataSource(ApiException.cache(message: 'failed')),
         diaryStorage,
-      );
+      )..setLogger(logger);
 
       final result = await failingRepo.create(content: 'body');
-      final failure = expectLeft(result);
-      expect(failure.code, ErrorCode.cache);
-      expect(failure.message, 'failed');
+      final error = expectLeft(result);
+      expect(error.code, ApiErrorCode.cache);
+      expect(error.message, 'failed');
     });
   });
 
@@ -403,13 +403,13 @@ void main() {
     });
 
     test('emits Left when datasource stream throws', () async {
-      final exception = AppException.cache(message: 'stream failed');
+      final exception = ApiException.cache(message: 'stream failed');
       final repo = DiaryRepositoryImpl(
         _ErrorStreamDiaryDataSource(exception),
         diaryStorage,
-      );
+      )..setLogger(logger);
 
-      final failure = await repo
+      final error = await repo
           .watchAll()
           .firstWhere((either) => either.isLeft())
           .then(
@@ -418,14 +418,14 @@ void main() {
               (_) => throw StateError('unexpected Right'),
             ),
           );
-      expect(failure.code, ErrorCode.cache);
-      expect(failure.message, 'stream failed');
+      expect(error.code, ApiErrorCode.cache);
+      expect(error.message, 'stream failed');
     });
   });
 }
 
 class _FailingCreateDataSource implements LocalDiaryDbDataSource {
-  final AppException exception;
+  final ApiException exception;
 
   _FailingCreateDataSource(this.exception);
 
@@ -502,7 +502,7 @@ class _FailingCreateDataSource implements LocalDiaryDbDataSource {
 }
 
 class _ErrorStreamDiaryDataSource implements LocalDiaryDbDataSource {
-  final AppException exception;
+  final ApiException exception;
 
   _ErrorStreamDiaryDataSource(this.exception);
 

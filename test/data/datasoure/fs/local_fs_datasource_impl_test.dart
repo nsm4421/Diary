@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:image/image.dart' as img;
 
-import '../../../helpers/mock_logger.dart';
+import '../../../mock_logger.dart';
 
 void main() {
   late Directory baseDir;

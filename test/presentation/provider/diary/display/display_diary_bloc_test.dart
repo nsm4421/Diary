@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:diary/core/error/failure.dart';
+import 'package:diary/core/error/api/api_error.dart';
 import 'package:diary/core/extension/datetime_extension.dart';
 import 'package:diary/core/value_objects/status.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
@@ -54,7 +54,7 @@ void main() {
 
     expect(bloc.state.items.map((e) => e.id), ['recent', 'older']);
     expect(bloc.state.status, DisplayStatus.initial);
-    expect(bloc.state.failure, isNull);
+    expect(bloc.state.errorMessage, isNull);
     expect(bloc.state.nextCursor, DateTime(2024, 4, 1, 8).toUtc());
   });
 
@@ -100,14 +100,14 @@ void main() {
 }
 
 class StubDiaryRepository implements DiaryRepository {
-  Future<Either<Failure, List<DiaryEntity>>> Function({
+  Future<Either<ApiError, List<DiaryEntity>>> Function({
     int limit,
     required DateTime cursor,
   })?
   fetchEntriesHandler;
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> fetchDiaries({
+  Future<Either<ApiError, List<DiaryEntity>>> fetchDiaries({
     int limit = 20,
     required DateTime cursor,
   }) {
@@ -119,7 +119,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<Failure, DiaryEntity>> create({
+  Future<Either<ApiError, DiaryEntity>> create({
     String? clientId,
     String? title,
     required String content,
@@ -128,19 +128,19 @@ class StubDiaryRepository implements DiaryRepository {
       throw UnimplementedError();
 
   @override
-  Future<Either<Failure, DiaryEntity?>> findById(String diaryId) =>
+  Future<Either<ApiError, DiaryEntity?>> findById(String diaryId) =>
       throw UnimplementedError();
 
   @override
-  Future<Either<Failure, DiaryDetailEntity?>> getDiaryDetail(String diaryId) =>
+  Future<Either<ApiError, DiaryDetailEntity?>> getDiaryDetail(String diaryId) =>
       throw UnimplementedError();
 
   @override
-  Future<Either<Failure, void>> delete(String diaryId) =>
+  Future<Either<ApiError, void>> delete(String diaryId) =>
       throw UnimplementedError();
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> searchByTitle({
+  Future<Either<ApiError, List<DiaryEntity>>> searchByTitle({
     required String keyword,
     int limit = 20,
     required DateTime cursor,
@@ -148,7 +148,7 @@ class StubDiaryRepository implements DiaryRepository {
       throw UnimplementedError();
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> searchByContent({
+  Future<Either<ApiError, List<DiaryEntity>>> searchByContent({
     required String keyword,
     int limit = 20,
     required DateTime cursor,
@@ -156,7 +156,7 @@ class StubDiaryRepository implements DiaryRepository {
       throw UnimplementedError();
 
   @override
-  Future<Either<Failure, List<DiaryEntity>>> searchByDateRange({
+  Future<Either<ApiError, List<DiaryEntity>>> searchByDateRange({
     required DateTime start,
     required DateTime end,
     int limit = 20,
@@ -165,11 +165,11 @@ class StubDiaryRepository implements DiaryRepository {
       throw UnimplementedError();
 
   @override
-  Stream<Either<Failure, List<DiaryEntity>>> watchAll() =>
+  Stream<Either<ApiError, List<DiaryEntity>>> watchAll() =>
       throw UnimplementedError();
 
   @override
-  Future<Either<Failure, DiaryEntity>> update({
+  Future<Either<ApiError, DiaryEntity>> update({
     required String diaryId,
     String? title,
     required String content,
@@ -178,7 +178,7 @@ class StubDiaryRepository implements DiaryRepository {
       throw UnimplementedError();
 
   @override
-  Future<Either<Failure, List<CreateDiaryMediaRequest>>> uploadMediaFiles({
+  Future<Either<ApiError, List<CreateDiaryMediaRequest>>> uploadMediaFiles({
     required String diaryId,
     required List<File> files,
   }) =>
