@@ -1,13 +1,12 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:diary/presentation/components/app_logo_hero.dart';
 import 'package:diary/presentation/provider/security/password_lock/password_lock_cubit.dart';
 import 'package:diary/presentation/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:diary/core/extension/build_context_extension.dart';
-
-const _kSplashDisplayDuration = Duration(milliseconds: 1600);
 
 @RoutePage()
 class SplashPage extends StatefulWidget {
@@ -19,6 +18,7 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage>
     with SingleTickerProviderStateMixin {
+  static const _duration = Duration(milliseconds: 1600);
   late final AnimationController _controller;
   late final Animation<double> _fadeAnimation;
   Timer? _navigateTimer;
@@ -39,7 +39,7 @@ class _SplashPageState extends State<SplashPage>
     _controller.forward();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _navigateTimer = Timer(_kSplashDisplayDuration, () {
+      _navigateTimer = Timer(_duration, () {
         if (!mounted) return;
         _delayElapsed = true;
         _maybeNavigate(context.read<PasswordLockCubit>().state);
@@ -106,24 +106,12 @@ class _SplashPageState extends State<SplashPage>
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Hero(
-                          tag: 'diary-logo',
-                          child: Container(
-                            padding: const EdgeInsets.all(24),
-                            decoration: BoxDecoration(
-                              color: colorScheme.onPrimary.withAlpha(10),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: colorScheme.onPrimary.withAlpha(20),
-                                width: 1.2,
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.menu_book_rounded,
-                              size: 48,
-                              color: colorScheme.onPrimary,
-                            ),
-                          ),
+                        AppLogoHero(
+                          padding: const EdgeInsets.all(24),
+                          iconSize: 48,
+                          backgroundColor: colorScheme.onPrimary.withAlpha(10),
+                          borderColor: colorScheme.onPrimary.withAlpha(20),
+                          iconColor: colorScheme.onPrimary,
                         ),
                         const SizedBox(height: 28),
                         Text(
@@ -163,7 +151,7 @@ class _SplashPageState extends State<SplashPage>
     if (state.isLocked) {
       context.router.replace(PasswordGateRoute(autoRedirectToHome: true));
     } else {
-      context.router.replace(const DisplayDiaryRoute());
+      context.router.replace(const HomeRoute());
     }
   }
 }

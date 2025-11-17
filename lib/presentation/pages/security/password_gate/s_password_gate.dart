@@ -162,7 +162,7 @@ class __ScreenState extends State<_Screen> {
     if (_completedNavigation) return;
     _completedNavigation = true;
     if (widget.autoRedirectToHome) {
-      context.router.replaceAll([const DisplayDiaryRoute()]);
+      context.router.replaceAll([const HomeRoute()]);
     } else {
       context.router.maybePop(true);
     }

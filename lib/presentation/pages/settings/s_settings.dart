@@ -22,37 +22,13 @@ class __ScreenState extends State<_Screen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        titleSpacing: 0,
-        title: Row(
-          children: [
-            Hero(
-              tag: 'diary-logo',
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: colorScheme.onPrimary.withAlpha(31),
-                  border: Border.all(
-                    color: colorScheme.onPrimary.withAlpha(51),
-                    width: 1,
-                  ),
-                ),
-                child: Icon(
-                  Icons.menu_book_rounded,
-                  color: colorScheme.onPrimary,
-                  size: 22,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              '설정',
-              style: textTheme.titleLarge?.copyWith(
-                color: colorScheme.onPrimary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
+        leading: Icon(Icons.settings, color: colorScheme.onPrimary),
+        title: Text(
+          '설정',
+          style: textTheme.titleLarge?.copyWith(
+            color: colorScheme.onPrimary,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
       body: Stack(

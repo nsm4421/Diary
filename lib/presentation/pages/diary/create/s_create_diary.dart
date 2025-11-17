@@ -23,29 +23,14 @@ class _ScreenState extends State<_Screen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        titleSpacing: 0,
+        leading: IconButton(
+          onPressed: () async {
+            await context.router.maybePop();
+          },
+          icon: Icon(Icons.clear),
+        ),
         title: Row(
           children: [
-            Hero(
-              tag: 'diary-logo',
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: context.colorScheme.onPrimary.withAlpha(31),
-                  border: Border.all(
-                    color: context.colorScheme.onPrimary.withAlpha(51),
-                    width: 1,
-                  ),
-                ),
-                child: Icon(
-                  Icons.menu_book_rounded,
-                  color: context.colorScheme.onPrimary,
-                  size: 22,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
             Text(
               '새 일기 작성',
               style: context.textTheme.titleLarge?.copyWith(
@@ -57,6 +42,7 @@ class _ScreenState extends State<_Screen> {
         ),
         iconTheme: IconThemeData(color: context.colorScheme.onPrimary),
       ),
+
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Stack(

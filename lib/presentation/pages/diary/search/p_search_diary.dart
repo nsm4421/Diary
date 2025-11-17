@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:diary/core/extension/build_context_extension.dart';
 import 'package:diary/core/extension/datetime_extension.dart';
 import 'package:diary/core/value_objects/diary.dart';
+import 'package:diary/presentation/components/app_logo_hero.dart';
 import 'package:diary/presentation/provider/diary/search/search_diary_cubit.dart';
 import 'package:diary/presentation/router/app_router.dart';
 import 'package:flutter/material.dart';

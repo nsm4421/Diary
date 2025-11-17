@@ -1,4 +1,4 @@
-part of 'p_display_diary.dart';
+part of '../p_display_diary.dart';
 
 class _DiaryCard extends StatelessWidget {
   const _DiaryCard({required this.diary, required this.accent});

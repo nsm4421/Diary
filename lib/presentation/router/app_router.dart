@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:diary/core/value_objects/diary.dart';
 import 'package:diary/presentation/pages/diary/create/p_create_diary.dart';
 import 'package:diary/presentation/pages/diary/detail/p_diary_detail.dart';
+import 'package:diary/presentation/pages/home/p_home.dart';
 import 'package:diary/presentation/pages/diary/display/p_display_diary.dart';
 import 'package:diary/presentation/pages/diary/edit/p_edit_diary.dart';
 import 'package:diary/presentation/pages/diary/search/result/p_searched_result.dart';
@@ -24,10 +25,16 @@ class AppRouter extends RootStackRouter {
   late final List<AutoRoute> routes = [
     AutoRoute(page: SplashRoute.page, initial: true),
     AutoRoute(page: PasswordGateRoute.page),
-    AutoRoute(page: DisplayDiaryRoute.page),
+    AutoRoute(
+      page: HomeRoute.page,
+      children: [
+        AutoRoute(page: DisplayDiaryRoute.page, initial: true),
+        AutoRoute(page: SettingsRoute.page),
+      ],
+    ),
     CustomRoute(
       page: CreateDiaryRoute.page,
-      transitionsBuilder: TransitionsBuilders.slideLeftWithFade,
+      transitionsBuilder: TransitionsBuilders.slideBottom,
       duration: _duration,
       reverseDuration: _duration,
     ),
@@ -43,14 +50,18 @@ class AppRouter extends RootStackRouter {
       duration: _duration,
       reverseDuration: _duration,
     ),
-    AutoRoute(page: SearchDiaryRoute.page),
-    CustomRoute(
-      page: SearchedResultRoute.page,
-      transitionsBuilder: TransitionsBuilders.slideLeftWithFade,
-      duration: _duration,
-      reverseDuration: _duration,
+    AutoRoute(
+      page: SearchDiaryRoute.page,
+      children: [
+        CustomRoute(
+          page: SearchedResultRoute.page,
+          transitionsBuilder: TransitionsBuilders.slideLeftWithFade,
+          duration: _duration,
+          reverseDuration: _duration,
+        ),
+      ],
     ),
-    AutoRoute(page: SettingsRoute.page),
+
     AutoRoute(page: PasswordSetupRoute.page),
   ];
 }

@@ -1,4 +1,4 @@
-part of 'p_display_diary.dart';
+part of '../p_display_diary.dart';
 
 class _EmptyState extends StatelessWidget {
   const _EmptyState();

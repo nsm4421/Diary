@@ -1,4 +1,4 @@
-part of 'p_display_diary.dart';
+part of '../p_display_diary.dart';
 
 class _EditDiaryDialog extends StatelessWidget {
   const _EditDiaryDialog(this._diaryId, {super.key});

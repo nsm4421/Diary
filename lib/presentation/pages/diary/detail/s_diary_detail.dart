@@ -54,24 +54,10 @@ class _ScreenState extends State<_Screen> {
         titleSpacing: 0,
         title: Row(
           children: [
-            Hero(
-              tag: 'diary-logo',
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: context.colorScheme.onPrimary.withAlpha(31),
-                  border: Border.all(
-                    color: context.colorScheme.onPrimary.withAlpha(51),
-                    width: 1,
-                  ),
-                ),
-                child: Icon(
-                  Icons.menu_book_rounded,
-                  color: context.colorScheme.onPrimary,
-                  size: 22,
-                ),
-              ),
+            AppLogoHero(
+              backgroundColor: context.colorScheme.onPrimary.withAlpha(31),
+              borderColor: context.colorScheme.onPrimary.withAlpha(51),
+              iconColor: context.colorScheme.onPrimary,
             ),
             const SizedBox(width: 12),
             Text(
