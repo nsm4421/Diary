@@ -254,4 +254,17 @@ class DiaryRepositoryImpl
       sortOrder: param.sortOrder,
     );
   }
+
+  @override
+  Future<Either<ApiError, List<DiaryEntity>>> findAllByDateRange({
+    required DateTime start,
+    required DateTime end,
+  }) {
+    return guard(() async {
+      final rows = await runDatabase(
+        () => _database.findAllByDateRange(start: start, end: end),
+      );
+      return rows.map((row) => row.toEntity()).toList(growable: false);
+    }, logger: logger);
+  }
 }

@@ -1,4 +1,5 @@
 part of 'local_diary_db_datasource.dart';
+
 class LocalDiaryDbSourceImpl implements LocalDiaryDbDataSource {
   final LocalDatabaseDao _dao;
   final Logger _logger;
@@ -114,6 +115,26 @@ class LocalDiaryDbSourceImpl implements LocalDiaryDbDataSource {
             ..where((tbl) => tbl.createdAt.isSmallerThanValue(cursor))
             ..orderBy([(tbl) => OrderingTerm.desc(tbl.createdAt)])
             ..limit(limit))
+          .get();
+    } catch (e, st) {
+      _logger.e(e, stackTrace: st);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Iterable<DiaryRecord>> findAllByDateRange({
+    required DateTime start,
+    required DateTime end,
+  }) async {
+    try {
+      return await (_dao.select(_dao.db.diaryRecords)
+            ..where((tbl) => tbl.date.isBiggerOrEqualValue(start.yyyymmdd))
+            ..where((tbl) => tbl.date.isSmallerOrEqualValue(end.yyyymmdd))
+            ..orderBy([
+              (tbl) => OrderingTerm.asc(tbl.date),
+              (tbl) => OrderingTerm.asc(tbl.createdAt),
+            ]))
           .get();
     } catch (e, st) {
       _logger.e(e, stackTrace: st);

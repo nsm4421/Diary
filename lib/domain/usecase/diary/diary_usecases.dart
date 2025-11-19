@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:diary/core/extension/datetime_extension.dart';
 import 'package:diary/core/value_objects/error/failure.dart';
 import 'package:diary/core/utils/falure_handler.dart';
 import 'package:diary/core/extension/logger_extension.dart';
@@ -19,13 +20,15 @@ part 'scenario/create_diary_entry_usecase.dart';
 
 part 'scenario/delete_diary_entry_usecase.dart';
 
-part 'scenario/fetch_diary_entries_usecase.dart';
+part 'scenario/fetch_diaries_usecase.dart';
 
 part 'scenario/get_diary_entry_usecase.dart';
 
 part 'scenario/update_diary_entry_usecase.dart';
 
 part 'scenario/watch_diary_entries_usecase.dart';
+
+part 'scenario/find_all_by_month_usecase.dart';
 
 @lazySingleton
 class DiaryUseCases with AppLoggerMixIn {
@@ -39,7 +42,11 @@ class DiaryUseCases with AppLoggerMixIn {
   _GetDiaryDetailUseCase get getDetail =>
       _GetDiaryDetailUseCase(_diaryRepository, logger: logger);
 
-  _FetchDiariesUseCase get fetch => _FetchDiariesUseCase(_diaryRepository, logger: logger);
+  _FetchDiariesUseCase get fetch =>
+      _FetchDiariesUseCase(_diaryRepository, logger: logger);
+
+  _FindAllByMonthUseCase get findAllByMonth =>
+      _FindAllByMonthUseCase(_diaryRepository, logger: logger);
 
   _DeleteDiaryEntryUseCase get delete =>
       _DeleteDiaryEntryUseCase(_diaryRepository, logger: logger);

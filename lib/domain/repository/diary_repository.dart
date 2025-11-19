@@ -43,6 +43,11 @@ abstract interface class DiaryRepository {
     required DateTime cursor,
   });
 
+  Future<Either<ApiError, List<DiaryEntity>>> findAllByDateRange({
+    required DateTime start,
+    required DateTime end,
+  });
+
   Stream<Either<ApiError, List<DiaryEntity>>> watchAll();
 
   Future<Either<ApiError, DiaryEntity>> update({

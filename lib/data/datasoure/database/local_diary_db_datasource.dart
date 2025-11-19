@@ -37,6 +37,11 @@ abstract interface class LocalDiaryDbDataSource {
     required DateTime cursor,
   });
 
+  Future<Iterable<DiaryRecord>> findAllByDateRange({
+    required DateTime start,
+    required DateTime end,
+});
+
   Stream<List<DiaryRecord>> watchAll();
 
   Future<DiaryRecord> update(UpdateDiaryRequestDto dto);
