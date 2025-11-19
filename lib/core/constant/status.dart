@@ -11,3 +11,5 @@ enum PasswordLockStatus { idle, loading, unLocked, locked, failure }
 enum PasswordSetupStatus { idle, editing, loading, success, failure }
 
 enum SettingStatus { initial, loading, ready, updating, failure }
+
+enum DisplayCalendarStatus { idle, loading, fetched, failure }

@@ -15,6 +15,10 @@ class DisplayState<E, C> with _$DisplayState<E, C> {
   final C? nextCursor;
   final String? errorMessage;
 
+  bool get isInitial => status == DisplayStatus.initial;
+
+  bool get isLoading => status == DisplayStatus.loading;
+
   bool get isEmpty => items.isEmpty && errorMessage == null;
 
   bool get isEnd => nextCursor == null;

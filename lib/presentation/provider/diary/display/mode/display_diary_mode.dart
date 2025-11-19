@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class DisplayDiaryModeCubit extends Cubit<DisplayDiaryMode> {
-  DisplayDiaryModeCubit() : super(DisplayDiaryMode.calendar);
+  DisplayDiaryModeCubit() : super(DisplayDiaryMode.feed);
 
   Future<void> handleToggle([
     Duration duration = const Duration(milliseconds: 200),
