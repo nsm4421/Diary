@@ -13,20 +13,20 @@ class _DiaryCard extends StatelessWidget {
       accent: accent,
       // 상세페이지로 이동
       onTap: () async =>
-          await context.router.push<bool>(DiaryDetailRoute(diaryId: diary.id)),
+      await context.router.push<bool>(DiaryDetailRoute(diaryId: diary.id)),
       // 우측상단 아이콘 클릭
       onMoreTap: () async =>
-          await showDialog<bool>(
-            context: context,
-            builder: (dialogContext) {
-              return _EditDiaryDialog(diary.id);
-            },
-          ).then((isDeleted) => isDeleted ?? false).then((isDeleted) {
-            if (!isDeleted || !context.mounted) return;
-            context.read<DisplayDiaryBloc>().add(
-              DisplayEvent.removed(diary.id),
-            );
-          }),
+      await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) {
+          return _EditDiaryDialog(diary.id);
+        },
+      ).then((isDeleted) => isDeleted ?? false).then((isDeleted) {
+        if (!isDeleted || !context.mounted) return;
+        context.read<DisplayDiaryBloc>().add(
+          DisplayEvent.removed(diary.id),
+        );
+      }),
     );
   }
 }

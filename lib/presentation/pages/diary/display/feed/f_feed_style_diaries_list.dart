@@ -30,8 +30,7 @@ class _FeedStyleDiariesListState extends State<_FeedStyleDiariesList> {
       debugPrint('scroll controller can not find its client');
       return;
     } else {
-      final bloc = context.read<DisplayDiaryBloc>();
-      final current = bloc.state;
+      final current = context.read<DisplayDiaryBloc>().state;
       if (current.isEnd ||
           current.status == DisplayStatus.paginated ||
           current.status == DisplayStatus.loading ||
@@ -64,8 +63,7 @@ class _FeedStyleDiariesListState extends State<_FeedStyleDiariesList> {
     return BlocBuilder<DisplayDiaryBloc, DisplayState<DiaryEntity, DateTime>>(
       builder: (context, state) {
         if (state.isEmpty) {
-          return (state.status == DisplayStatus.loading ||
-                  state.status == DisplayStatus.initial)
+          return (state.isLoading || state.isInitial)
               ? const Center(child: CircularProgressIndicator())
               : _EmptyState();
         }

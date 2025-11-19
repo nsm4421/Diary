@@ -31,7 +31,7 @@ class _ScreenState extends State<_Screen> {
             builder: (context, state) {
               return switch (state) {
                 DisplayDiaryMode.feed => _FeedStyleDiariesList(),
-                DisplayDiaryMode.calendar => _CalendarStyleDiariesList(),
+                DisplayDiaryMode.calendar => _Calendar(),
               };
             },
           ),

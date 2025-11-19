@@ -4,4 +4,6 @@ extension DateTimeExtension on DateTime {
     final dd = day.toString().padLeft(2, '0');
     return '$year-$mm-$dd';
   }
+
+  DateTime get normalizedMonth => DateTime(year, month);
 }
