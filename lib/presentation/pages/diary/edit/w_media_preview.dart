@@ -1,4 +1,4 @@
-part of 'p_create_diary.dart';
+part of 'p_edit_diary.dart';
 
 class _MediaPreview extends StatelessWidget {
   const _MediaPreview({
@@ -17,8 +17,8 @@ class _MediaPreview extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Container(
-          width: 104,
-          height: 104,
+          width: 92,
+          height: 92,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             boxShadow: [

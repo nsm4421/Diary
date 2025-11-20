@@ -1,4 +1,4 @@
-part of 'p_create_diary.dart';
+part of 'p_edit_diary.dart';
 
 class _SelectMedia extends StatefulWidget {
   const _SelectMedia({super.key});
@@ -19,7 +19,7 @@ class _SelectMediaState extends State<_SelectMedia> {
 
   Future<void> _handleAddMedia() async {
     final remaining =
-        _maxSelectable - context.read<CreateDiaryCubit>().state.medias.length;
+        _maxSelectable - context.read<EditDiaryCubit>().state.medias.length;
     final selected = await showModalBottomSheet<List<XFile>>(
       context: context,
       builder: (sheetContext) {
@@ -62,16 +62,16 @@ class _SelectMediaState extends State<_SelectMedia> {
       return;
     }
 
-    context.read<CreateDiaryCubit>().addMediaFiles(files);
+    context.read<EditDiaryCubit>().addMediaFiles(files);
 
     if (truncated) {
-      context.showToast('이미지는 최대 ${_maxSelectable}장까지 선택할 수 있어요.');
+      context.showToast('이미지는 최대 $_maxSelectable장까지 선택할 수 있어요.');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CreateDiaryCubit, CreateDiaryState>(
+    return BlocBuilder<EditDiaryCubit, EditDiaryState>(
       buildWhen: (previous, current) => previous.medias != current.medias,
       builder: (context, state) {
         return Container(
@@ -111,7 +111,7 @@ class _SelectMediaState extends State<_SelectMedia> {
                       color: context.colorScheme.secondary.withAlpha(31),
                     ),
                     child: Text(
-                      '최대 ${_maxSelectable}장',
+                      '최대 $_maxSelectable장',
                       style: context.textTheme.labelSmall?.copyWith(
                         color: context.colorScheme.secondary,
                         fontWeight: FontWeight.w600,
@@ -133,15 +133,15 @@ class _SelectMediaState extends State<_SelectMedia> {
               ),
               const SizedBox(height: 16),
               Wrap(
-                spacing: 16,
-                runSpacing: 16,
+                spacing: 12,
+                runSpacing: 12,
                 children: [
                   ...List.generate(
                     state.medias.length,
                     (index) => _MediaPreview(
                       file: state.medias[index],
                       onRemove: () =>
-                          context.read<CreateDiaryCubit>().removeMediaAt(index),
+                          context.read<EditDiaryCubit>().removeMediaAt(index),
                       accent: context.colorScheme.secondary,
                     ),
                   ),

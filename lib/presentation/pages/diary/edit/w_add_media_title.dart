@@ -1,4 +1,4 @@
-part of 'p_create_diary.dart';
+part of 'p_edit_diary.dart';
 
 class _AddMediaTile extends StatelessWidget {
   const _AddMediaTile({

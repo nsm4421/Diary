@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
             (e) => switch (e) {
               HomeBottomNavMenu.displayDiaries => DisplayDiaryRoute(),
               HomeBottomNavMenu.setting => SettingsRoute(),
-              HomeBottomNavMenu.createDiary => CreateDiaryRoute(),
+              HomeBottomNavMenu.createDiary => EditDiaryRoute(diaryId: null),
             },
           )
           .toList(growable: false),
@@ -35,9 +35,9 @@ class HomePage extends StatelessWidget {
           bottomNavigationBar: BottomNavigationBar(
             elevation: 0,
             currentIndex: currentIndex,
-            onTap: (tapped) {
+            onTap: (tapped) async {
               if (_createDiaryIndexIndex == tapped) {
-                context.router.push(const CreateDiaryRoute());
+                await context.router.push(EditDiaryRoute(diaryId: null));
                 return;
               }
               final targetIndex = tapped > _createDiaryIndexIndex

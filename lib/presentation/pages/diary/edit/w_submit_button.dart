@@ -1,4 +1,4 @@
-part of 'p_create_diary.dart';
+part of 'p_edit_diary.dart';
 
 class _SubmitButton extends StatelessWidget {
   const _SubmitButton(this._formKey, {super.key});
@@ -7,7 +7,7 @@ class _SubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CreateDiaryCubit, CreateDiaryState>(
+    return BlocBuilder<EditDiaryCubit, EditDiaryState>(
       builder: (context, state) {
         return SizedBox(
           width: double.infinity,
@@ -28,7 +28,7 @@ class _SubmitButton extends StatelessWidget {
                     _formKey.currentState?.save();
                     final ok = _formKey.currentState?.validate();
                     if (ok == null || !ok) return;
-                    await context.read<CreateDiaryCubit>().handleSubmit();
+                    await context.read<EditDiaryCubit>().handleSubmit();
                   },
             child: state.isSubmitting
                 ? SizedBox(
@@ -50,7 +50,7 @@ class _SubmitButton extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        '기록 저장하기',
+                        '제출하기',
                         style: context.textTheme.titleMedium?.copyWith(
                           color: context.colorScheme.primary,
                           fontWeight: FontWeight.w700,
