@@ -28,14 +28,11 @@ class _AppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
-        BlocBuilder<DisplayDiaryModeCubit, DisplayDiaryMode>(
-          builder: (context, state) {
-            return IconButton(
-              onPressed: context.read<DisplayDiaryModeCubit>().handleToggle,
-              icon: Icon(state.iconData, color: colorScheme.onPrimary),
-              tooltip: '모드 변경하기',
-            );
+        IconButton(
+          onPressed: () async {
+            await context.router.push(CalendarRoute());
           },
+          icon: Icon(Icons.calendar_month, color: colorScheme.onPrimary),
         ),
         IconButton(
           onPressed: () => context.router.push(const SearchDiaryRoute()),

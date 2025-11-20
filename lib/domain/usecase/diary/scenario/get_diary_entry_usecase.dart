@@ -24,7 +24,7 @@ class _GetDiaryDetailUseCase with FailureHandlerMixin {
       (failure) => logger?.useCaseFail(_scope, failure, hint: '상세 조회'),
       (entity) => logger?.useCaseSuccess(
         _scope,
-        entity == null ? '조회 성공 - 결과 없음' : '조회 성공 - ${entity.id}',
+        entity == null ? '조회 성공 - 결과 없음' : '조회 성공',
       ),
     );
     return result;

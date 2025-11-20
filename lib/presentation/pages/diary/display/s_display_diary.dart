@@ -26,16 +26,7 @@ class _ScreenState extends State<_Screen> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: SafeArea(
-          child: BlocBuilder<DisplayDiaryModeCubit, DisplayDiaryMode>(
-            builder: (context, state) {
-              return switch (state) {
-                DisplayDiaryMode.feed => _FeedStyleDiariesList(),
-                DisplayDiaryMode.calendar => _Calendar(),
-              };
-            },
-          ),
-        ),
+        child: SafeArea(child: _FeedStyleDiariesList()),
       ),
     );
   }

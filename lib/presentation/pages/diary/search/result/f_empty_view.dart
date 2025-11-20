@@ -5,7 +5,7 @@ class _EmptyResultView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final onPrimary = context.colorScheme.onPrimary;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -15,12 +15,14 @@ class _EmptyResultView extends StatelessWidget {
             Icon(
               Icons.search_off_rounded,
               size: 48,
-              color: theme.colorScheme.primary,
+              color: onPrimary.withAlpha(230),
             ),
             const SizedBox(height: 12),
             Text(
               '조회된 일기가 없어요',
-              style: theme.textTheme.titleMedium?.copyWith(
+              textAlign: TextAlign.center,
+              style: context.textTheme.titleMedium?.copyWith(
+                color: onPrimary,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -28,8 +30,8 @@ class _EmptyResultView extends StatelessWidget {
             Text(
               '검색 조건을 조금 더 완화하거나 다른 키워드로 검색해 보세요.',
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: onPrimary.withAlpha(200),
               ),
             ),
           ],

@@ -1,4 +1,4 @@
-part of '../p_display_diary.dart';
+part of 'p_display_diary.dart';
 
 class _EditDiaryDialog extends StatelessWidget {
   const _EditDiaryDialog(this._diaryId, {super.key});
@@ -55,7 +55,9 @@ class _EditDiaryDialog extends StatelessWidget {
                     foregroundColor: colorScheme.onSecondary,
                   ),
                   onPressed: () async {
-                    await context.router.popAndPush(EditDiaryRoute());
+                    await context.router.popAndPush(
+                      EditDiaryRoute(diaryId: _diaryId),
+                    );
                   },
                   child: const Text('수정'),
                 ),
@@ -66,16 +68,16 @@ class _EditDiaryDialog extends StatelessWidget {
                   ),
                   onPressed: state.isReady
                       ? () async {
-                          // 삭제 요청
-                          await context.read<DeleteDiaryCubit>().delete();
-                        }
+                    // 삭제 요청
+                    await context.read<DeleteDiaryCubit>().delete();
+                  }
                       : null,
                   child: state.isReady
                       ? const Text('삭제')
                       : Transform.scale(
-                          scale: 0.5,
-                          child: CircularProgressIndicator(),
-                        ),
+                    scale: 0.5,
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
               ],
             );

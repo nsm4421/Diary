@@ -26,25 +26,29 @@ class _SearchKindSelector extends StatelessWidget {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: SearchDiaryKind.values
-                  .where((e) => e != SearchDiaryKind.none)
+              children: [SearchDiaryKind.title, SearchDiaryKind.content]
                   .map(
                     (kind) => ChoiceChip(
                       label: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(switch (kind) {
-                            SearchDiaryKind.content => Icons.notes_rounded,
-                            SearchDiaryKind.dateRange =>
-                              Icons.date_range_rounded,
-                            _ => Icons.title_rounded,
-                          }, size: 16),
+                          switch (kind) {
+                            SearchDiaryKind.title => Icon(
+                              Icons.title_rounded,
+                              size: 16,
+                            ),
+                            SearchDiaryKind.content => Icon(
+                              Icons.notes_rounded,
+                              size: 16,
+                            ),
+                            _ => SizedBox.shrink(),
+                          },
                           const SizedBox(width: 6),
-                          Text(switch (kind) {
-                            SearchDiaryKind.content => '본문',
-                            SearchDiaryKind.dateRange => '기간',
-                            _ => '제목',
-                          }),
+                          switch (kind) {
+                            SearchDiaryKind.title => Text("제목"),
+                            SearchDiaryKind.content => Text("본문"),
+                            _ => SizedBox.shrink(),
+                          },
                         ],
                       ),
                       selected: selectedKind == kind,

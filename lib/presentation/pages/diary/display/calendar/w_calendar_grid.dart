@@ -1,4 +1,4 @@
-part of '../p_display_diary.dart';
+part of 'p_calendar.dart';
 
 class _CalendarGrid extends StatelessWidget {
   const _CalendarGrid();

@@ -1,4 +1,4 @@
-part of '../p_display_diary.dart';
+part of 'p_display_diary.dart';
 
 class _FeedStyleDiariesList extends StatefulWidget {
   const _FeedStyleDiariesList();

@@ -8,7 +8,7 @@ class _FailureView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final onPrimary = context.colorScheme.onPrimary;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -18,14 +18,14 @@ class _FailureView extends StatelessWidget {
             Icon(
               Icons.error_outline_rounded,
               size: 40,
-              color: theme.colorScheme.error,
+              color: onPrimary.withAlpha(220),
             ),
             const SizedBox(height: 12),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface,
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: onPrimary.withAlpha(235),
               ),
             ),
             const SizedBox(height: 16),

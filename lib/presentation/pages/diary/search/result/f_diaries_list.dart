@@ -76,6 +76,7 @@ class _DiariesListState extends State<_DiariesList> {
 
         return Card(
           elevation: 0,
+          color: context.colorScheme.surface.withAlpha(235),
           clipBehavior: Clip.antiAlias,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),

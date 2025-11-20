@@ -1,4 +1,4 @@
-part of '../p_display_diary.dart';
+part of 'p_calendar.dart';
 
 class _Header extends StatelessWidget {
   const _Header();
@@ -11,18 +11,23 @@ class _Header extends StatelessWidget {
             '${state.normalizedMonth.year}년 ${state.normalizedMonth.month}월';
         final isLoading = state.isLoading;
 
-        return Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.chevron_left),
-              onPressed: isLoading
-                  ? null
-                  : () => _changeMonth(context, state.normalizedMonth, -1),
-            ),
-            Expanded(
-              child: Center(
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          decoration: BoxDecoration(
+            color: context.colorScheme.surfaceVariant.withAlpha(90),
+            borderRadius: BorderRadius.circular(999),
+          ),
+          child: Row(
+            children: [
+              _ArrowButton(
+                icon: Icons.chevron_left,
+                onPressed: isLoading
+                    ? null
+                    : () => _changeMonth(context, state.normalizedMonth, -1),
+              ),
+              Expanded(
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(32),
                   onTap: isLoading
                       ? null
                       : () async {
@@ -45,27 +50,42 @@ class _Header extends StatelessWidget {
                         },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                      horizontal: 12,
+                      vertical: 6,
                     ),
-                    child: Text(
-                      monthLabel,
-                      style: context.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: context.colorScheme.onSurface,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          monthLabel,
+                          style: context.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          state.currentDate == null
+                              ? '기록을 확인할 날짜를 선택하세요'
+                              : '선택된 날짜: ${state.currentDate!.yyyymmdd}',
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: context.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.chevron_right),
-              onPressed: isLoading
-                  ? null
-                  : () => _changeMonth(context, state.normalizedMonth, 1),
-            ),
-          ],
+              _ArrowButton(
+                icon: Icons.chevron_right,
+                onPressed: isLoading
+                    ? null
+                    : () => _changeMonth(context, state.normalizedMonth, 1),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -75,6 +95,25 @@ class _Header extends StatelessWidget {
     final target = DateTime(currentMonth.year, currentMonth.month + offset);
     context.read<DisplayCalendarBloc>().add(
       DisplayCalendarEvent.monthChanged(target),
+    );
+  }
+}
+
+class _ArrowButton extends StatelessWidget {
+  const _ArrowButton({required this.icon, this.onPressed});
+
+  final IconData icon;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: onPressed,
+      style: IconButton.styleFrom(
+        backgroundColor: context.colorScheme.surface.withAlpha(180),
+        shape: const CircleBorder(),
+      ),
+      icon: Icon(icon),
     );
   }
 }

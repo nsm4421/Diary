@@ -15,6 +15,10 @@ part 's_diary_detail.dart';
 
 part 'f_carousel.dart';
 
+part 'w_info_fill.dart';
+
+part 'f_content.dart';
+
 @RoutePage()
 class DiaryDetailPage extends StatelessWidget {
   const DiaryDetailPage(this._diaryId, {super.key});

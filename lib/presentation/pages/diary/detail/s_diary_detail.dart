@@ -42,35 +42,8 @@ class _ScreenState extends State<_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    final diary = widget._diary;
-    final title = diary.title?.trim();
-    final hasTitle = title != null && title.isNotEmpty;
-
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        titleSpacing: 0,
-        title: Row(
-          children: [
-            AppLogoHero(
-              backgroundColor: context.colorScheme.onPrimary.withAlpha(31),
-              borderColor: context.colorScheme.onPrimary.withAlpha(51),
-              iconColor: context.colorScheme.onPrimary,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              diary.createdAt.toLocal().yyyymmdd,
-              style: context.textTheme.titleLarge?.copyWith(
-                color: context.colorScheme.onPrimary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-        iconTheme: IconThemeData(color: context.colorScheme.onPrimary),
-      ),
       body: Stack(
         children: [
           Container(
@@ -110,9 +83,65 @@ class _ScreenState extends State<_Screen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (diary.medias.isNotEmpty) ...[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppLogoHero(
+                        backgroundColor: context.colorScheme.onPrimary
+                            .withAlpha(28),
+                        borderColor: context.colorScheme.onPrimary.withAlpha(
+                          46,
+                        ),
+                        iconColor: context.colorScheme.onPrimary,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '오늘의 기록',
+                              style: context.textTheme.labelLarge?.copyWith(
+                                color: context.colorScheme.onPrimary.withAlpha(
+                                  220,
+                                ),
+                                letterSpacing: 0.8,
+                              ),
+                            ),
+                            Text(
+                              '감정과 생각을 있는 그대로 담아보았어요.',
+                              style: context.textTheme.bodySmall?.copyWith(
+                                color: context.colorScheme.onPrimary.withAlpha(
+                                  190,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        tooltip: '닫기',
+                        style: IconButton.styleFrom(
+                          backgroundColor: context.colorScheme.onPrimary
+                              .withAlpha(36),
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(10),
+                        ),
+                        icon: Icon(
+                          Icons.close_rounded,
+                          color: context.colorScheme.onPrimary,
+                        ),
+                        onPressed: () async {
+                          await context.router.maybePop();
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 28),
+                  if (widget._diary.medias.isNotEmpty) ...[
                     _MediaCarousel(
-                      medias: diary.medias,
+                      medias: widget._diary.medias,
                       controller: _pageController,
                       currentPage: _currentPage,
                       onPageChanged: _handlePageChanged,
@@ -136,68 +165,7 @@ class _ScreenState extends State<_Screen> {
                         ),
                       ],
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.circle,
-                              size: 10,
-                              color: context.colorScheme.secondary.withAlpha(
-                                204,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              diary.createdAt.toLocal().yyyymmdd,
-                              style: context.textTheme.labelMedium?.copyWith(
-                                color: context.colorScheme.onSurfaceVariant
-                                    .withAlpha(191),
-                                letterSpacing: 0.6,
-                              ),
-                            ),
-                          ],
-                        ),
-                        if (hasTitle) ...[
-                          const SizedBox(height: 16),
-                          Text(
-                            title!,
-                            style: context.textTheme.headlineSmall?.copyWith(
-                              color: context.colorScheme.onSurface,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                        const SizedBox(height: 20),
-                        Text(
-                          diary.content,
-                          style: context.textTheme.bodyLarge?.copyWith(
-                            color: context.colorScheme.onSurface.withAlpha(242),
-                            height: 1.6,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 32),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.edit_note_rounded,
-                        color: context.colorScheme.onPrimary.withAlpha(179),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          '당신의 하루가 소중한 이야기로 남았어요.',
-                          style: context.textTheme.bodyMedium?.copyWith(
-                            color: context.colorScheme.onPrimary.withAlpha(191),
-                          ),
-                        ),
-                      ),
-                    ],
+                    child: _DiaryContent(widget._diary),
                   ),
                 ],
               ),
