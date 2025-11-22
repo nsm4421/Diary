@@ -7,7 +7,7 @@ class _GetDiaryDetailUseCase with FailureHandlerMixin {
   final Logger? logger;
   static const _scope = '[Diary][Detail]';
 
-  Future<Either<Failure, DiaryDetailEntity?>> call(String id) async {
+  Future<Either<Failure, DiaryDetailEntity>> call(String id) async {
     final trimmedId = id.trim();
     logger?.useCaseTrace(_scope, '상세 조회 요청 수신 (id=$trimmedId)');
     if (trimmedId.isEmpty) {
@@ -22,10 +22,7 @@ class _GetDiaryDetailUseCase with FailureHandlerMixin {
         .then(mapApiResult);
     result.fold(
       (failure) => logger?.useCaseFail(_scope, failure, hint: '상세 조회'),
-      (entity) => logger?.useCaseSuccess(
-        _scope,
-        entity == null ? '조회 성공 - 결과 없음' : '조회 성공',
-      ),
+      (entity) => logger?.useCaseSuccess(_scope, '조회 성공'),
     );
     return result;
   }

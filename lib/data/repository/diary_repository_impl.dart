@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:dartz/dartz.dart';
+import 'package:diary/core/value_objects/domain/diary_mood.dart';
 import 'package:diary/core/value_objects/error/api_error.dart';
 import 'package:diary/core/value_objects/error/api_exception.dart';
 import 'package:diary/core/utils/api_error_handler.dart';
@@ -35,6 +36,7 @@ class DiaryRepositoryImpl
     String? clientId,
     String? title,
     required String content,
+    DiaryMood mood = DiaryMood.none,
     List<CreateDiaryMediaRequest> medias = const [],
   }) {
     return guard(() async {
@@ -44,6 +46,7 @@ class DiaryRepositoryImpl
             clientId: clientId,
             title: title,
             content: content,
+            mood: mood,
             medias: medias.map(_toDto).toList(growable: false),
           ),
         ),
@@ -61,11 +64,14 @@ class DiaryRepositoryImpl
   }
 
   @override
-  Future<Either<ApiError, DiaryDetailEntity?>> getDiaryDetail(String diaryId) {
+  Future<Either<ApiError, DiaryDetailEntity>> getDiaryDetail(String diaryId) {
     return guard(() async {
       final record = await runDatabase(() => _database.findById(diaryId));
       if (record == null) {
-        return null;
+        throw ApiException.notFound(
+          message: 'diary is not founded',
+          details: {'diary_id': diaryId},
+        );
       }
       final medias = await runDatabase(() => _database.fetchMedias(diaryId));
       final mediaEntities = medias
@@ -181,6 +187,7 @@ class DiaryRepositoryImpl
     required String diaryId,
     String? title,
     required String content,
+    required DiaryMood mood,
     List<CreateDiaryMediaRequest> medias = const [],
   }) {
     return guard(() async {
@@ -191,6 +198,7 @@ class DiaryRepositoryImpl
             id: diaryId,
             title: title,
             content: content,
+            mood: mood,
             medias: medias.map(_toDto).toList(growable: false),
           ),
         ),

@@ -20,7 +20,7 @@ abstract class LocalDatasourceModule with AppLoggerMixIn {
 
   /// database
   @lazySingleton
-  LocalDiaryDbDataSource get diary => LocalDiaryDbSourceImpl(_dao, logger);
+  LocalDiaryDbDataSource get diaryTable => LocalDiaryDbSourceImpl(_dao, logger);
 
   /// storage
   @preResolve

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:diary/core/extension/datetime_extension.dart';
+import 'package:diary/core/value_objects/domain/diary_mood.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
@@ -33,12 +34,14 @@ class LocalDatabase extends _$LocalDatabase {
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) async => await m.createAll(),
     onUpgrade: (m, from, to) async {
-      if (from < schemaVersion) {
+      if (from == 5) {
+        await m.addColumn(diaryRecords, diaryRecords.mood);
+      } else if (from < schemaVersion) {
         await m.createAll();
       }
     },
   );
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 5;
 }

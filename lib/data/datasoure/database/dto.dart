@@ -1,3 +1,4 @@
+import 'package:diary/core/value_objects/domain/diary_mood.dart';
 import 'package:diary/data/datasoure/database/dao/local_database.dart';
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
@@ -6,6 +7,7 @@ class CreateDiaryRequestDto {
   late final String id;
   final String? title;
   final String content;
+  final DiaryMood mood;
   final List<CreateDiaryMediaRequestDto> medias;
 
   CreateDiaryRequestDto({
@@ -13,6 +15,7 @@ class CreateDiaryRequestDto {
     required this.title,
     required this.content,
     List<CreateDiaryMediaRequestDto> medias = const [],
+    this.mood = DiaryMood.none,
   }) : this.medias = List.unmodifiable(medias) {
     this.id = clientId ?? Uuid().v4();
   }
@@ -22,6 +25,7 @@ class CreateDiaryRequestDto {
       id: Value(this.id),
       title: Value(this.title),
       content: this.content,
+      mood: Value(mood),
     );
   }
 
@@ -92,5 +96,6 @@ class UpdateDiaryRequestDto extends CreateDiaryRequestDto {
     required super.title,
     required super.content,
     super.medias,
+    super.mood
   }) : super(clientId: id);
 }

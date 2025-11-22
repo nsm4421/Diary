@@ -1,3 +1,4 @@
+import 'package:diary/core/value_objects/domain/diary_mood.dart';
 import 'package:diary/data/datasoure/database/dao/local_database.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
@@ -9,7 +10,7 @@ extension DiaryRecordMapper on DiaryRecord {
       id: id,
       title: title,
       content: content,
-      isTemp: isTemp,
+      mood: mood ?? DiaryMood.none,
       createdAt: createdAt,
       updatedAt: updatedAt,
       date: date,
@@ -21,7 +22,7 @@ extension DiaryRecordMapper on DiaryRecord {
       id: id,
       title: title,
       content: content,
-      isTemp: isTemp,
+      mood: mood ?? DiaryMood.none,
       createdAt: createdAt,
       updatedAt: updatedAt,
       date: date,

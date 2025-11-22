@@ -10,6 +10,7 @@ class _CreateDiaryEntryUseCase with FailureHandlerMixin {
     String? clientId,
     String? title,
     required String content,
+    DiaryMood? mood,
     List<File> files = const [],
   }) async {
     const scope = '[Diary][Create]';
@@ -75,6 +76,7 @@ class _CreateDiaryEntryUseCase with FailureHandlerMixin {
           ? null
           : trimmedTitle,
       content: trimmedContent,
+      mood: mood ?? DiaryMood.none,
       medias: medias,
     );
     final mapped = mapApiResult(result);

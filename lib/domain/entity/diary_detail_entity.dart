@@ -1,4 +1,5 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:diary/core/value_objects/domain/diary_mood.dart';
 
 import 'diary_entity.dart';
 import 'diary_media_asset.dart';
@@ -14,10 +15,10 @@ class DiaryDetailEntity extends DiaryEntity {
     required super.createdAt,
     required super.updatedAt,
     required super.date,
-    super.isTemp = false,
     super.title,
     super.content = '',
     List<DiaryMediaAsset> medias = const [],
+    super.mood
   }) : medias = List.unmodifiable(medias);
 
   @override

@@ -1,4 +1,5 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
+import 'package:diary/core/value_objects/domain/diary_mood.dart';
 import 'package:equatable/equatable.dart';
 
 part 'diary_entity.g.dart';
@@ -9,18 +10,18 @@ class DiaryEntity extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String date;
-  final bool isTemp;
   final String? title;
   final String content;
+  final DiaryMood mood;
 
   const DiaryEntity({
     required this.id,
     required this.createdAt,
     required this.updatedAt,
     required this.date,
-    this.isTemp = false,
     this.title,
     this.content = '',
+    this.mood = DiaryMood.none
   });
 
   @override
@@ -29,8 +30,8 @@ class DiaryEntity extends Equatable {
     createdAt,
     updatedAt,
     date,
-    isTemp,
     title,
     content,
+    mood
   ];
 }

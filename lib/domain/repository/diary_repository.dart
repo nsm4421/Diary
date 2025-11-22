@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:diary/core/value_objects/domain/diary_mood.dart';
 import 'package:diary/core/value_objects/error/api_error.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
@@ -12,12 +13,13 @@ abstract interface class DiaryRepository {
     String? clientId,
     String? title,
     required String content,
+    required DiaryMood mood,
     List<CreateDiaryMediaRequest> medias = const [],
   });
 
   Future<Either<ApiError, DiaryEntity?>> findById(String diaryId);
 
-  Future<Either<ApiError, DiaryDetailEntity?>> getDiaryDetail(String diaryId);
+  Future<Either<ApiError, DiaryDetailEntity>> getDiaryDetail(String diaryId);
 
   Future<Either<ApiError, List<DiaryEntity>>> fetchDiaries({
     int limit = 20,
@@ -54,6 +56,7 @@ abstract interface class DiaryRepository {
     required String diaryId,
     String? title,
     required String content,
+    required DiaryMood mood,
     List<CreateDiaryMediaRequest> medias = const [],
   });
 

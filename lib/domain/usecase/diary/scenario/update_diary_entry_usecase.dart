@@ -10,6 +10,7 @@ class _UpdateDiaryEntryUseCase with FailureHandlerMixin {
   Future<Either<Failure, DiaryEntity>> call({
     required String id,
     String? title,
+    required DiaryMood mood,
     required String content,
   }) async {
     final trimmedId = id.trim();
@@ -44,6 +45,7 @@ class _UpdateDiaryEntryUseCase with FailureHandlerMixin {
               ? null
               : trimmedTitle,
           content: trimmedContent,
+          mood: mood,
         )
         .then(mapApiResult);
     result.fold(
