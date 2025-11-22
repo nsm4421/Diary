@@ -1,4 +1,4 @@
-import 'package:diary/core/value_objects/diary.dart';
+import 'package:diary/core/value_objects/domain/fetch_diary.dart';
 import 'package:diary/presentation/provider/diary/search/search_diary_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -36,20 +36,16 @@ void main() {
     );
   });
 
-  test('updateContent and updateDateRange cache their params', () {
+  test('updateContent caches value across kind switches', () {
+    cubit.switchKind(SearchDiaryKind.content);
     cubit.updateContent('  gratitude list ');
     expect(
       (cubit.state as FetchDiaryByContentParamValue).content,
       'gratitude list',
     );
 
-    cubit.switchKind(SearchDiaryKind.dateRange);
-    final start = DateTime(2024, 3, 1);
-    final end = DateTime(2024, 3, 31);
-    cubit.updateDateRange(start: start, end: end);
-    final dateParam = cubit.state as FetchDiaryByDateRangeParamValue;
-    expect(dateParam.start, start);
-    expect(dateParam.end, end);
+    cubit.switchKind(SearchDiaryKind.title);
+    expect(cubit.state, isA<FetchDiaryByTitleParamValue>());
 
     cubit.switchKind(SearchDiaryKind.content);
     expect(

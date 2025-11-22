@@ -1,3 +1,4 @@
+import 'package:diary/core/extension/datetime_extension.dart';
 import 'package:diary/data/datasoure/database/dao/local_database.dart';
 import 'package:diary/data/datasoure/database/dao/local_database_dao.dart';
 import 'package:diary/data/datasoure/database/dto.dart';
@@ -46,7 +47,7 @@ void main() {
             content: content,
             createdAt: Value(created),
             updatedAt: Value(updated),
-            date: Value(created.toIso8601String()),
+            date: Value(created.yyyymmdd),
           ),
         );
 
@@ -232,6 +233,53 @@ void main() {
       );
 
       expect(rows.map((r) => r.id), [latest.id, older.id]);
+    });
+  });
+
+  group('findAllByDateRange', () {
+    test('returns rows within range ordered by date asc', () async {
+      await insertDiary(
+        id: 'december',
+        createdAt: DateTime(2023, 12, 31),
+      );
+      final janFirst = await insertDiary(
+        id: 'jan-01',
+        createdAt: DateTime(2024, 1, 1, 8),
+      );
+      final janFifthEarly = await insertDiary(
+        id: 'jan-05-a',
+        createdAt: DateTime(2024, 1, 5, 5),
+      );
+      final janFifthLate = await insertDiary(
+        id: 'jan-05-b',
+        createdAt: DateTime(2024, 1, 5, 9),
+      );
+      await insertDiary(
+        id: 'february',
+        createdAt: DateTime(2024, 2, 1),
+      );
+
+      final rows = await dataSource.findAllByDateRange(
+        start: DateTime(2024, 1, 1),
+        end: DateTime(2024, 2, 0),
+      );
+
+      expect(rows.map((r) => r.id), [
+        janFirst.id,
+        janFifthEarly.id,
+        janFifthLate.id,
+      ]);
+    });
+
+    test('returns empty list when no diaries exist in range', () async {
+      await insertDiary(createdAt: DateTime(2024, 2, 1));
+
+      final rows = await dataSource.findAllByDateRange(
+        start: DateTime(2024, 1, 1),
+        end: DateTime(2024, 1, 31),
+      );
+
+      expect(rows, isEmpty);
     });
   });
 

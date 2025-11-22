@@ -6,7 +6,8 @@ import 'package:diary/core/constant/api_error_code.dart';
 import 'package:diary/core/value_objects/error/api_error.dart';
 import 'package:diary/core/constant/error_code.dart';
 import 'package:diary/core/constant/constraint.dart';
-import 'package:diary/core/value_objects/diary.dart';
+import 'package:diary/core/value_objects/domain/diary_mood.dart';
+import 'package:diary/core/value_objects/domain/fetch_diary.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/domain/repository/diary_repository.dart';
@@ -85,7 +86,8 @@ void main() {
             String? clientId,
             String? title,
             required String content,
-            List<CreateDiaryMediaRequest> medias = const [],
+            required DiaryMood mood,
+            required List<CreateDiaryMediaRequest> medias,
           }) async {
             receivedClientId = clientId;
             receivedTitle = title;
@@ -111,7 +113,8 @@ void main() {
             String? clientId,
             String? title,
             required String content,
-            List<CreateDiaryMediaRequest> medias = const [],
+            required DiaryMood mood,
+            required List<CreateDiaryMediaRequest> medias,
           }) async {
             return Left(
               const ApiError(
@@ -156,7 +159,8 @@ void main() {
             String? clientId,
             String? title,
             required String content,
-            List<CreateDiaryMediaRequest> medias = const [],
+            required DiaryMood mood,
+            required List<CreateDiaryMediaRequest> medias,
           }) async {
             expect(clientId, 'client');
             expect(title, 'title');
@@ -196,7 +200,8 @@ void main() {
             String? clientId,
             String? title,
             required String content,
-            List<CreateDiaryMediaRequest> medias = const [],
+            required DiaryMood mood,
+            required List<CreateDiaryMediaRequest> medias,
           }) async {
             createCalled = true;
             return Right(_fakeEntry(id: clientId ?? 'id'));
@@ -219,7 +224,11 @@ void main() {
 
   group('update', () {
     test('returns validation failure when id is blank', () async {
-      final result = await useCases.update(id: '   ', content: 'content');
+      final result = await useCases.update(
+        id: '   ',
+        content: 'content',
+        mood: DiaryMood.none,
+      );
 
       expect(result.isLeft(), isTrue);
       result.fold((failure) {
@@ -232,6 +241,7 @@ void main() {
       final result = await useCases.update(
         id: 'id',
         content: 'a' * (diaryMaxContentLength + 1),
+        mood: DiaryMood.none,
       );
 
       expect(result.isLeft(), isTrue);
@@ -250,7 +260,8 @@ void main() {
             required String diaryId,
             String? title,
             required String content,
-            List<CreateDiaryMediaRequest> medias = const [],
+            required DiaryMood mood,
+            required List<CreateDiaryMediaRequest> medias,
           }) async {
             expect(diaryId, 'id');
             return Left(
@@ -261,7 +272,11 @@ void main() {
             );
           };
 
-      final result = await useCases.update(id: ' id ', content: 'content');
+      final result = await useCases.update(
+        id: ' id ',
+        content: 'content',
+        mood: DiaryMood.none,
+      );
 
       expect(result.isLeft(), isTrue);
       result.fold((failure) {
@@ -503,10 +518,10 @@ DiaryEntity _fakeEntry({
     id: id,
     title: title,
     content: content,
-    isTemp: false,
     createdAt: created,
     updatedAt: updated,
     date: '2024-01-01',
+    mood: DiaryMood.none,
   );
 }
 
@@ -515,13 +530,14 @@ class StubDiaryRepository implements DiaryRepository {
     String? clientId,
     String? title,
     required String content,
-    List<CreateDiaryMediaRequest> medias,
+    required DiaryMood mood,
+    required List<CreateDiaryMediaRequest> medias,
   })?
   createHandler;
 
   Future<Either<ApiError, DiaryEntity?>> Function(String id)? findByIdHandler;
 
-  Future<Either<ApiError, DiaryDetailEntity?>> Function(String id)?
+  Future<Either<ApiError, DiaryDetailEntity>> Function(String id)?
   getDiaryDetailHandler;
 
   Future<Either<ApiError, List<DiaryEntity>>> Function({
@@ -549,6 +565,11 @@ class StubDiaryRepository implements DiaryRepository {
     required DateTime cursor,
   })?
   searchByContentHandler;
+  Future<Either<ApiError, List<DiaryEntity>>> Function({
+    required DateTime start,
+    required DateTime end,
+  })?
+  findAllByDateRangeHandler;
 
   Stream<Either<ApiError, List<DiaryEntity>>> Function()? watchAllHandler;
 
@@ -556,7 +577,8 @@ class StubDiaryRepository implements DiaryRepository {
     required String diaryId,
     String? title,
     required String content,
-    List<CreateDiaryMediaRequest> medias,
+    required DiaryMood mood,
+    required List<CreateDiaryMediaRequest> medias,
   })?
   updateHandler;
 
@@ -576,6 +598,7 @@ class StubDiaryRepository implements DiaryRepository {
     String? clientId,
     String? title,
     required String content,
+    required DiaryMood mood,
     List<CreateDiaryMediaRequest> medias = const [],
   }) {
     final handler = createHandler;
@@ -586,6 +609,7 @@ class StubDiaryRepository implements DiaryRepository {
       clientId: clientId,
       title: title,
       content: content,
+      mood: mood,
       medias: medias,
     );
   }
@@ -600,7 +624,7 @@ class StubDiaryRepository implements DiaryRepository {
   }
 
   @override
-  Future<Either<ApiError, DiaryDetailEntity?>> getDiaryDetail(String diaryId) {
+  Future<Either<ApiError, DiaryDetailEntity>> getDiaryDetail(String diaryId) {
     final handler = getDiaryDetailHandler;
     if (handler == null) {
       throw StateError('getDiaryDetailHandler not set');
@@ -674,6 +698,7 @@ class StubDiaryRepository implements DiaryRepository {
     required String diaryId,
     String? title,
     required String content,
+    required DiaryMood mood,
     List<CreateDiaryMediaRequest> medias = const [],
   }) {
     final handler = updateHandler;
@@ -684,6 +709,7 @@ class StubDiaryRepository implements DiaryRepository {
       diaryId: diaryId,
       title: title,
       content: content,
+      mood: mood,
       medias: medias,
     );
   }
@@ -703,5 +729,17 @@ class StubDiaryRepository implements DiaryRepository {
     required List<File> files,
   }) {
     return uploadMediaFilesHandler(diaryId: diaryId, files: files);
+  }
+
+  @override
+  Future<Either<ApiError, List<DiaryEntity>>> findAllByDateRange({
+    required DateTime start,
+    required DateTime end,
+  }) {
+    final handler = findAllByDateRangeHandler;
+    if (handler == null) {
+      throw StateError('findAllByDateRangeHandler not set');
+    }
+    return handler(start: start, end: end);
   }
 }

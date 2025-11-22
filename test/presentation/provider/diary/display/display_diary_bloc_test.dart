@@ -4,11 +4,12 @@ import 'package:dartz/dartz.dart';
 import 'package:diary/core/value_objects/error/api_error.dart';
 import 'package:diary/core/extension/datetime_extension.dart';
 import 'package:diary/core/constant/status.dart';
+import 'package:diary/core/value_objects/domain/diary_mood.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/repository/diary_repository.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';
-import 'package:diary/presentation/provider/diary/display/display_diary_bloc.dart';
+import 'package:diary/presentation/provider/diary/display/pagination/display_diary_bloc.dart';
 import 'package:diary/presentation/provider/display/display_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -123,6 +124,7 @@ class StubDiaryRepository implements DiaryRepository {
     String? clientId,
     String? title,
     required String content,
+    required DiaryMood mood,
     List<CreateDiaryMediaRequest> medias = const [],
   }) =>
       throw UnimplementedError();
@@ -132,7 +134,9 @@ class StubDiaryRepository implements DiaryRepository {
       throw UnimplementedError();
 
   @override
-  Future<Either<ApiError, DiaryDetailEntity?>> getDiaryDetail(String diaryId) =>
+  Future<Either<ApiError, DiaryDetailEntity>> getDiaryDetail(
+    String diaryId,
+  ) =>
       throw UnimplementedError();
 
   @override
@@ -165,6 +169,12 @@ class StubDiaryRepository implements DiaryRepository {
       throw UnimplementedError();
 
   @override
+  Future<Either<ApiError, List<DiaryEntity>>> findAllByDateRange({
+    required DateTime start,
+    required DateTime end,
+  }) => throw UnimplementedError();
+
+  @override
   Stream<Either<ApiError, List<DiaryEntity>>> watchAll() =>
       throw UnimplementedError();
 
@@ -173,6 +183,7 @@ class StubDiaryRepository implements DiaryRepository {
     required String diaryId,
     String? title,
     required String content,
+    required DiaryMood mood,
     List<CreateDiaryMediaRequest> medias = const [],
   }) =>
       throw UnimplementedError();

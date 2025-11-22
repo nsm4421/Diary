@@ -5,6 +5,7 @@ import 'package:dartz/dartz.dart';
 import 'package:diary/core/constant/api_error_code.dart';
 import 'package:diary/core/value_objects/error/api_error.dart';
 import 'package:diary/core/value_objects/error/api_exception.dart';
+import 'package:diary/core/value_objects/domain/diary_mood.dart';
 import 'package:diary/core/extension/datetime_extension.dart';
 import 'package:diary/data/datasoure/database/dao/local_database.dart';
 import 'package:diary/data/datasoure/database/dao/local_database_dao.dart';
@@ -207,12 +208,13 @@ void main() {
       });
     });
 
-    test('getDiaryDetail returns Right(null) when record missing', () async {
+    test('getDiaryDetail returns ApiError when record missing', () async {
       final result = await repository.getDiaryDetail('missing');
 
-      result.fold((_) => fail('Expected Right'), (entry) {
-        expect(entry, isNull);
-      });
+      result.fold(
+        (error) => expect(error.code, ApiErrorCode.notFound),
+        (_) => fail('Expected Left'),
+      );
     });
 
     test('fetchEntries returns entries ordered by createdAt desc', () async {
@@ -299,6 +301,33 @@ void main() {
         expect(entries.map((e) => e.id), ['feb-01', 'jan-10']);
       });
     });
+
+    test('findAllByDateRange returns rows ordered by date asc', () async {
+      await insertDiary(
+        id: 'jan-02',
+        title: 'Second day',
+        createdAt: DateTime(2024, 1, 2),
+      );
+      await insertDiary(
+        id: 'jan-01',
+        title: 'First day',
+        createdAt: DateTime(2024, 1, 1),
+      );
+      await insertDiary(
+        id: 'feb-01',
+        title: 'Next month',
+        createdAt: DateTime(2024, 2, 1),
+      );
+
+      final result = await repository.findAllByDateRange(
+        start: DateTime(2024, 1, 1),
+        end: DateTime(2024, 2, 0),
+      );
+
+      result.fold((_) => fail('Expected Right'), (entries) {
+        expect(entries.map((e) => e.id), ['jan-01', 'jan-02']);
+      });
+    });
   });
 
   group('write operations', () {
@@ -309,6 +338,7 @@ void main() {
         diaryId: 'update-id',
         title: 'New title',
         content: 'New content',
+        mood: DiaryMood.none,
       );
       expect(result.isRight(), isTrue);
 
@@ -469,6 +499,13 @@ class _FailingCreateDataSource implements LocalDiaryDbDataSource {
   }) => throw UnimplementedError();
 
   @override
+  @override
+  Future<Iterable<DiaryRecord>> findAllByDateRange({
+    required DateTime start,
+    required DateTime end,
+  }) => throw UnimplementedError();
+
+  @override
   Stream<List<DiaryRecord>> watchAll() => const Stream.empty();
 
   @override
@@ -543,6 +580,13 @@ class _ErrorStreamDiaryDataSource implements LocalDiaryDbDataSource {
     required DateTime end,
     int limit = 20,
     required DateTime cursor,
+  }) => throw UnimplementedError();
+
+  @override
+  @override
+  Future<Iterable<DiaryRecord>> findAllByDateRange({
+    required DateTime start,
+    required DateTime end,
   }) => throw UnimplementedError();
 
   @override

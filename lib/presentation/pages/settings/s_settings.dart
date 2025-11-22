@@ -84,19 +84,6 @@ class __ScreenState extends State<_Screen> {
                             icon: Icon(Icons.arrow_forward_outlined),
                           ),
                         ),
-
-                        _SettingTile(
-                          icon: Icons.cloud_upload_outlined,
-                          title: '백업 알림',
-                          subtitle: '주기적으로 다이어리를 백업하도록 안내받아요.',
-                          trailing: Switch(
-                            value: _backupReminder,
-                            onChanged: (value) {
-                              setState(() => _backupReminder = value);
-                              // TODO: implement backup reminder scheduling
-                            },
-                          ),
-                        ),
                       ],
                     ),
                   ),

@@ -115,7 +115,7 @@ class _SplashPageState extends State<SplashPage>
                         ),
                         const SizedBox(height: 28),
                         Text(
-                          'My Diary',
+                          '나의 일기',
                           style: textTheme.headlineMedium?.copyWith(
                             color: colorScheme.onPrimary,
                             fontWeight: FontWeight.w700,
