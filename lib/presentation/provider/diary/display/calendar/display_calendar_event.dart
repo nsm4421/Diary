@@ -11,4 +11,9 @@ abstract class DisplayCalendarEvent with _$DisplayCalendarEvent {
       _MonthChanged;
 
   const factory DisplayCalendarEvent.refreshed(String id) = _Refreshed;
+
+
+  const factory DisplayCalendarEvent.modified(DiaryEntity diary) = _Modified;
+
+  const factory DisplayCalendarEvent.removed(String id) = _Removed;
 }

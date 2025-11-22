@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:diary/core/value_objects/error/failure.dart';
-import 'package:diary/core/value_objects/diary.dart';
+import 'package:diary/core/value_objects/domain/fetch_diary.dart';
 import 'package:diary/core/value_objects/pageable.dart';
 import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';

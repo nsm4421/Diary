@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:diary/core/extension/datetime_extension.dart';
+import 'package:diary/core/value_objects/domain/diary_mood.dart';
 import 'package:diary/domain/entity/diary_detail_entity.dart';
 import 'package:diary/domain/entity/diary_media_asset.dart';
 import 'package:diary/presentation/components/app_logo_hero.dart';
+import 'package:diary/presentation/pages/diary/display/p_display_diary.dart';
 import 'package:diary/presentation/provider/diary/detail/diary_detail_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

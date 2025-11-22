@@ -16,23 +16,23 @@ class _FormState extends State<_Form> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController()
-      ..addListener(_handleChangeTitle)
-      ..text = context.read<EditDiaryCubit>().state.title;
-    _contentController = TextEditingController()
-      ..addListener(_handleChangeContent)
-      ..text = context.read<EditDiaryCubit>().state.content;
+    _titleController = TextEditingController(
+      text: context.read<EditDiaryCubit>().state.title,
+    )..addListener(_handleChangeTitle);
+    _contentController = TextEditingController(
+      text: context.read<EditDiaryCubit>().state.content,
+    )..addListener(_handleChangeContent);
   }
 
   @override
   void dispose() {
-    super.dispose();
     _titleController
       ..removeListener(_handleChangeTitle)
       ..dispose();
     _contentController
       ..removeListener(_handleChangeContent)
       ..dispose();
+    super.dispose();
   }
 
   String? _validateTitle(String? value) {

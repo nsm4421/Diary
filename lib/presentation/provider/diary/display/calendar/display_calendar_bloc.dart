@@ -25,6 +25,8 @@ class DisplayCalendarBloc
     on<_Refreshed>(_onRefreshed, transformer: droppable());
     on<_CurrentChanged>(_onCurrentChanged, transformer: droppable());
     on<_MonthChanged>(_onMonthChanged, transformer: droppable());
+    on<_Modified>(_onModified, transformer: droppable());
+    on<_Removed>(_onRemoved, transformer: droppable());
   }
 
   final DiaryUseCases _diaryUseCases;
@@ -69,6 +71,32 @@ class DisplayCalendarBloc
       return;
     }
     await _loadDiaries(event.targetDate, emit);
+  }
+
+  Future<void> _onModified(
+    _Modified event,
+    Emitter<DisplayCalendarState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        diaries: state.diaries
+            .map((e) => e.id == event.diary.id ? event.diary : e)
+            .toList(growable: false),
+      ),
+    );
+  }
+
+  Future<void> _onRemoved(
+    _Removed event,
+    Emitter<DisplayCalendarState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        diaries: state.diaries
+            .where((diary) => diary.id != event.id)
+            .toList(growable: false),
+      ),
+    );
   }
 
   Future<bool> _loadDiaries(

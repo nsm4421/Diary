@@ -45,13 +45,6 @@ class _DiaryContent extends StatelessWidget {
                 letterSpacing: 0.6,
               ),
             ),
-            Spacer(),
-            IconButton(
-              onPressed: () {
-                // TODO : 수정, 삭제 다이얼로그 띄우기
-              },
-              icon: Icon(Icons.more_vert, size: 18),
-            ),
           ],
         ),
         const SizedBox(height: 14),
@@ -63,6 +56,11 @@ class _DiaryContent extends StatelessWidget {
               icon: Icons.schedule_rounded,
               label: _formatTime(_diary.createdAt),
             ),
+            if (!_diary.mood.isNone)
+              _InfoPill(
+                icon: _diary.mood.meta.icons,
+                label: _diary.mood.meta.label,
+              ),
             if (hasUpdatedInfo)
               _InfoPill(
                 icon: Icons.update_rounded,

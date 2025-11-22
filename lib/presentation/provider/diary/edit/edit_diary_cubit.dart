@@ -4,7 +4,10 @@ import 'dart:math' as math;
 import 'package:diary/core/constant/error_code.dart';
 import 'package:diary/core/constant/status.dart';
 import 'package:diary/core/utils/app_logger.dart';
+import 'package:diary/core/value_objects/domain/diary_mood.dart';
 import 'package:diary/core/value_objects/error/failure.dart';
+import 'package:diary/domain/entity/diary_detail_entity.dart';
+import 'package:diary/domain/entity/diary_entity.dart';
 import 'package:diary/domain/usecase/diary/diary_usecases.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -20,6 +23,7 @@ enum EditDiaryMode { create, modify }
 @injectable
 class EditDiaryCubit extends Cubit<EditDiaryState> with AppLoggerMixIn {
   late final String _diaryId;
+  late DiaryDetailEntity _initialDiary;
   late final EditDiaryMode _editMode;
   static const int _maxMediaCount = 3;
   final DiaryUseCases _diaryUseCases;
@@ -31,6 +35,13 @@ class EditDiaryCubit extends Cubit<EditDiaryState> with AppLoggerMixIn {
   }
 
   EditDiaryMode get mode => _editMode;
+
+  DiaryEntity get diary => _initialDiary.copyWith(
+    title: state.title,
+    content: state.content,
+    mood: state.mood,
+    updatedAt: DateTime.now(),
+  );
 
   void init() async {
     if (_editMode == EditDiaryMode.modify) {
@@ -47,15 +58,17 @@ class EditDiaryCubit extends Cubit<EditDiaryState> with AppLoggerMixIn {
                 );
               },
               (diary) {
+                _initialDiary = diary;
                 emit(
                   state.copyWith(
-                    title: diary?.title ?? '',
-                    content: diary?.content ?? '',
-                    medias: (diary?.medias ?? [])
+                    title: diary.title ?? '',
+                    content: diary.content,
+                    medias: (diary.medias ?? [])
                         .map((e) => e.absolutePath)
                         .map(File.new)
                         .toList(growable: false),
                     status: EditDiaryStatus.editing,
+                    mood: diary.mood,
                   ),
                 );
               },
@@ -66,13 +79,19 @@ class EditDiaryCubit extends Cubit<EditDiaryState> with AppLoggerMixIn {
     }
   }
 
-  void handleChange({String? title, String? content, List<File>? medias}) {
+  void handleChange({
+    String? title,
+    String? content,
+    List<File>? medias,
+    DiaryMood? mood,
+  }) {
     emit(
       state.copyWith(
         status: EditDiaryStatus.editing,
         title: title ?? state.title,
         content: content ?? state.content,
         medias: medias ?? state.medias,
+        mood: mood ?? state.mood,
       ),
     );
   }
@@ -113,11 +132,13 @@ class EditDiaryCubit extends Cubit<EditDiaryState> with AppLoggerMixIn {
                   title: state.title,
                   content: state.content,
                   files: state.medias,
+                  mood: state.mood,
                 )
               : _diaryUseCases.update.call(
                   id: _diaryId,
                   title: state.title,
                   content: state.content,
+                  mood: state.mood,
                 ))
           .then(
             (res) => res.fold(

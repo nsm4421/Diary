@@ -43,9 +43,32 @@ class _Preview extends StatelessWidget {
           separatorBuilder: (_, __) => const SizedBox(height: 16),
           itemBuilder: (context, index) {
             final diary = state.currentDiaries[index];
-            return DiaryPreviewCard(
-              diary: diary,
-              accent: context.colorScheme.primary,
+            return GestureDetector(
+              onTap: () async {
+                await context.router.push(DiaryDetailRoute(diaryId: diary.id));
+              },
+              child: DiaryPreviewCard(
+                diary: diary,
+                accent: context.colorScheme.primary,
+                // 우측상단 아이콘 클릭
+                onMoreTap: () async =>
+                    await showDialog<bool>(
+                      context: context,
+                      builder: (_) => EditDiaryDialog(
+                        diary.id,
+                        onEdited: (diary) {
+                          context.read<DisplayCalendarBloc>().add(
+                            DisplayCalendarEvent.modified(diary),
+                          );
+                        },
+                      ),
+                    ).then((isDeleted) => isDeleted ?? false).then((isDeleted) {
+                      if (!isDeleted || !context.mounted) return;
+                      context.read<DisplayCalendarBloc>().add(
+                        DisplayCalendarEvent.removed(diary.id),
+                      );
+                    }),
+              ),
             );
           },
         );

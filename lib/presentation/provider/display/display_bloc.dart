@@ -40,19 +40,6 @@ abstract class DisplayBloc<E, C>
   @protected
   C initialCursor();
 
-  @protected
-  List<E> reorderAfterUpsert(List<E> current, E upserted) {
-    final filtered = current
-        .where((e) => idOf(e) != idOf(upserted))
-        .toList(growable: true);
-    if (prependOnUpsert) {
-      filtered.insert(0, upserted);
-      return filtered;
-    }
-    filtered.add(upserted);
-    return filtered;
-  }
-
   Future<void> _onStarted(
     _Started<E> event,
     Emitter<DisplayState<E, C>> emit,
@@ -145,7 +132,13 @@ abstract class DisplayBloc<E, C>
   }
 
   void _onUpserted(_Upserted<E> event, Emitter<DisplayState<E, C>> emit) {
-    emit(state.copyWith(items: reorderAfterUpsert(state.items, event.item)));
+    emit(
+      state.copyWith(
+        items: state.items
+            .map((e) => idOf(e) == idOf(event.item) ? event.item : e)
+            .toList(growable: false),
+      ),
+    );
   }
 
   void _onRemoved(_Removed<E> event, Emitter<DisplayState<E, C>> emit) {
@@ -172,13 +165,10 @@ abstract class DisplayBloc<E, C>
       ErrorCode.forbidden => '접근 권한이 없습니다.',
       ErrorCode.notFound => '요청한 데이터를 찾을 수 없습니다.',
       ErrorCode.conflict => '이미 처리된 요청입니다.',
-      ErrorCode.server =>
-        '데이터를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.',
+      ErrorCode.server => '데이터를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.',
       ErrorCode.network => '네트워크 연결을 확인해주세요.',
-      ErrorCode.timeout =>
-        '요청 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.',
-      ErrorCode.cache || ErrorCode.database =>
-        '저장된 데이터를 불러오는 중 문제가 발생했습니다.',
+      ErrorCode.timeout => '요청 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.',
+      ErrorCode.cache || ErrorCode.database => '저장된 데이터를 불러오는 중 문제가 발생했습니다.',
       ErrorCode.storage => '파일을 처리하는 중 문제가 발생했습니다.',
       ErrorCode.parsing => '데이터 처리 중 오류가 발생했습니다.',
       ErrorCode.validation => failure.description,

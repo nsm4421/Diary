@@ -1,9 +1,17 @@
-part of 'p_display_diary.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:diary/core/extension/build_context_extension.dart';
+import 'package:diary/domain/entity/diary_entity.dart';
+import 'package:diary/presentation/provider/diary/delete/delete_diary_cubit.dart';
+import 'package:diary/presentation/router/app_router.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
-class _EditDiaryDialog extends StatelessWidget {
-  const _EditDiaryDialog(this._diaryId, {super.key});
+class EditDiaryDialog extends StatelessWidget {
+  const EditDiaryDialog(this._diaryId, {super.key, this.onEdited});
 
   final String _diaryId;
+  final void Function(DiaryEntity diary)? onEdited;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +37,7 @@ class _EditDiaryDialog extends StatelessWidget {
               title: Row(
                 children: [
                   IconButton(
-                    onPressed: () => context.router.pop(),
+                    onPressed: () => context.router.maybePop(),
                     icon: const Icon(Icons.clear, size: 18),
                     tooltip: '취소',
                   ),
@@ -55,9 +63,16 @@ class _EditDiaryDialog extends StatelessWidget {
                     foregroundColor: colorScheme.onSecondary,
                   ),
                   onPressed: () async {
-                    await context.router.popAndPush(
-                      EditDiaryRoute(diaryId: _diaryId),
-                    );
+                    await context.router
+                        .popAndPush<DiaryEntity, dynamic>(
+                          EditDiaryRoute(diaryId: _diaryId),
+                        )
+                        .then((diary) {
+                          debugPrint('[EditDiaryDialog]modal closed');
+                          if (diary == null || onEdited == null) return;
+                          debugPrint('[EditDiaryDialog]diary edited');
+                          onEdited!(diary);
+                        });
                   },
                   child: const Text('수정'),
                 ),
@@ -68,16 +83,16 @@ class _EditDiaryDialog extends StatelessWidget {
                   ),
                   onPressed: state.isReady
                       ? () async {
-                    // 삭제 요청
-                    await context.read<DeleteDiaryCubit>().delete();
-                  }
+                          // 삭제 요청
+                          await context.read<DeleteDiaryCubit>().delete();
+                        }
                       : null,
                   child: state.isReady
                       ? const Text('삭제')
                       : Transform.scale(
-                    scale: 0.5,
-                    child: CircularProgressIndicator(),
-                  ),
+                          scale: 0.5,
+                          child: CircularProgressIndicator(),
+                        ),
                 ),
               ],
             );

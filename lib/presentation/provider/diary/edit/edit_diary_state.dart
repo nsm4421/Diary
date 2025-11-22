@@ -12,6 +12,8 @@ class EditDiaryState with _$EditDiaryState {
   final List<File> medias;
   @override
   final String errorMessage;
+  @override
+  final DiaryMood mood;
 
   const EditDiaryState({
     this.status = EditDiaryStatus.idle,
@@ -19,6 +21,7 @@ class EditDiaryState with _$EditDiaryState {
     this.content = '',
     this.medias = const [],
     this.errorMessage = '',
+    this.mood = DiaryMood.none,
   });
 
   bool get isMounted => status != EditDiaryStatus.idle;

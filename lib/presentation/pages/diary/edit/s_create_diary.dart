@@ -112,9 +112,12 @@ class _ScreenState extends State<_Screen> {
 
                         child: Column(
                           children: [
+                            const SizedBox(height: 18),
                             _Form(_formKey),
                             const SizedBox(height: 18),
                             const _SelectMedia(),
+                            const SizedBox(height: 18),
+                            const _SelectMood(),
                           ],
                         ),
                       ),

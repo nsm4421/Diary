@@ -1,4 +1,4 @@
-import 'package:diary/core/value_objects/diary.dart';
+import 'package:diary/core/value_objects/domain/fetch_diary.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 

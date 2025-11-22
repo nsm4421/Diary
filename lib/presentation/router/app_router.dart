@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:diary/core/value_objects/diary.dart';
+import 'package:diary/core/value_objects/domain/fetch_diary.dart';
 import 'package:diary/presentation/pages/diary/edit/p_edit_diary.dart';
 import 'package:diary/presentation/pages/diary/detail/p_diary_detail.dart';
 import 'package:diary/presentation/pages/diary/display/calendar/p_calendar.dart';
