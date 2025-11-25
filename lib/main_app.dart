@@ -1,3 +1,4 @@
+import 'package:diary/presentation/provider/permission/permission_cubit.dart';
 import 'package:diary/presentation/provider/security/password_lock/password_lock_cubit.dart';
 import 'package:diary/presentation/provider/setting/app_setting_cubit.dart';
 import 'package:flutter/material.dart';
@@ -14,11 +15,17 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        // 앱 세팅
         BlocProvider<AppSettingCubit>(
           create: (_) => GetIt.instance<AppSettingCubit>()..init(),
         ),
+        // 앱 비밀번호
         BlocProvider<PasswordLockCubit>(
           create: (_) => GetIt.instance<PasswordLockCubit>()..init(),
+        ),
+        // 앱 권한
+        BlocProvider<PermissionCubit>(
+          create: (_) => GetIt.instance<PermissionCubit>()..checkPermission(),
         ),
       ],
       child: BlocBuilder<AppSettingCubit, AppSettingState>(

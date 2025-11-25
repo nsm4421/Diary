@@ -35,14 +35,12 @@ class _FeedStyleDiariesListState extends State<_FeedStyleDiariesList> {
           current.status == DisplayStatus.paginated ||
           current.status == DisplayStatus.loading ||
           current.status == DisplayStatus.refreshing) {
-        debugPrint('scroll request dropped1');
         return;
       }
     }
     final position = _scrollController.position;
     if (position.maxScrollExtent <= 0 ||
         position.pixels < position.maxScrollExtent - _paginationThreshold) {
-      debugPrint('scroll request dropped2');
       return;
     }
 
@@ -62,10 +60,10 @@ class _FeedStyleDiariesListState extends State<_FeedStyleDiariesList> {
     final textTheme = Theme.of(context).textTheme;
     return BlocBuilder<DisplayDiaryBloc, DisplayState<DiaryEntity, DateTime>>(
       builder: (context, state) {
-        if (state.isEmpty) {
-          return (state.isLoading || state.isInitial)
-              ? const Center(child: CircularProgressIndicator())
-              : _EmptyState();
+        if (state.isEmpty & state.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state.isEmpty & state.isInitial) {
+          return _EmptyState();
         }
 
         return RefreshIndicator(

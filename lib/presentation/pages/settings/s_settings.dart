@@ -66,6 +66,7 @@ class __ScreenState extends State<_Screen> {
                     child: ListView(
                       children: [
                         _DarkModeSwitch(),
+                        const _PermissionTile(),
                         _SettingTile(
                           icon: Icons.lock_outline_rounded,
                           title: '비밀번호 잠금',
