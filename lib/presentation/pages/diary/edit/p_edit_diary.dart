@@ -40,11 +40,12 @@ class EditDiaryPage extends StatelessWidget {
       child: BlocListener<EditDiaryCubit, EditDiaryState>(
         listener: (context, state) {
           if (state.isSuccess) {
+            final savedDiary = context.read<EditDiaryCubit>().diary;
             context
               ..showToast('일기 작성 성공')
               ..maybePop<DiaryEntity>(
                 // 작성된 일기를 원래 화면으로 보내기
-                context.read<EditDiaryCubit>().diary,
+                savedDiary,
               );
           } else if (state.isError) {
             final message = state.errorMessage;

@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:diary/core/constant/constraint.dart';
 import 'package:diary/core/constant/error_code.dart';
 import 'package:diary/core/constant/status.dart';
+import 'package:diary/core/extension/datetime_extension.dart';
 import 'package:diary/core/utils/app_logger.dart';
 import 'package:diary/core/value_objects/domain/diary_mood.dart';
 import 'package:diary/core/value_objects/error/failure.dart';
@@ -25,7 +27,6 @@ class EditDiaryCubit extends Cubit<EditDiaryState> with AppLoggerMixIn {
   late final String _diaryId;
   late DiaryDetailEntity _initialDiary;
   late final EditDiaryMode _editMode;
-  static const int _maxMediaCount = 3;
   final DiaryUseCases _diaryUseCases;
 
   EditDiaryCubit(@factoryParam String? diaryId, this._diaryUseCases)
@@ -75,6 +76,12 @@ class EditDiaryCubit extends Cubit<EditDiaryState> with AppLoggerMixIn {
             ),
           );
     } else {
+      _initialDiary = DiaryDetailEntity(
+        id: _diaryId,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        date: DateTime.now().yyyymmdd,
+      );
       emit(state.copyWith(status: EditDiaryStatus.editing));
     }
   }
@@ -101,7 +108,7 @@ class EditDiaryCubit extends Cubit<EditDiaryState> with AppLoggerMixIn {
       return;
     }
     final current = List<File>.from(state.medias);
-    final remaining = math.max(0, _maxMediaCount - current.length);
+    final remaining = math.max(0, maxDiaryMediaCount - current.length);
     if (remaining <= 0) {
       return;
     }

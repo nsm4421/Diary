@@ -86,13 +86,30 @@ class _ScreenState extends State<_Screen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AppLogoHero(
-                        backgroundColor: context.colorScheme.onPrimary
-                            .withAlpha(28),
-                        borderColor: context.colorScheme.onPrimary.withAlpha(
-                          46,
-                        ),
-                        iconColor: context.colorScheme.onPrimary,
+                      Stack(
+                        children: [
+                          AppLogoHero(
+                            backgroundColor: Colors.transparent,
+                            borderColor: Colors.transparent,
+                            iconColor: Colors.transparent,
+                          ),
+                          IconButton(
+                            tooltip: '닫기',
+                            style: IconButton.styleFrom(
+                              backgroundColor: context.colorScheme.onPrimary
+                                  .withAlpha(36),
+                              shape: const CircleBorder(),
+                              padding: const EdgeInsets.all(10),
+                            ),
+                            icon: Icon(
+                              Icons.close_rounded,
+                              color: context.colorScheme.onPrimary,
+                            ),
+                            onPressed: () async {
+                              await context.router.maybePop();
+                            },
+                          ),
+                        ],
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -118,23 +135,6 @@ class _ScreenState extends State<_Screen> {
                             ),
                           ],
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        tooltip: '닫기',
-                        style: IconButton.styleFrom(
-                          backgroundColor: context.colorScheme.onPrimary
-                              .withAlpha(36),
-                          shape: const CircleBorder(),
-                          padding: const EdgeInsets.all(10),
-                        ),
-                        icon: Icon(
-                          Icons.close_rounded,
-                          color: context.colorScheme.onPrimary,
-                        ),
-                        onPressed: () async {
-                          await context.router.maybePop();
-                        },
                       ),
                     ],
                   ),

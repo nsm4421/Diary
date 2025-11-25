@@ -22,7 +22,7 @@ class _SelectMood extends StatelessWidget {
                       ),
                     ),
                     builder: (_) =>
-                        _MoodDialog(context.read<EditDiaryCubit>().state.mood),
+                        _MoodDialog(state.mood),
                   ).then((selected) {
                     debugPrint(selected?.meta.label);
                     if (selected == null ||

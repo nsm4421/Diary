@@ -9,7 +9,6 @@ class _SelectMedia extends StatefulWidget {
 
 class _SelectMediaState extends State<_SelectMedia> {
   late final ImagePicker _imagePicker;
-  static const int _maxSelectable = 3;
 
   @override
   void initState() {
@@ -19,7 +18,7 @@ class _SelectMediaState extends State<_SelectMedia> {
 
   Future<void> _handleAddMedia() async {
     final remaining =
-        _maxSelectable - context.read<EditDiaryCubit>().state.medias.length;
+        maxDiaryMediaCount - context.read<EditDiaryCubit>().state.medias.length;
     final selected = await showModalBottomSheet<List<XFile>>(
       context: context,
       builder: (sheetContext) {
@@ -65,7 +64,7 @@ class _SelectMediaState extends State<_SelectMedia> {
     context.read<EditDiaryCubit>().addMediaFiles(files);
 
     if (truncated) {
-      context.showToast('이미지는 최대 $_maxSelectable장까지 선택할 수 있어요.');
+      context.showToast('이미지는 최대 $maxDiaryMediaCount장까지 선택할 수 있어요.');
     }
   }
 
@@ -111,7 +110,7 @@ class _SelectMediaState extends State<_SelectMedia> {
                       color: context.colorScheme.secondary.withAlpha(31),
                     ),
                     child: Text(
-                      '최대 $_maxSelectable장',
+                      '최대 $maxDiaryMediaCount장',
                       style: context.textTheme.labelSmall?.copyWith(
                         color: context.colorScheme.secondary,
                         fontWeight: FontWeight.w600,
@@ -122,7 +121,7 @@ class _SelectMediaState extends State<_SelectMedia> {
                   const Spacer(),
                   if (state.medias.isNotEmpty)
                     Text(
-                      '${state.medias.length}/$_maxSelectable',
+                      '${state.medias.length}/$maxDiaryMediaCount',
                       style: context.textTheme.labelMedium?.copyWith(
                         color: context.colorScheme.onSurfaceVariant.withAlpha(
                           204,
@@ -145,9 +144,9 @@ class _SelectMediaState extends State<_SelectMedia> {
                       accent: context.colorScheme.secondary,
                     ),
                   ),
-                  if (_maxSelectable > state.medias.length)
+                  if (maxDiaryMediaCount > state.medias.length)
                     _AddMediaTile(
-                      remaining: _maxSelectable - state.medias.length,
+                      remaining: maxDiaryMediaCount - state.medias.length,
                       onTap: state.isSubmitting ? null : _handleAddMedia,
                       accent: context.colorScheme.secondary,
                       textTheme: context.textTheme,

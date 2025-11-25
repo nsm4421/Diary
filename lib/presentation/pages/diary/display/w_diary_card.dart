@@ -24,7 +24,7 @@ class _DiaryCard extends StatelessWidget {
               onEdited: (diary) {
                 debugPrint('diary edited');
                 context.read<DisplayDiaryBloc>().add(
-                  DisplayEvent.upserted(diary),
+                  DisplayEvent.update(diary),
                 );
               },
             ),

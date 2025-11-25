@@ -10,7 +10,6 @@ import 'package:diary/presentation/provider/display/display_bloc.dart';
 import 'package:diary/presentation/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
 part 's_display_diary.dart';
 
@@ -28,11 +27,6 @@ class DisplayDiaryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) =>
-          GetIt.instance<DisplayDiaryBloc>()
-            ..add(DisplayEvent<DiaryEntity>.started()),
-      child: _Screen(),
-    );
+    return _Screen();
   }
 }

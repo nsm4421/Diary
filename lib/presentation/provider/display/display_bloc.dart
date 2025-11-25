@@ -17,14 +17,13 @@ part 'display_bloc.freezed.dart';
 abstract class DisplayBloc<E, C>
     extends Bloc<DisplayEvent<E>, DisplayState<E, C>> {
   final int pageSize;
-  final bool prependOnUpsert;
 
-  DisplayBloc({this.pageSize = 20, this.prependOnUpsert = true})
-    : super(DisplayState<E, C>()) {
+  DisplayBloc({this.pageSize = 20}) : super(DisplayState<E, C>()) {
     on<_Started<E>>(_onStarted, transformer: restartable());
     on<_Refreshed<E>>(_onRefreshed, transformer: restartable());
     on<_NextPageRequested<E>>(_onNextPageRequested, transformer: droppable());
-    on<_Upserted<E>>(_onUpserted);
+    on<_Updated<E>>(_onUpdated);
+    on<_Created<E>>(_onCreated);
     on<_Removed<E>>(_onRemoved);
   }
 
@@ -131,7 +130,15 @@ abstract class DisplayBloc<E, C>
     );
   }
 
-  void _onUpserted(_Upserted<E> event, Emitter<DisplayState<E, C>> emit) {
+  void _onCreated(_Created<E> event, Emitter<DisplayState<E, C>> emit) {
+    emit(
+      state.copyWith(
+        items: [event.item, ...state.items].toList(growable: false),
+      ),
+    );
+  }
+
+  void _onUpdated(_Updated<E> event, Emitter<DisplayState<E, C>> emit) {
     emit(
       state.copyWith(
         items: state.items
