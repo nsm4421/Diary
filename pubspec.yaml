@@ -15,15 +15,10 @@ dependencies:
   injectable: ^2.4.2
   flutter_bloc: ^8.1.6
   equatable: ^2.0.5
-  dartz: ^0.10.1
-  google_fonts: ^6.2.1
   auto_route: ^10.2.0
   uuid: ^4.5.1
   freezed_annotation: 3.1.0
   json_annotation: ^4.9.0
-  drift: ^2.20.2
-  drift_flutter: ^0.1.0
-  sqlite3_flutter_libs: ^0.5.24
   path: ^1.9.0
   path_provider: ^2.1.4
   image: ^4.2.0
@@ -31,13 +26,22 @@ dependencies:
   permission_handler: ^11.3.1
   copy_with_extension_gen: ^10.0.1
   logger: ^2.6.2
+  flutter_svg: ^2.0.10+1
   bloc_concurrency: ^0.2.5
   crypto: ^3.0.3
   shared_preferences: ^2.3.2
   flutter_secure_storage: ^9.2.2
   table_calendar: ^3.1.2
-  diary_supabase:
-    path: packages/supabase
+  fpdart: ^1.2.0
+
+  shared:
+    path: packages/shared
+  supabase_datasource:
+    path: packages/supabase_datasource
+  app_theme:
+    path: packages/theme
+  app_extensions:
+    path: packages/extensions
 
 dev_dependencies:
   flutter_test:
@@ -53,3 +57,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/svg/light_app_logo.svg
+    - assets/svg/dark_app_logo.svg
