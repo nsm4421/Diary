@@ -21,7 +21,7 @@ class ApiException implements Exception {
   String toString() {
     final base = message ?? code.description;
     final status = statusCode != null ? ' (status: $statusCode)' : '';
-    return 'ApiError(code: ${code.code}, message: $base$status)';
+    return 'ApiError(code: ${code.name}, message: $base$status)';
   }
 
   static ApiException _from({

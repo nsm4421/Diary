@@ -13,8 +13,8 @@ enum ApiErrorCode {
   cancelled('CANCELLED', 'Request cancelled.'),
   unknown('UNKNOWN', 'Unknown error occurred.');
 
-  const ApiErrorCode(this.code, this.description);
+  const ApiErrorCode(this.name, this.description);
 
-  final String code;
+  final String name;
   final String description;
 }
