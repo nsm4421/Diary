@@ -36,6 +36,8 @@ dependencies:
   shared_preferences: ^2.3.2
   flutter_secure_storage: ^9.2.2
   table_calendar: ^3.1.2
+  diary_supabase:
+    path: packages/supabase
 
 dev_dependencies:
   flutter_test:
