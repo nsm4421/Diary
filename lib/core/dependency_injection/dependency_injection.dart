@@ -13,5 +13,6 @@ import 'dependency_injection.config.dart';
   ],
 )
 Future<void> configureDependencies() async {
+  await initSupabaseDataSourceMicroPackage();
   await GetIt.instance.init();
 }

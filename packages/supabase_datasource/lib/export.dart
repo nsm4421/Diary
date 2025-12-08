@@ -2,6 +2,7 @@ library supabase_datasource;
 
 /// di
 export 'src/dependency_injection/dependency_injection.module.dart';
+export 'src/dependency_injection/dependency_injection.dart';
 
 /// auth
 export 'src/auth/auth_datasource.dart';
