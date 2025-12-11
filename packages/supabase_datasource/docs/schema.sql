@@ -1,9 +1,10 @@
+-- required for gen_random_uuid()
+create extension if not exists "pgcrypto";
+
 -- public.profiles
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
-  display_name text,
-  avatar_url text,
-  bio text,
+  display_name text not null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -19,8 +20,8 @@ begin
 end;
 $$;
 
-drop trigger if exists tg_set_updated_at on public.profiles;
-create trigger tg_set_updated_at
+drop trigger if exists tg_profile_set_updated_at on public.profiles;
+create trigger tg_profile_set_updated_at
 before update on public.profiles
 for each row
 execute procedure public.set_updated_at();
@@ -37,7 +38,6 @@ begin
   values (
     new.id,
     nullif(meta ->> 'display_name', ''),
-    nullif(meta ->> 'avatar_url', '')
   )
   on conflict (id) do nothing;
   return new;
@@ -49,3 +49,38 @@ create trigger on_auth_user_created
 after insert on auth.users
 for each row
 execute procedure public.create_profile_for_new_user();
+
+-- public.diaries
+create table if not exists public.diaries (
+  id uuid primary key default gen_random_uuid(),
+  title text,
+  created_by uuid not null references auth.users (id) on delete cascade,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  delete_at timestamptz
+);
+
+drop trigger if exists tg_diary_set_updated_at on public.diaries;
+create trigger tg_diary_set_updated_at
+before update on public.diaries
+for each row
+execute procedure public.set_updated_at();
+
+-- public.stories
+create table if not exists public.stories (
+  id uuid primary key default gen_random_uuid(),
+  diary_id uuid not null references public.diaries (id) on delete cascade,
+  sequence int not null default 0,
+  description text not null,
+  media text[] not null default '{}',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  delete_at timestamptz,
+  unique(diary_id, sequence)
+);
+
+drop trigger if exists tg_story_set_updated_at on public.stories;
+create trigger tg_story_set_updated_at
+before update on public.stories
+for each row
+execute procedure public.set_updated_at();

@@ -1,62 +1,52 @@
-# Supabase 스키마 요약
+## Supabase schema overview
 
-`packages/supabase_datasource/docs/schema.sql`에 포함된 쿼리를 설명합니다. SQL을 그대로 실행하면 됩니다.
+This document mirrors the current DDL in `schema.sql` for the Supabase instance used by the app.
 
-## 1) `public.profiles` 테이블
+### Extensions
+- `pgcrypto` (for `gen_random_uuid()`)
 
-사용자 프로필 저장용 테이블입니다. `auth.users.id`를 기본 키로 두고, 사용자 삭제 시 함께 삭제되도록 `ON DELETE CASCADE`를 설정했습니다.
+### Functions & triggers
+- `public.set_updated_at()`  
+  - Before-update trigger helper that stamps `updated_at` with `now()`.  
+  - Applied to: `public.profiles`, `public.diaries`, `public.stories`.
+- `public.create_profile_for_new_user()`  
+  - After-insert trigger on `auth.users` (`on_auth_user_created`) that creates a profile record using `raw_user_meta_data.display_name` when present.  
+  - Note: the function currently inserts into an `avatar_url` column that is **not** defined on `public.profiles`; adjust the table or function to keep them in sync.
 
-```sql
-create table if not exists public.profiles (
-  id uuid primary key references auth.users (id) on delete cascade,
-  display_name text,
-  avatar_url text,
-  bio text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-```
+### Tables
 
-### updated_at 자동 갱신 트리거
+#### public.profiles
+| column       | type        | constraints                                     | default    |
+|--------------|-------------|-------------------------------------------------|------------|
+| id           | uuid        | primary key; references `auth.users(id)` cascade | —          |
+| display_name | text        | not null                                        | —          |
+| created_at   | timestamptz | not null                                        | `now()`    |
+| updated_at   | timestamptz | not null                                        | `now()`    |
 
-```sql
-create or replace function public.set_updated_at()
-returns trigger
-language plpgsql
-as $$
-begin
-  new.updated_at = now();
-  return new;
-end;
-$$;
+Triggers: `tg_profile_set_updated_at` (before update) via `set_updated_at()`. Profiles are also auto-created after a new auth user via `on_auth_user_created`.
 
-drop trigger if exists tg_set_updated_at on public.profiles;
-create trigger tg_set_updated_at
-before update on public.profiles
-for each row
-execute procedure public.set_updated_at();
-```
+#### public.diaries
+| column     | type        | constraints                                           | default         |
+|------------|-------------|-------------------------------------------------------|-----------------|
+| id         | uuid        | primary key                                           | `gen_random_uuid()` |
+| title      | text        | nullable                                              | —               |
+| created_by | uuid        | not null; references `auth.users(id)` cascade         | —               |
+| created_at | timestamptz | not null                                              | `now()`         |
+| updated_at | timestamptz | not null                                              | `now()`         |
+| delete_at  | timestamptz | soft delete marker                                    | —               |
 
-## 2) 회원 가입 시 프로필 자동 생성 트리거
+Triggers: `tg_diary_set_updated_at` (before update) via `set_updated_at()`.
 
-`auth.users`에 새로운 유저가 삽입되면 동일한 `id`와 `email`로 `public.profiles`에 기본 프로필을 생성합니다. 이미 있으면 무시합니다.
+#### public.stories
+| column      | type        | constraints                                                       | default             |
+|-------------|-------------|-------------------------------------------------------------------|---------------------|
+| id          | uuid        | primary key                                                       | `gen_random_uuid()` |
+| diary_id    | uuid        | not null; references `public.diaries(id)` cascade                 | —                   |
+| sequence    | int         | not null; unique together with `diary_id`                         | `0`                 |
+| description | text        | not null                                                          | —                   |
+| media       | text[]      | not null                                                          | `{}`                |
+| created_at  | timestamptz | not null                                                          | `now()`             |
+| updated_at  | timestamptz | not null                                                          | `now()`             |
+| delete_at   | timestamptz | soft delete marker                                                | —                   |
 
-```sql
-create or replace function public.create_profile_for_new_user()
-returns trigger
-language plpgsql
-as $$
-begin
-  insert into public.profiles (id, email)
-  values (new.id, new.email)
-  on conflict (id) do nothing;
-  return new;
-end;
-$$;
-
-drop trigger if exists on_auth_user_created on auth.users;
-create trigger on_auth_user_created
-after insert on auth.users
-for each row
-execute procedure public.create_profile_for_new_user();
-```
+Triggers: `tg_story_set_updated_at` (before update) via `set_updated_at()`.
