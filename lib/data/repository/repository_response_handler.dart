@@ -1,5 +1,6 @@
 import 'package:diary/core/response/api_response.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:logger/logger.dart';
 import 'package:shared/shared.dart';
 
 mixin class RepositoryResponseHandlerMixIn {
@@ -26,8 +27,10 @@ mixin class RepositoryResponseHandlerMixIn {
   ApiResponse<T> fromApiException<T>({
     required Object error,
     StackTrace? stackTrace,
+    Logger? logger,
   }) {
     if (error is ApiException) {
+      logger?.e('REPOSITORY EXCEPTION', error: error, stackTrace: stackTrace);
       return apiFailureWith(
         code: error.code,
         message: error.message,
@@ -37,6 +40,7 @@ mixin class RepositoryResponseHandlerMixIn {
         stackTrace: stackTrace ?? error.stackTrace,
       );
     } else {
+      logger?.e('REPOSITORY EXCEPTION', error: error, stackTrace: stackTrace);
       return apiFailureWith(
         error: error,
         stackTrace: stackTrace,
