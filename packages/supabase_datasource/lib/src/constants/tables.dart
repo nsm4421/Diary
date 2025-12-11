@@ -1,5 +1,7 @@
 enum SupabaseTables {
-  profiles("profiles");
+  profiles("profiles"),
+  diary("diary"),
+  story("story");
 
   final String name;
 
