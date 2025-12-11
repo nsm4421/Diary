@@ -60,4 +60,15 @@ class SupabaseAuthDataSourceImpl
       throw toApiException(error, stackTrace);
     }
   }
+
+  @override
+  Future<AuthUserModel?> setUserAttribute({required String displayName}) async {
+    try {
+      return await _auth
+          .updateUser(UserAttributes(data: {'display_name': displayName}))
+          .then((res) => res.user.toAuthUser());
+    } catch (error, stackTrace) {
+      throw toApiException(error, stackTrace);
+    }
+  }
 }

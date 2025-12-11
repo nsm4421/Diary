@@ -1,6 +1,6 @@
 import 'package:diary/core/response/app_response.dart';
 import 'package:diary/domain/entity/auth/auth_user_entity.dart';
-import 'package:diary/domain/repository/auth/auth_repository.dart';
+import 'package:diary/domain/repository/auth_repository.dart';
 import 'package:injectable/injectable.dart';
 
 part 'scenario/sign_in_usecase.dart';

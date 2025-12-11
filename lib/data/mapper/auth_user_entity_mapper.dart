@@ -9,8 +9,6 @@ extension AuthUserModelX on AuthUserModel? {
             id: this!.id,
             email: this!.email,
             displayName: this!.displayName,
-            avatarUrl: this!.avatarUrl,
-            bio: this!.bio,
           );
   }
 }

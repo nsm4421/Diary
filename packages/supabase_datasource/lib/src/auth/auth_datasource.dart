@@ -22,8 +22,12 @@ abstract interface class SupabaseAuthDataSource {
     required String password,
     required String displayName,
     String? avatarUrl,
-    String? bio
+    String? bio,
   });
 
   Future<void> signOut();
+
+  Future<AuthUserModel?> setUserAttribute({
+    required String displayName,
+  });
 }

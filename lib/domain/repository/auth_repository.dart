@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:diary/core/response/api_response.dart';
 import 'package:diary/domain/entity/auth/auth_user_entity.dart';
 
@@ -10,8 +12,6 @@ abstract interface class AuthRepository {
     required String email,
     required String password,
     required String displayName,
-    String? avatarUrl,
-    String? bio,
   });
 
   Future<ApiResponse<AuthUserEntity?>> signInWithPassword({
@@ -20,4 +20,8 @@ abstract interface class AuthRepository {
   });
 
   Future<ApiResponse<void>> signOut();
+
+  Future<ApiResponse<AuthUserEntity?>> setUserAttribute({
+    required String displayName,
+  });
 }

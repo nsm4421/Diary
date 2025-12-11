@@ -96,8 +96,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             email: event.email,
             password: event.password,
             displayName: event.displayName,
-            bio: event.bio,
-            avatarUrl: event.avatarUrl,
           )
           .then(
             (res) => res.mapLeft((l) {

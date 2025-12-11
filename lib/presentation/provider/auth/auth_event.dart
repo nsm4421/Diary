@@ -15,8 +15,6 @@ sealed class AuthEvent with _$AuthEvent {
     required String email,
     required String password,
     required String displayName,
-    String? avatarUrl,
-    String? bio,
   }) = _SignUp;
 
   const factory AuthEvent.signOut() = _SignOut;
