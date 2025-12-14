@@ -5,7 +5,10 @@ ios/
 **.freezed.dart
 **.config.dart
 **.gr.dart
+**.module.dart
 devtools_options.yaml
+supabase/*
+assets/*
 
 # Miscellaneous
 *.class
