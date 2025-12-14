@@ -1,9 +1,6 @@
-import 'package:app_extensions/export.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:diary/presentation/components/components.dart';
-import 'package:diary/presentation/pages/auth/sign_in/sign_in_page.dart';
-import 'package:diary/presentation/pages/auth/sign_up/sign_up_page.dart';
 import 'package:diary/presentation/provider/auth/auth_bloc.dart';
+import 'package:diary/presentation/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,10 +10,13 @@ class AuthEntryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Text("AUTH"),
-      ),
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state.isAuth) {
+          context.router.replace(HomeEntryRoute());
+        }
+      },
+      child: const AutoRouter(),
     );
   }
 }

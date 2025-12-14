@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../model/auth/auth_user_model.dart';
@@ -25,7 +26,7 @@ abstract interface class SupabaseAuthDataSource {
     String? bio,
   });
 
-  Future<void> signOut();
+  Future<void> signOut([SignOutScope scope = SignOutScope.local]);
 
   Future<AuthUserModel?> setUserAttribute({
     required String displayName,

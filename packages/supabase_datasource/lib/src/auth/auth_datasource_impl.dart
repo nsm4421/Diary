@@ -48,6 +48,7 @@ class SupabaseAuthDataSourceImpl
           .signUp(email: email, password: password, data: data)
           .then((authResponse) => authResponse.user.toAuthUser());
     } catch (error, stackTrace) {
+      log(error.toString());
       throw toApiException(error, stackTrace);
     }
   }

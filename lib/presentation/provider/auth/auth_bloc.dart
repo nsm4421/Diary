@@ -111,7 +111,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> _onSignOut(_SignOut event, Emitter<AuthState> emit) async {
     try {
-      emit(AuthState.unauthenticated());
+      await _useCases.signOut.call().then(
+        (res) => res.map((_) => emit(AuthState.unauthenticated())),
+      );
     } catch (e, st) {
       _logger.e('sign out error', error: e, stackTrace: st);
       emit(AuthState.error('error occurs'));

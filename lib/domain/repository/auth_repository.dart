@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:diary/core/response/api_response.dart';
 import 'package:diary/domain/entity/auth/auth_user_entity.dart';
 

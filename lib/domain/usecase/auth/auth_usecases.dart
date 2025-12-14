@@ -23,5 +23,5 @@ class AuthUseCases {
 
   _SignUpUseCase get signUp => _SignUpUseCase(_repository);
 
-  _SignOutUseCase get _signOut => _SignOutUseCase(_repository);
+  _SignOutUseCase get signOut => _SignOutUseCase(_repository);
 }
