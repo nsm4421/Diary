@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'text_theme.dart';
 import 'color_scheme.dart';
 
-final lightThemeData = _buildThemeData(Brightness.light);
-final darkThemeData = _buildThemeData(Brightness.dark);
-
-ThemeData _buildThemeData(Brightness brightness) {
+ThemeData buildThemeData(Brightness brightness) {
   final ColorScheme colorScheme = switch (brightness) {
     Brightness.light => lightColorScheme,
     Brightness.dark => darkColorScheme,
@@ -13,6 +10,15 @@ ThemeData _buildThemeData(Brightness brightness) {
   final TextTheme textTheme = switch (brightness) {
     Brightness.light => lightTextTheme,
     Brightness.dark => darkTextTheme,
+  };
+
+  final Color bottomNavSelectedColor = switch (brightness) {
+    Brightness.light => colorScheme.primary,
+    Brightness.dark => colorScheme.onSurface,
+  };
+  final Color bottomNavUnselectedColor = switch (brightness) {
+    Brightness.light => colorScheme.onSurfaceVariant,
+    Brightness.dark => colorScheme.onSurface.withAlpha(179),
   };
 
   return ThemeData(
@@ -40,6 +46,20 @@ ThemeData _buildThemeData(Brightness brightness) {
     ),
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: colorScheme.surface,
+      selectedItemColor: bottomNavSelectedColor,
+      unselectedItemColor: bottomNavUnselectedColor,
+      selectedIconTheme: IconThemeData(color: bottomNavSelectedColor),
+      unselectedIconTheme: IconThemeData(color: bottomNavUnselectedColor),
+      selectedLabelStyle: textTheme.labelMedium?.copyWith(
+        color: bottomNavSelectedColor,
+      ),
+      unselectedLabelStyle: textTheme.labelMedium?.copyWith(
+        color: bottomNavUnselectedColor,
+      ),
+      showUnselectedLabels: true,
     ),
   );
 }

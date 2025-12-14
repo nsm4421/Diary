@@ -1,3 +1,7 @@
 library app_theme;
 
-export 'src/theme_data.dart';
+import 'package:flutter/material.dart';
+import 'src/theme_data.dart';
+
+final lightThemeData = buildThemeData(Brightness.light);
+final darkThemeData = buildThemeData(Brightness.dark);
