@@ -1,4 +1,14 @@
 mixin class ClientValidatorMixIn {
+  String? validateIsNotEmpty(
+    String? value, {
+    String message = 'field must no be empty',
+  }) {
+    if (value == null || value.trim().isEmpty) {
+      return message;
+    }
+    return null;
+  }
+
   String? validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Email is required';
