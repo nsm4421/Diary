@@ -48,8 +48,6 @@ RLS: 부모 `diaries`가 현재 사용자(`auth.uid()`)인 경우에만 select/i
 | diary_id   | uuid        | not null; references `public.diaries(id)` cascade                 | —                   |
 | story_id   | uuid        | not null; references `public.diary_story(id)` cascade             | —                   |
 | sequence   | int         | not null; unique together with `diary_id` and `story_id`          | `0`                 |
-| filename   | uuid        | not null                                                          | —                   |
-| extension  | text        | not null                                                          | —                   |
 | path       | text        | not null; unique                                                  | —                   |
 | created_at | timestamptz | not null                                                          | `now()`             |
 | updated_at | timestamptz | not null                                                          | `now()`             |
@@ -66,7 +64,7 @@ RLS: `created_by = auth.uid()`이면서 부모 일기(`diary_id`)도 동일 소�
   - 삭제되지 않은 일기만 노출하며, 각 일기의 스토리와 스토리별 미디어를 JSON 배열로 포함.  
   - 스토리는 `sequence` 순으로 정렬되어 집계되고, 스토리/미디어 모두 soft-delete 대상(`delete_at` 또는 `deleted_at`)은 제외.  
   - 스토리 객체 필드: `id`, `sequence`, `description`, `created_at`, `updated_at`, `deleted_at`, `created_by`(일기 작성자), `media`(배열).  
-  - 미디어 객체 필드: `id`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `diary_id`, `story_id`, `sequence`, `filename`, `extension`, `path` (미디어는 `sequence` 순으로 정렬).
+  - 미디어 객체 필드: `id`, `created_at`, `updated_at`, `deleted_at`, `created_by`, `diary_id`, `story_id`, `sequence`, `path` (미디어는 `sequence` 순으로 정렬).
 
 ### Storage
 

@@ -69,8 +69,6 @@ create table if not exists public.story_media (
   diary_id uuid not null references public.diaries (id) on delete cascade,
   story_id uuid not null references public.diary_story (id) on delete cascade,
   sequence int not null default 0,
-  filename uuid not null,
-  extension text not null,
   path text not null unique,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -84,12 +82,6 @@ create trigger tg_story_media_set_updated_at
 before update on public.story_media
 for each row
 execute procedure public.set_updated_at();
-
-alter table public.story_media
-  alter column filename type uuid using filename::uuid;
-
-alter table public.story_media
-  add column if not exists extension text default '' not null;
 
 -- views
 drop view if exists public.diaries_view;
@@ -133,8 +125,6 @@ with story_media as (
         'diary_id', m.diary_id,
         'story_id', m.story_id,
         'sequence', m.sequence,
-        'filename', m.filename,
-        'extension', m.extension,
         'path', m.path
       )
       order by m.sequence

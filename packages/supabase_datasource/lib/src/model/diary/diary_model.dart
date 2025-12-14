@@ -9,6 +9,7 @@ part 'diary_model.freezed.dart';
 class DiaryModel with _$DiaryModel {
   @override
   final String id;
+  @override
   final String? title;
   @override
   @JsonKey(name: 'created_at')
@@ -22,6 +23,9 @@ class DiaryModel with _$DiaryModel {
   @override
   @JsonKey(name: 'created_by')
   final String createdBy;
+  @override
+  @JsonKey(name: 'story_count')
+  final int storyCount;
 
   DiaryModel({
     required this.id,
@@ -30,6 +34,7 @@ class DiaryModel with _$DiaryModel {
     required this.updatedAt,
     this.deletedAt,
     required this.createdBy,
+    this.storyCount = 0
   });
 
   factory DiaryModel.fromJson(Map<String, dynamic> json) =>

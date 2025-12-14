@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:supabase_datasource/src/model/diary/story_media_model.dart';
 
 part 'story_model.g.dart';
 
@@ -26,8 +27,6 @@ class StoryModel with _$StoryModel {
   final int sequence;
   @override
   final String description;
-  @override
-  final Iterable<String> media;
 
   StoryModel({
     required this.id,
@@ -37,7 +36,6 @@ class StoryModel with _$StoryModel {
     this.sequence = 0,
     required this.createdBy,
     required this.description,
-    this.media = const [],
   });
 
   factory StoryModel.fromJson(Map<String, dynamic> json) =>

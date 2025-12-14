@@ -1,6 +1,5 @@
 enum SupabaseBuckets {
-  avatar('avatar'),
-  story('story');
+  diaryMedia('diary_media');
 
   final String name;
 
