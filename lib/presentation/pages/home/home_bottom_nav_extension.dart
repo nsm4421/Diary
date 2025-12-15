@@ -1,12 +1,18 @@
-part of 'home_bottom_nav_cubit.dart';
+part of 'home_entry_page.dart';
 
-enum HomeBottomNav { display, create, setting }
+extension _HomeBottomNavX on HomeBottomNav {
+  PageRouteInfo get pageInfo {
+    return switch (this) {
+      HomeBottomNav.display => DisplayDiariesRoute(),
+      HomeBottomNav.search => SearchDiaryRoute(),
+      HomeBottomNav.setting => SettingRoute(),
+    };
+  }
 
-extension HomeBottomNavX on HomeBottomNav {
   String get label {
     return switch (this) {
       HomeBottomNav.display => 'HOME',
-      HomeBottomNav.create => 'CREATE',
+      HomeBottomNav.search => 'SEARCH',
       HomeBottomNav.setting => 'SETTING',
     };
   }
@@ -14,7 +20,7 @@ extension HomeBottomNavX on HomeBottomNav {
   IconData get iconData {
     return switch (this) {
       HomeBottomNav.display => Icons.home_outlined,
-      HomeBottomNav.create => Icons.add_circle_outline,
+      HomeBottomNav.search => Icons.search_outlined,
       HomeBottomNav.setting => Icons.settings_outlined,
     };
   }
@@ -22,7 +28,7 @@ extension HomeBottomNavX on HomeBottomNav {
   IconData get activeIconData {
     return switch (this) {
       HomeBottomNav.display => Icons.home,
-      HomeBottomNav.create => Icons.add_circle,
+      HomeBottomNav.search => Icons.search,
       HomeBottomNav.setting => Icons.settings,
     };
   }

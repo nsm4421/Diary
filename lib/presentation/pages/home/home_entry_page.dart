@@ -1,10 +1,9 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:diary/presentation/provider/home_bottom_nav/home_bottom_nav_cubit.dart';
+import 'package:diary/core/constant/home_bottom_nav.dart';
+import 'package:diary/presentation/router/app_router.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
-part 'bottom_nav_fragment.dart';
+part 'home_bottom_nav_extension.dart';
 
 @RoutePage()
 class HomeEntryPage extends StatelessWidget {
@@ -12,13 +11,29 @@ class HomeEntryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => GetIt.instance<HomeBottomNavCubit>(),
-      child: Scaffold(
-        appBar: AppBar(title: Text("HOME")),
-        body: SafeArea(child: Text("HOME")),
-        bottomNavigationBar: const BottomNavFragment(),
-      ),
+    return AutoTabsRouter(
+      routes: HomeBottomNav.values.map((e) => e.pageInfo).toList(),
+      builder: (context, child) {
+        return Scaffold(
+          body: child,
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: AutoTabsRouter.of(context).activeIndex,
+            onTap: AutoTabsRouter.of(context).setActiveIndex,
+            showSelectedLabels: true,
+            showUnselectedLabels: false,
+            elevation: 0,
+            items: HomeBottomNav.values
+                .map(
+                  (e) => BottomNavigationBarItem(
+                    icon: Icon(e.iconData),
+                    activeIcon: Icon(e.activeIconData),
+                    label: e.label,
+                  ),
+                )
+                .toList(),
+          ),
+        );
+      },
     );
   }
 }

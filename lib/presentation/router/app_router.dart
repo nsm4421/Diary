@@ -3,7 +3,10 @@ import 'package:diary/presentation/pages/auth/auth_entry_page.dart';
 import 'package:diary/presentation/pages/auth/landing/auth_landing_page.dart';
 import 'package:diary/presentation/pages/auth/sign_in/sign_in_page.dart';
 import 'package:diary/presentation/pages/auth/sign_up/sign_up_page.dart';
+import 'package:diary/presentation/pages/diary/display/display_diaries_page.dart';
 import 'package:diary/presentation/pages/home/home_entry_page.dart';
+import 'package:diary/presentation/pages/search/search_page.dart';
+import 'package:diary/presentation/pages/setting/setting_page.dart';
 import 'package:diary/presentation/pages/splash/splash_page.dart';
 import 'package:injectable/injectable.dart';
 
@@ -34,10 +37,7 @@ class AppRouter extends RootStackRouter {
       duration: _duration,
       guards: [_redirectIfAuthenticatedGuard],
       children: [
-        AutoRoute(
-          page: AuthLandingRoute.page,
-          initial: true,
-        ),
+        AutoRoute(page: AuthLandingRoute.page, initial: true),
         CustomRoute(
           page: SignInRoute.page,
           transitionsBuilder: TransitionsBuilders.slideLeft,
@@ -56,6 +56,11 @@ class AppRouter extends RootStackRouter {
       transitionsBuilder: TransitionsBuilders.fadeIn,
       duration: _duration,
       guards: [_redirectIfNotAuthenticatedGuard],
+      children: [
+        AutoRoute(page: DisplayDiariesRoute.page, initial: true),
+        AutoRoute(page: SearchDiaryRoute.page),
+        AutoRoute(page: SettingRoute.page),
+      ],
     ),
   ];
 }
