@@ -7,14 +7,6 @@ class SupabaseDiaryDataSourceImpl
 
   SupabaseDiaryDataSourceImpl(this._client);
 
-  String get _currentUid {
-    final uid = _client.auth.currentUser?.id;
-    if (uid == null) {
-      throw AuthException('user not found');
-    }
-    return uid;
-  }
-
   PostgrestQueryBuilder get _diaryTable =>
       _client.rest.from(SupabaseTables.diary.name);
 

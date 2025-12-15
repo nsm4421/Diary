@@ -30,7 +30,7 @@ end $$;
 create table if not exists public.diaries (
   id uuid primary key default gen_random_uuid(),
   title text,
-  created_by uuid not null references auth.users (id) on delete cascade,
+  created_by uuid not null default auth.uid() references auth.users (id) on delete cascade,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   delete_at timestamptz
@@ -46,6 +46,7 @@ execute procedure public.set_updated_at();
 create table if not exists public.diary_story (
   id uuid primary key default gen_random_uuid(),
   diary_id uuid not null references public.diaries (id) on delete cascade,
+  created_by uuid not null default auth.uid() references auth.users (id) on delete cascade,
   sequence int not null default 0,
   description text not null,
   media text[] not null default '{}',
@@ -65,7 +66,7 @@ execute procedure public.set_updated_at();
 -- public.story_media
 create table if not exists public.story_media (
   id uuid primary key default gen_random_uuid(),
-  created_by uuid not null references auth.users (id) on delete cascade,
+  created_by uuid not null default auth.uid() references auth.users (id) on delete cascade,
   diary_id uuid not null references public.diaries (id) on delete cascade,
   story_id uuid not null references public.diary_story (id) on delete cascade,
   sequence int not null default 0,
