@@ -1,6 +1,6 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
 
-import '../../entity/base_entity.dart';
+import '../base/base_entity.dart';
 import 'story_media_entity.dart';
 
 part 'story_entity.g.dart';

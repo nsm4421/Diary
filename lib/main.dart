@@ -1,5 +1,5 @@
 import 'package:app_theme/export.dart';
-import 'package:diary/presentation/provider/auth/auth_bloc.dart';
+import 'package:diary/presentation/provider/auth/app_auth/auth_bloc.dart';
 import 'package:diary/presentation/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
