@@ -1,1 +1,0 @@
-const kMaxDiaryTitleLength = 20;

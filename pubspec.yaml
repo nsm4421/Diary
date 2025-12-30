@@ -1,5 +1,5 @@
 name: diary
-description: "Diary App"
+description: "Dating App"
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
@@ -10,49 +10,68 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # UI/Design
   cupertino_icons: ^1.0.8
-  get_it: ^7.7.0
-  injectable: ^2.4.2
+  google_fonts: ^6.2.1
+  flutter_svg: ^2.0.10+1
+  table_calendar: ^3.1.2
+
+  # State management
   flutter_bloc: ^8.1.6
   equatable: ^2.0.5
+  bloc_concurrency: ^0.2.5
+
+  # Dependency injection
+  get_it: ^7.7.0
+  injectable: ^2.4.2
+
+  # Routing
   auto_route: ^10.2.0
+
+  # Backend
+  supabase_flutter: ^2.8.0
+
+  # Env
+  envied: ^1.3.2
+
+  # Codegen/serialization runtime
   freezed_annotation: 3.1.0
   json_annotation: ^4.9.0
-  path: ^1.9.0
-  path_provider: ^2.1.4
-  image: ^4.2.0
-  image_picker: ^1.0.7
-  permission_handler: ^11.3.1
-  copy_with_extension_gen: ^10.0.1
-  logger: ^2.6.2
-  flutter_svg: ^2.0.10+1
-  bloc_concurrency: ^0.2.5
-  crypto: ^3.0.3
+
+  # Storage
   shared_preferences: ^2.3.2
   flutter_secure_storage: ^9.2.2
-  table_calendar: ^3.1.2
-  fpdart: ^1.2.0
+  path_provider: ^2.1.4
 
-  shared:
-    path: packages/shared
-  supabase_datasource:
-    path: packages/supabase_datasource
-  app_theme:
-    path: packages/theme
-  app_extensions:
-    path: packages/extensions
+  # Device/Permissions
+  image_picker: ^1.0.7
+  permission_handler: ^11.3.1
+
+  # Misc
+  image: ^4.2.0
+  fpdart: ^1.2.0
+  crypto: ^3.0.3
+  logger: ^2.6.2
+  path: ^1.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  # Lint
   flutter_lints: ^5.0.0
+
+  # Codegen
   build_runner: ^2.10.1
   injectable_generator: ^2.9.0
   auto_route_generator: ^10.2.0
   freezed: ^3.2.3
   json_serializable: ^6.10.0
   drift_dev: ^2.20.1
+  envied_generator: ^1.3.2
+  copy_with_extension_gen: ^10.0.1
+
+  # Testing
   mocktail: ^1.0.3
 
 flutter:

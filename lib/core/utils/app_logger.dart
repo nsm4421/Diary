@@ -1,4 +1,3 @@
-import 'package:diary/core/response/failure.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
@@ -16,14 +15,4 @@ abstract class AppLoggerModule {
       printTime: true,
     ),
   );
-}
-
-extension LoggerFailureX on Logger {
-  void fail(Failure failure) {
-    e(
-      'code=${failure.code} status=${failure.statusCode ?? '-'} message=${failure.message}',
-      error: failure.error ?? failure,
-      stackTrace: failure.stackTrace,
-    );
-  }
 }

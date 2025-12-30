@@ -1,31 +1,30 @@
-import 'package:app_theme/export.dart';
-import 'package:diary/presentation/provider/auth/app_auth/auth_bloc.dart';
-import 'package:diary/presentation/router/app_router.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'core/dependency_injection/dependency_injection.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'core/core.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: SupabaseEnv.supabaseApiUrl,
+    anonKey: SupabaseEnv.supabasePublishableKey,
+  );
 
-  await configureDependencies();
+  configureDependencies();
+
   runApp(const _MainApp());
 }
 
 class _MainApp extends StatelessWidget {
-  const _MainApp({super.key});
+  const _MainApp();
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => GetIt.instance<AuthBloc>()..add(AuthEvent.init()),
-      child: MaterialApp.router(
-        title: 'Karma-Diary',
-        theme: lightThemeData,
-        darkTheme: darkThemeData,
-        routerConfig: GetIt.instance<AppRouter>().config(),
-      ),
+    return MaterialApp(
+      title: 'Dating App',
+      theme: GetIt.instance<LightAppTheme>().themeData,
+      darkTheme: GetIt.instance<DarkAppTheme>().themeData,
+      home: Scaffold(appBar: AppBar(title: Text("APP"))),
     );
   }
 }

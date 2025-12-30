@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-
-final lightPalette = _LightPalette();
-final darkPalette = _DarkPalette();
+part of 'theme_module.dart';
 
 abstract class _Palette {
+  Brightness get brightness;
+
   Color get primary;
 
   Color get onPrimary;
@@ -22,7 +21,8 @@ abstract class _Palette {
 }
 
 class _LightPalette extends _Palette {
-  _LightPalette();
+  @override
+  Brightness get brightness => Brightness.light;
 
   @override
   Color get primary => const Color(0xFF1DB954);
@@ -50,6 +50,9 @@ class _LightPalette extends _Palette {
 }
 
 class _DarkPalette extends _Palette {
+  @override
+  Brightness get brightness => Brightness.dark;
+
   @override
   Color get primary => const Color(0xFF1DB954);
 

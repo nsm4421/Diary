@@ -9,6 +9,7 @@ ios/
 devtools_options.yaml
 supabase/*
 assets/*
+.env.local
 
 # Miscellaneous
 *.class
