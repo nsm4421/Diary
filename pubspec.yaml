@@ -1,6 +1,6 @@
 name: diary
 description: "Dating App"
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 version: 1.0.0+1
 
 environment:
@@ -29,7 +29,8 @@ dependencies:
   auto_route: ^10.2.0
 
   # Backend
-  supabase_flutter: ^2.8.0
+  supabase_flutter: ^2.12.0
+  supabase_codegen: ^3.0.1
 
   # Env
   envied: ^1.3.2
@@ -79,3 +80,5 @@ flutter:
   assets:
     - assets/svg/light_app_logo.svg
     - assets/svg/dark_app_logo.svg
+    - assets/svg/light_splash_logo.svg
+    - assets/svg/dark_splash_logo.svg

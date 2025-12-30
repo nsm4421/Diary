@@ -1,6 +1,8 @@
+import 'package:diary/app/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_codegen/supabase_codegen.dart';
 import 'core/core.dart';
 
 Future<void> main() async {
@@ -8,7 +10,7 @@ Future<void> main() async {
   await Supabase.initialize(
     url: SupabaseEnv.supabaseApiUrl,
     anonKey: SupabaseEnv.supabasePublishableKey,
-  );
+  ).then((res) => res.client).then(setClient);
 
   configureDependencies();
 
@@ -20,11 +22,11 @@ class _MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Dating App',
       theme: GetIt.instance<LightAppTheme>().themeData,
       darkTheme: GetIt.instance<DarkAppTheme>().themeData,
-      home: Scaffold(appBar: AppBar(title: Text("APP"))),
+      routerConfig: GetIt.instance<AppRouter>().config(),
     );
   }
 }

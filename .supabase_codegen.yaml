@@ -1,0 +1,5 @@
+# codegen : flutter pub run supabase_codegen:generate_types
+env: .env.local
+output: lib/core/supabase/generated
+tag: v1
+debug: true

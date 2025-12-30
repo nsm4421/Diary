@@ -1,4 +1,4 @@
-part of 'theme_module.dart';
+part of 'app_theme.dart';
 
 ColorScheme _buildColorScheme(Brightness brightness) {
   final palette = switch (brightness) {

@@ -1,4 +1,4 @@
-part of 'theme_module.dart';
+part of 'app_theme.dart';
 
 abstract class _Palette {
   Brightness get brightness;

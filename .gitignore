@@ -10,6 +10,7 @@ devtools_options.yaml
 supabase/*
 assets/*
 .env.local
+lib/core/supabase/generated
 
 # Miscellaneous
 *.class
