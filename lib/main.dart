@@ -1,9 +1,11 @@
 import 'package:diary/app/router/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supabase_codegen/supabase_codegen.dart';
 import 'core/core.dart';
+import 'features/auth/auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,11 +24,14 @@ class _MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Dating App',
-      theme: GetIt.instance<LightAppTheme>().themeData,
-      darkTheme: GetIt.instance<DarkAppTheme>().themeData,
-      routerConfig: GetIt.instance<AppRouter>().config(),
+    return BlocProvider(
+      create: (_) => GetIt.instance<AppAuthBloc>(),
+      child: MaterialApp.router(
+        title: 'Dating App',
+        theme: GetIt.instance<LightAppTheme>().themeData,
+        darkTheme: GetIt.instance<DarkAppTheme>().themeData,
+        routerConfig: GetIt.instance<AppRouter>().config(),
+      ),
     );
   }
 }

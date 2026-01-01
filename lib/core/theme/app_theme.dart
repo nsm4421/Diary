@@ -10,16 +10,12 @@ abstract class _AppTheme {
   ThemeData get themeData;
 }
 
-@lazySingleton
 class LightAppTheme extends _AppTheme {
   @override
-  @lazySingleton
   ThemeData get themeData => _buildThemeData(Brightness.light);
 }
 
-@lazySingleton
 class DarkAppTheme extends _AppTheme {
   @override
-  @lazySingleton
   ThemeData get themeData => _buildThemeData(Brightness.dark);
 }

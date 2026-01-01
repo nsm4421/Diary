@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 @RoutePage()
-class AuthPage extends StatelessWidget {
-  const AuthPage({super.key});
+class EntryPage extends StatelessWidget {
+  const EntryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AppAuthBloc, AppAuthState>(
-      listenWhen: (prev, curr) => curr.isAuth,
+      listenWhen: (prev, curr) => !curr.isAuth,
       listener: (context, state) {
-        context.router.replaceAll([EntryRoute()]);
+        context.router.replaceAll([AuthRoute()]);
       },
       child: AutoRouter(),
     );
