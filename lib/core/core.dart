@@ -6,5 +6,6 @@ export 'extensions/build_context_extension.dart';
 export 'extensions/int_extension.dart';
 export 'theme/app_theme.dart';
 export 'utils/client_validator.dart';
+export 'utils/toast.dart';
 export 'value_objects/pageable.dart';
 export 'value_objects/failure.dart';

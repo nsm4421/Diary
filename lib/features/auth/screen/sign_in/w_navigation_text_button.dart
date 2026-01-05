@@ -9,7 +9,14 @@ class _NavigationTextButton extends StatelessWidget {
       onPressed: () {
         context.router.push(SignUpRoute());
       },
-      child: Text('TO SIGN UP'),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('Create Account'),
+          SizedBox(width: 12),
+          Icon(Icons.app_registration),
+        ],
+      ),
     );
   }
 }

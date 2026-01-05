@@ -1,4 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/animation.dart';
+import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import '../pages/auth/p_auth.dart';
 import '../pages/entry/entry_page.dart';
@@ -11,6 +13,8 @@ part 'app_router.gr.dart';
 part 'guards/auth_page_guard.dart';
 
 part 'guards/entry_page_guard.dart';
+
+part 'transition.dart';
 
 @lazySingleton
 @AutoRouterConfig(replaceInRouteName: 'Screen|Page,Route')
@@ -32,7 +36,11 @@ class AppRouter extends RootStackRouter {
       children: [
         RedirectRoute(path: '', redirectTo: 'sign-in'),
         AutoRoute(path: 'sign-in', page: SignInRoute.page),
-        AutoRoute(path: 'sign-up', page: SignUpRoute.page),
+        CustomRoute(
+          path: 'sign-up',
+          page: SignUpRoute.page,
+          transitionsBuilder: _rightToLeftBuilder,
+        ),
       ],
     ),
 

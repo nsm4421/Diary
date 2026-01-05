@@ -31,6 +31,7 @@ class _MainApp extends StatelessWidget {
         theme: GetIt.instance<LightAppTheme>().themeData,
         darkTheme: GetIt.instance<DarkAppTheme>().themeData,
         routerConfig: GetIt.instance<AppRouter>().config(),
+        scaffoldMessengerKey: appScaffoldMessengerKey,
       ),
     );
   }
