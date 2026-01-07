@@ -1,0 +1,27 @@
+import 'package:diary/core/core.dart';
+import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../repository/agendas/agenda_repository.dart';
+import '../../repository/agenda_options/agenda_option_repository.dart';
+import '../../service/vote_service.dart';
+
+@module
+abstract class VoteModule {
+  final _logger = Logger();
+
+  @lazySingleton
+  String get _clientId => Supabase.instance.client.auth.clientId;
+
+  @lazySingleton
+  AgendaRepository get _agendaRepository =>
+      AgendaRepositoryImpl(AgendasTable(), _clientId);
+
+  @lazySingleton
+  AgendaOptionRepository get _agendaOptionRepository =>
+      AgendaOptionRepositoryImpl(AgendaOptionsTable(), _clientId);
+
+  @lazySingleton
+  VoteService get _voteService =>
+      VoteServiceImpl(_agendaRepository, _agendaOptionRepository, _logger);
+}

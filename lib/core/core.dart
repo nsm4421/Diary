@@ -9,3 +9,5 @@ export 'utils/client_validator.dart';
 export 'utils/toast.dart';
 export 'value_objects/pageable.dart';
 export 'value_objects/failure.dart';
+export 'supabase/supabase_extension.dart';
+export 'supabase/generated/database.dart';

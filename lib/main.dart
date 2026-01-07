@@ -2,8 +2,8 @@ import 'package:diary/app/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supabase_codegen/supabase_codegen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/core.dart';
 import 'features/auth/auth.dart';
 
@@ -12,7 +12,9 @@ Future<void> main() async {
   await Supabase.initialize(
     url: SupabaseEnv.supabaseApiUrl,
     anonKey: SupabaseEnv.supabasePublishableKey,
-  ).then((res) => res.client).then(setClient);
+    authOptions: const FlutterAuthClientOptions(autoRefreshToken: true),
+  );
+  setClient(Supabase.instance.client);
 
   configureDependencies();
 
