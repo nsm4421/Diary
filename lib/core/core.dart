@@ -8,6 +8,8 @@ export 'theme/app_theme.dart';
 export 'utils/client_validator.dart';
 export 'utils/toast.dart';
 export 'value_objects/pageable.dart';
+export 'value_objects/base_model.dart';
 export 'value_objects/failure.dart';
 export 'supabase/supabase_extension.dart';
 export 'supabase/generated/database.dart';
+export 'blocs/display/display_bloc_with_cursor.dart';

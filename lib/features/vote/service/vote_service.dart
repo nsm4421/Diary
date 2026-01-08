@@ -1,7 +1,7 @@
-import 'package:diary/features/vote/model/agenda_model.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:logger/logger.dart';
 
+import '../model/agenda_model.dart';
 import '../model/agenda_option_model.dart';
 import '../repository/agenda_options/agenda_option_repository.dart';
 import '../repository/agendas/agenda_repository.dart';
@@ -15,7 +15,7 @@ abstract interface class VoteService {
     required Iterable<String> optionContents,
   });
 
-  TaskEither<VoteFailure, Iterable<AgendaModel>> fetchAgendas({
+  TaskEither<VoteFailure, List<AgendaModel>> fetchAgendas({
     DateTime? lastCreatedAt,
     int limit = 20,
   });

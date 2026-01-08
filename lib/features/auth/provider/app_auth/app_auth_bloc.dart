@@ -1,10 +1,9 @@
 import 'dart:async';
 
-import 'package:diary/features/auth/service/auth_failure.dart';
-import 'package:diary/features/auth/service/auth_service.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import '../../service/auth_failure.dart';
+import '../../service/auth_service.dart';
 import '../../model/auth_user_model.dart';
 
 part 'app_auth_state.dart';

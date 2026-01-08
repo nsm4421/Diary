@@ -20,8 +20,9 @@ class VoteServiceImpl implements VoteService {
         final options = await _optionRepository
             .insertRows(agendaId: agenda.id, contents: optionContents)
             .then(
-              (rows) =>
-                  rows.map((row) => AgendaOptionModel.fromRow(row)).toList(),
+              (rows) => rows
+                  .map((row) => AgendaOptionModel.fromRow(row))
+                  .toList(growable: false),
             );
         return agenda.copyWith(options: options);
       },
@@ -37,7 +38,7 @@ class VoteServiceImpl implements VoteService {
   }
 
   @override
-  TaskEither<VoteFailure, Iterable<AgendaModel>> fetchAgendas({
+  TaskEither<VoteFailure, List<AgendaModel>> fetchAgendas({
     DateTime? lastCreatedAt,
     int limit = 20,
   }) {
@@ -45,7 +46,9 @@ class VoteServiceImpl implements VoteService {
       () async {
         return await _agendaRepository
             .fetch(lastCreatedAt: lastCreatedAt, limit: limit)
-            .then((rows) => rows.map(AgendaModel.fromRow));
+            .then(
+              (rows) => rows.map(AgendaModel.fromRow).toList(growable: false),
+            );
       },
       (error, stackTrace) {
         return VoteFailure(

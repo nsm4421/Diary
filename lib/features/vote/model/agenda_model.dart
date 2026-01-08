@@ -6,7 +6,7 @@ import 'agenda_option_model.dart';
 part 'agenda_model.freezed.dart';
 
 @freezed
-class AgendaModel with _$AgendaModel {
+class AgendaModel with _$AgendaModel implements BaseModel {
   @override
   final String id;
   @override
