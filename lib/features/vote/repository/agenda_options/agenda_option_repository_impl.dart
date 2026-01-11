@@ -1,10 +1,10 @@
 part of 'agenda_option_repository.dart';
 
+@LazySingleton(as: AgendaOptionRepository)
 class AgendaOptionRepositoryImpl implements AgendaOptionRepository {
   final AgendaOptionsTable _dao;
-  final String _clientId;
 
-  AgendaOptionRepositoryImpl(this._dao, this._clientId);
+  AgendaOptionRepositoryImpl(this._dao);
 
   @override
   Future<Iterable<AgendaOptionsRow>> insertRows({

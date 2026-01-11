@@ -1,5 +1,6 @@
 part of 'auth_service.dart';
 
+@LazySingleton(as: AuthService)
 class AuthServiceImpl implements AuthService {
   final AuthRepository _authRepository;
   final Logger _logger;

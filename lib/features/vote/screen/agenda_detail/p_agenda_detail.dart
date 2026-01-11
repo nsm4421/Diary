@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../model/agenda_model.dart';
-import '../../provider/get_agenda_detail/get_agenda_cubit.dart';
+import '../../provider/agenda_detail/agenda_detail_bloc.dart';
 
 part 's_fetched.dart';
 
@@ -26,12 +26,14 @@ class AgendaDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => GetIt.instance<GetAgendaDetailCubit>()..fetch(_agendaId),
-      child: BlocBuilder<GetAgendaDetailCubit, GetDataState<AgendaModel>>(
+      create: (_) =>
+          GetIt.instance<AgendaDetailBloc>(param1: _agendaId)
+            ..add(AgendaDetailEvent.started(_agendaId)),
+      child: BlocBuilder<AgendaDetailBloc, AgendaDetailState>(
         builder: (context, state) {
-          return state.data == null
-              ? _LoadingScreen()
-              : _FetchedScreen(state.data!);
+          return (state.mounted && state.data != null)
+              ? _FetchedScreen(state.data!)
+              : _LoadingScreen();
         },
       ),
     );

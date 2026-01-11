@@ -1,6 +1,7 @@
 import 'package:diary/features/vote/model/agenda_option_model.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 import 'package:uuid/uuid.dart';
 import 'package:diary/core/core.dart';
@@ -12,6 +13,7 @@ part 'create_agenda_data.dart';
 
 part 'create_agenda_bloc.freezed.dart';
 
+@injectable
 class CreateAgendaBloc extends CreateBloc<CreateAgendaData, AgendaModel> {
   late final String _clientAgendaId;
   final Logger _logger;

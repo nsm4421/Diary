@@ -1,10 +1,13 @@
 part of 'agenda_repository.dart';
 
+@LazySingleton(as: AgendaRepository)
 class AgendaRepositoryImpl implements AgendaRepository {
   final AgendasTable _dao;
-  final String _clientId;
+  late final String _clientId;
 
-  AgendaRepositoryImpl(this._dao, this._clientId);
+  AgendaRepositoryImpl(this._dao, SupabaseClient _client) {
+    _clientId = _client.auth.clientId;
+  }
 
   @override
   Future<AgendasRow> insert({

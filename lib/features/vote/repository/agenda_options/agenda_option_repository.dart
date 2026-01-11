@@ -1,4 +1,5 @@
 import 'package:diary/core/core.dart';
+import 'package:injectable/injectable.dart';
 
 part 'agenda_option_repository_impl.dart';
 

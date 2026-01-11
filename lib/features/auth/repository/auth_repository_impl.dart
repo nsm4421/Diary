@@ -1,5 +1,6 @@
 part of 'auth_repository.dart';
 
+@LazySingleton(as:AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
   final SupabaseClient _supabaseClient;
 

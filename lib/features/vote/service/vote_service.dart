@@ -1,8 +1,10 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 
 import '../model/agenda_model.dart';
 import '../model/agenda_option_model.dart';
+import '../repository/agenda_option_choices/agenda_option_choice_repository.dart';
 import '../repository/agenda_options/agenda_option_repository.dart';
 import '../repository/agendas/agenda_repository.dart';
 import 'vote_failure.dart';
@@ -25,4 +27,10 @@ abstract interface class VoteService {
   TaskEither<VoteFailure, AgendaModel> getAgendaDetail(String agendaId);
 
   TaskEither<VoteFailure, void> deleteAgenda(String agendaId);
+
+  TaskEither<VoteFailure, void> voteOnAgenda({
+    required String agendaId,
+    String? previousOptionId,
+    String? currentOptionId,
+  });
 }

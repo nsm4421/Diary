@@ -1,4 +1,6 @@
 import 'package:diary/core/core.dart';
+import 'package:injectable/injectable.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'agenda_repository_impl.dart';
 

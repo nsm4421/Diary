@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS public.agenda_options (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   agenda_id uuid NOT NULL REFERENCES public.agendas(id),
   sequence integer NOT NULL default 0,
-  choice_count integer NOT NULL default 0,
   content text NOT NULL,
   UNIQUE (agenda_id, sequence)
 );

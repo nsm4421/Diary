@@ -1,11 +1,18 @@
 part of 'vote_service.dart';
 
+@LazySingleton(as: VoteService)
 class VoteServiceImpl implements VoteService {
   final AgendaRepository _agendaRepository;
   final AgendaOptionRepository _optionRepository;
+  final AgendaOptionChoiceRepository _choiceRepository;
   final Logger _logger;
 
-  VoteServiceImpl(this._agendaRepository, this._optionRepository, this._logger);
+  VoteServiceImpl(
+    this._agendaRepository,
+    this._optionRepository,
+    this._choiceRepository,
+    this._logger,
+  );
 
   @override
   TaskEither<VoteFailure, AgendaModel> createAgenda({
@@ -83,7 +90,17 @@ class VoteServiceImpl implements VoteService {
         if (options.isEmpty) {
           throw Exception('agenda option is empty');
         }
-        return agenda.copyWith(options: options);
+        final userChoice = await _choiceRepository.findClientChoice(agendaId);
+
+        return agenda.copyWith(
+          options: options
+              .map(
+                (option) => option.id == userChoice?.agendaOptionId
+                    ? option.copyWith(choiceByMe: true)
+                    : option,
+              )
+              .toList(growable: false),
+        );
       },
       (error, stackTrace) {
         return VoteFailure(
@@ -105,6 +122,42 @@ class VoteServiceImpl implements VoteService {
       (error, stackTrace) {
         return VoteFailure(
           message: 'delete agenda fails',
+          error: error,
+          stackTrace: stackTrace,
+          logger: _logger,
+        );
+      },
+    );
+  }
+
+  @override
+  TaskEither<VoteFailure, void> voteOnAgenda({
+    required String agendaId,
+    String? previousOptionId,
+    String? currentOptionId,
+  }) {
+    return TaskEither.tryCatch(
+      () async {
+        if (previousOptionId == null && currentOptionId != null) {
+          await _choiceRepository.insertRow(
+            agendaId: agendaId,
+            optionId: currentOptionId,
+          );
+        } else if (previousOptionId != null && currentOptionId == null) {
+          await _choiceRepository.deleteRow(agendaId);
+        } else if (previousOptionId != null && currentOptionId != null) {
+          await _choiceRepository.updateRow(
+            agendaId: agendaId,
+            previousOptionId: previousOptionId,
+            currentOptionId: currentOptionId,
+          );
+        } else {
+          throw Exception('option id is not given properly');
+        }
+      },
+      (error, stackTrace) {
+        return VoteFailure(
+          message: 'vote agenda fails',
           error: error,
           stackTrace: stackTrace,
           logger: _logger,

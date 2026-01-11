@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:diary/core/core.dart';
+import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
 
 import '../model/auth_user_model.dart';

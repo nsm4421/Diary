@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import '../../service/auth_failure.dart';
 import '../../service/auth_service.dart';
 import '../../model/auth_user_model.dart';
@@ -12,6 +13,7 @@ part 'app_auth_event.dart';
 
 part 'app_auth_bloc.freezed.dart';
 
+@lazySingleton
 class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
   final AuthService _authService;
   late final StreamSubscription<AuthUserModel?> _authStreamSubscription;

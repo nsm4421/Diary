@@ -2,6 +2,7 @@ import 'package:diary/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import '../../service/auth_service.dart';
 import '../../model/auth_user_model.dart';
 
@@ -9,6 +10,7 @@ part 'sign_in_state.dart';
 
 part 'sign_in_cubit.freezed.dart';
 
+@injectable
 class SignInCubit extends Cubit<SignInState> {
   late final GlobalKey<FormState> _formKey;
   final AuthService _authService;

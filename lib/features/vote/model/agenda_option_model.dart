@@ -15,22 +15,28 @@ class AgendaOptionModel with _$AgendaOptionModel {
   final String content;
   @override
   final int choiceCount;
+  @override
+  final bool choiceByMe;
 
   AgendaOptionModel({
     required this.id,
     required this.agendaId,
     this.sequence = 0,
     required this.content,
-    this.choiceCount = 0
+    this.choiceCount = 0,
+    this.choiceByMe = false,
   });
 
-  factory AgendaOptionModel.fromRow(AgendaOptionsRow row) {
+  factory AgendaOptionModel.fromRow(
+    AgendaOptionsRow row, {
+    bool choiceByMe = false,
+  }) {
     return AgendaOptionModel(
       id: row.id,
       agendaId: row.agendaId,
       sequence: row.sequence,
       content: row.content,
-      choiceCount: row.choiceCount
+      choiceByMe: choiceByMe,
     );
   }
 }
