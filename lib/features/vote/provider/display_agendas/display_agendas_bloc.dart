@@ -1,6 +1,5 @@
 import 'package:diary/core/core.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:logger/logger.dart';
 
 import '../../model/agenda_model.dart';
 import '../../service/vote_service.dart';

@@ -7,8 +7,10 @@ class AgendaRepositoryImpl implements AgendaRepository {
   AgendaRepositoryImpl(this._dao, this._clientId);
 
   @override
-  Future<AgendasRow> insert({required String title}) async {
-    return await _dao.insertRow(AgendasRow(title: title, createdBy: _clientId));
+  Future<AgendasRow> insert({String? id, required String title}) async {
+    return await _dao.insertRow(
+      AgendasRow(id: id, title: title, createdBy: _clientId),
+    );
   }
 
   @override

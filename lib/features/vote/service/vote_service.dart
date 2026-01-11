@@ -11,6 +11,7 @@ part 'vote_service_impl.dart';
 
 abstract interface class VoteService {
   TaskEither<VoteFailure, AgendaModel> createAgenda({
+    required String clientAgendaId,
     required String title,
     required Iterable<String> optionContents,
   });
