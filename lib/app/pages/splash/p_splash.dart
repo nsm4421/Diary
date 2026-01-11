@@ -36,7 +36,7 @@ class _SplashPageState extends State<SplashPage> {
     _routeTimer = Timer(_routeDelay, () async {
       if (!mounted) return;
 
-      final navigateTo = _isAuth ? EntryRoute() : AuthRoute();
+      final navigateTo = _isAuth ? HomeRoute() : AuthRoute();
       await context.router.replace(navigateTo);
     });
   }

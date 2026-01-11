@@ -49,6 +49,7 @@ class CreateAgendaBloc extends CreateBloc<CreateAgendaData, AgendaModel> {
     return _service.createAgenda(
       clientAgendaId: _clientAgendaId,
       title: data.title,
+      description: data.description.isEmpty ? null : data.description,
       optionContents: data.options,
     );
   }

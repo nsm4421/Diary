@@ -1,12 +1,11 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import '../pages/auth/p_auth.dart';
-import '../pages/entry/entry_page.dart';
-import '../pages/entry/home/home_page.dart';
+import '../pages/home/p_home.dart';
 import '../pages/splash/p_splash.dart';
 import '../../features/auth/auth.dart';
+import '../../features/vote/vote.dart';
 
 part 'app_router.gr.dart';
 
@@ -46,12 +45,18 @@ class AppRouter extends RootStackRouter {
 
     /// 시작 페이지 - 인증 성공한 경우
     AutoRoute(
-      path: '/entry',
-      page: EntryRoute.page,
+      path: '/home',
+      page: HomeRoute.page,
       guards: [_EntryPagesGuard(_appAuthBloc)],
       children: [
-        RedirectRoute(path: '', redirectTo: 'home'),
-        AutoRoute(path: 'home', page: HomeRoute.page),
+        RedirectRoute(path: '', redirectTo: 'display-agendas'),
+        AutoRoute(path: 'display-agendas', page: DisplayAgendasRoute.page),
+        AutoRoute(path: 'create-agendas', page: CreateAgendaRoute.page),
+        CustomRoute(
+          path: 'agenda-detail',
+          page: AgendaDetailRoute.page,
+          transitionsBuilder: _rightToLeftBuilder,
+        ),
       ],
     ),
   ];

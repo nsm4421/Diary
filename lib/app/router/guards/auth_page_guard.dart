@@ -8,7 +8,7 @@ class _AuthPagesGuard extends AutoRouteGuard {
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) async {
     if (_appAuthBloc.state.isAuth) {
-      router.replaceAll([const EntryRoute()]);
+      router.replaceAll([const HomeRoute()]);
     } else {
       resolver.next(true);
     }

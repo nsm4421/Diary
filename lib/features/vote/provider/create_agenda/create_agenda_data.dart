@@ -5,7 +5,13 @@ class CreateAgendaData with _$CreateAgendaData {
   @override
   final String title;
   @override
+  final String description;
+  @override
   final List<String> options;
 
-  CreateAgendaData({this.title = '', this.options = const []});
+  CreateAgendaData({
+    this.title = '',
+    this.description = '',
+    this.options = const [],
+  });
 }

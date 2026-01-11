@@ -11,12 +11,13 @@ class VoteServiceImpl implements VoteService {
   TaskEither<VoteFailure, AgendaModel> createAgenda({
     required String clientAgendaId,
     required String title,
+    String? description,
     required Iterable<String> optionContents,
   }) {
     return TaskEither.tryCatch(
       () async {
         final agenda = await _agendaRepository
-            .insert(id: clientAgendaId, title: title)
+            .insert(id: clientAgendaId, title: title, description: description)
             .then(AgendaModel.fromRow);
         assert(clientAgendaId == agenda.id);
         final options = await _optionRepository

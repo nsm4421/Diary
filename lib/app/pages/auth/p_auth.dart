@@ -13,7 +13,7 @@ class AuthPage extends StatelessWidget {
     return BlocListener<AppAuthBloc, AppAuthState>(
       listenWhen: (prev, curr) => curr.isAuth,
       listener: (context, state) {
-        context.router.replaceAll([EntryRoute()]);
+        context.router.replaceAll([HomeRoute()]);
       },
       child: AutoRouter(),
     );

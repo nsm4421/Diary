@@ -3,7 +3,11 @@ import 'package:diary/core/core.dart';
 part 'agenda_repository_impl.dart';
 
 abstract interface class AgendaRepository {
-  Future<AgendasRow> insert({String? id, required String title});
+  Future<AgendasRow> insert({
+    String? id,
+    required String title,
+    String? description,
+  });
 
   Future<AgendasRow?> findById(String id);
 

@@ -13,6 +13,7 @@ abstract interface class VoteService {
   TaskEither<VoteFailure, AgendaModel> createAgenda({
     required String clientAgendaId,
     required String title,
+    String? description,
     required Iterable<String> optionContents,
   });
 
