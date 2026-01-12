@@ -56,6 +56,15 @@ dependencies:
   path: ^1.9.0
   uuid: ^4.5.2
 
+  shared:
+    path : packages/shared
+  supabase_repository:
+    path: packages/supabase_repository
+  app_theme:
+    path: packages/app_theme
+  auth:
+    path: packages/auth
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
