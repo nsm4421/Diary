@@ -7,9 +7,6 @@ environment:
   sdk: ^3.9.2
 
 dependencies:
-  flutter:
-    sdk: flutter
-
   logger: ^2.6.2
 
 dev_dependencies:

@@ -2,7 +2,7 @@ import 'package:auth/auth.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 
-import '../value_object/auth_failure.dart';
+import '../core/value_object/auth_failure.dart';
 
 part 'auth_service_impl.dart';
 
