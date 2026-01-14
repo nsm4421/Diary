@@ -48,7 +48,7 @@ class SignInCubit extends Cubit<SignInState> {
             .run())
         .match(
           (failure) {
-            _logger.f(failure);
+            _logger.failure(failure);
             emit(state.copyWith(status: Status.error, failure: failure));
           },
           (authUser) {

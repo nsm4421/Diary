@@ -75,7 +75,7 @@ class SignUpCubit extends Cubit<SignUpState> with SignUpValidationMixIn {
             .run())
         .match(
           (failure) {
-            _logger.f(failure);
+            _logger.failure(failure);
             emit(state.copyWith(status: Status.error, failure: failure));
           },
           (authUser) {

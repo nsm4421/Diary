@@ -1,4 +1,4 @@
-part of 'page.dart';
+part of 'p_splash.dart';
 
 class _Screen extends StatelessWidget {
   const _Screen();

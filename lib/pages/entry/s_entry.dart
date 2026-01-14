@@ -1,4 +1,4 @@
-part of 'page.dart';
+part of 'p_entry.dart';
 
 class _Screen extends StatelessWidget {
   const _Screen({super.key});
@@ -18,6 +18,7 @@ class _Screen extends StatelessWidget {
           IconButton(onPressed: () {}, icon: Icon(Icons.logout)),
         ],
       ),
+      body: _AgendaList(),
     );
   }
 }

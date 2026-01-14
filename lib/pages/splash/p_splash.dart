@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 import 'package:diary/core/core.dart';
 
-part 'screen.dart';
+part 's_splash.dart';
 
 @RoutePage()
 class SplashPage extends StatefulWidget {

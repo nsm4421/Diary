@@ -19,4 +19,6 @@ extension AuthenticationStateExtension on AuthenticationState {
     authenticated: (_) => true,
     unAuthenticated: (_) => false,
   );
+
+  bool get isIdle => mapOrNull(idle: (_) => true) ?? false;
 }
