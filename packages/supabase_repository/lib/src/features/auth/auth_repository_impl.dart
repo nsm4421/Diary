@@ -1,10 +1,11 @@
-import 'package:auth/auth.dart';
-import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:auth/auth.dart';
+import 'package:shared/shared.dart';
+import 'package:injectable/injectable.dart';
 import 'mapper.dart';
 
 @LazySingleton(as: AuthRepository)
-class AuthRepositoryImpl implements AuthRepository {
+class AuthRepositoryImpl with DevLoggerMixIn implements AuthRepository {
   final SupabaseClient _client;
 
   AuthRepositoryImpl(this._client);
@@ -30,9 +31,14 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) async {
-    return await _client.auth
-        .signInWithPassword(email: email, password: password)
-        .then((res) => res.user?.toModel());
+    try {
+      return await _client.auth
+          .signInWithPassword(email: email, password: password)
+          .then((res) => res.user?.toModel());
+    } catch (error, stackTrace) {
+      logE('sign in fails', error, stackTrace);
+      rethrow;
+    }
   }
 
   @override
@@ -41,17 +47,27 @@ class AuthRepositoryImpl implements AuthRepository {
     String? username,
     required String password,
   }) async {
-    return await _client.auth
-        .signUp(
-          email: email,
-          password: password,
-          data: username == null ? null : {'username': username},
-        )
-        .then((res) => res.user?.toModel());
+    try {
+      return await _client.auth
+          .signUp(
+            email: email,
+            password: password,
+            data: username == null ? null : {'username': username},
+          )
+          .then((res) => res.user?.toModel());
+    } catch (error, stackTrace) {
+      logE('sign up fails', error, stackTrace);
+      rethrow;
+    }
   }
 
   @override
   Future<void> signOut() async {
-    await _client.auth.signOut(scope: SignOutScope.global);
+    try {
+      await _client.auth.signOut(scope: SignOutScope.global);
+    } catch (error, stackTrace) {
+      logE('sign out fails', error, stackTrace);
+      rethrow;
+    }
   }
 }

@@ -64,6 +64,8 @@ dependencies:
     path: packages/app_theme
   auth:
     path: packages/auth
+  vote:
+    path: packages/vote
 
 dev_dependencies:
   flutter_test:

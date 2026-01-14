@@ -15,6 +15,8 @@ dependencies:
 
   auth:
     path: ../auth
+  vote:
+    path: ../vote
 
 dev_dependencies:
   lints: ^6.0.0

@@ -10,11 +10,4 @@ abstract class SupabaseModule {
 
   @lazySingleton
   AgendasTable get agendaTable => AgendasTable();
-
-  @lazySingleton
-  AgendaOptionChoicesTable get agendaOptionChoicesTable =>
-      AgendaOptionChoicesTable();
-
-  @lazySingleton
-  AgendaOptionsTable get agendaOptionsTable => AgendaOptionsTable();
 }
