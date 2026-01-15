@@ -1,0 +1,7 @@
+abstract class BaseModel {
+  String get id;
+
+  DateTime? get createdAt;
+
+  DateTime? get updatedAt;
+}

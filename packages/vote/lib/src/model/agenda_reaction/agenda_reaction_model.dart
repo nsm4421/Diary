@@ -1,10 +1,12 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shared/shared.dart';
 
-part 'agenda_model.freezed.dart';
+part 'agenda_reaction_model.freezed.dart';
+
+enum VoteReaction { like, dislike }
 
 @freezed
-class AgendaModel extends BaseModel with _$AgendaModel {
+class AgendaReactionModel extends BaseModel with _$AgendaReactionModel {
   @override
   final String id;
   @override
@@ -12,27 +14,18 @@ class AgendaModel extends BaseModel with _$AgendaModel {
   @override
   final DateTime updatedAt;
   @override
-  final String title;
-  @override
-  final String? description;
+  final String agendaId;
   @override
   final String createdBy;
   @override
-  final int likeCount;
-  @override
-  final int dislikeCount;
-  @override
-  final int commentCount;
+  final VoteReaction reaction;
 
-  AgendaModel({
+  AgendaReactionModel({
     required this.id,
     required this.createdAt,
     required this.updatedAt,
-    required this.title,
-    this.description = '',
+    required this.agendaId,
     required this.createdBy,
-    this.likeCount = 0,
-    this.dislikeCount = 0,
-    this.commentCount = 0,
+    required this.reaction,
   });
 }

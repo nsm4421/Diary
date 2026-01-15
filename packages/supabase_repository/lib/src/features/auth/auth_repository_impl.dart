@@ -44,16 +44,17 @@ class AuthRepositoryImpl with DevLoggerMixIn implements AuthRepository {
   @override
   Future<AuthUserModel?> signUpWithEmail({
     required String email,
-    String? username,
+    required String username,
     required String password,
+    String? avatarUrl,
   }) async {
     try {
+      final data = {
+        'username': username,
+        if (avatarUrl != null) 'avatar_url': avatarUrl,
+      };
       return await _client.auth
-          .signUp(
-            email: email,
-            password: password,
-            data: username == null ? null : {'username': username},
-          )
+          .signUp(email: email, password: password, data: data)
           .then((res) => res.user?.toModel());
     } catch (error, stackTrace) {
       logE('sign up fails', error, stackTrace);

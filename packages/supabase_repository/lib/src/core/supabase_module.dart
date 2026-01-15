@@ -9,5 +9,14 @@ abstract class SupabaseModule {
   SupabaseClient get supabaseClient => Supabase.instance.client;
 
   @lazySingleton
-  AgendasTable get agendaTable => AgendasTable();
+  AgendasTable get agendaDao => AgendasTable();
+
+  @lazySingleton
+  AgendaReactionsTable get agendaReactionDao => AgendaReactionsTable();
+
+  @lazySingleton
+  AgendaCommentsTable get agendaCommentDao => AgendaCommentsTable();
+
+  @lazySingleton
+  AgendaFeedTable get agendaFeedDao => AgendaFeedTable();
 }

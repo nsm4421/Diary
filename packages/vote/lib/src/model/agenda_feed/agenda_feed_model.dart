@@ -1,10 +1,12 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shared/shared.dart';
 
-part 'agenda_model.freezed.dart';
+import '../agenda_comment/agenda_comment_model.dart';
+
+part 'agenda_feed_model.freezed.dart';
 
 @freezed
-class AgendaModel extends BaseModel with _$AgendaModel {
+class AgendaFeedModel extends BaseModel with _$AgendaFeedModel {
   @override
   final String id;
   @override
@@ -16,23 +18,26 @@ class AgendaModel extends BaseModel with _$AgendaModel {
   @override
   final String? description;
   @override
-  final String createdBy;
+  final ProfileModel author;
   @override
   final int likeCount;
   @override
   final int dislikeCount;
   @override
   final int commentCount;
+  @override
+  final AgendaCommentModel? latestComment;
 
-  AgendaModel({
+  AgendaFeedModel({
     required this.id,
     required this.createdAt,
     required this.updatedAt,
     required this.title,
-    this.description = '',
-    required this.createdBy,
+    this.description,
     this.likeCount = 0,
     this.dislikeCount = 0,
     this.commentCount = 0,
+    this.latestComment,
+    required this.author,
   });
 }

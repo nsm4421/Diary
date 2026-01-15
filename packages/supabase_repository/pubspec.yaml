@@ -13,6 +13,8 @@ dependencies:
   get_it: ^7.7.0
   injectable: ^2.4.2
 
+  shared:
+    path: ../shared
   auth:
     path: ../auth
   vote:

@@ -19,7 +19,8 @@ abstract interface class AuthService {
   TaskEither<AuthFailure, AuthUserModel?> signUpWithEmail({
     required String email,
     required String password,
-    String? clientUsername,
+    required String username,
+    String? avatarUrl,
   });
 
   TaskEither<AuthFailure, void> signOut();

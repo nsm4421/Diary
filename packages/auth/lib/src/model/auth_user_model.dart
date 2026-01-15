@@ -1,15 +1,14 @@
-class AuthUserModel {
-  final String id;
+import 'package:shared/shared.dart';
+
+class AuthUserModel extends ProfileModel {
   final String email;
-  final String? username;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
 
   AuthUserModel({
-    required this.id,
+    required super.id,
     required this.email,
-    this.username,
-    this.createdAt,
-    this.updatedAt,
+    super.username,
+    super.avatarUrl,
+    super.createdAt,
+    super.updatedAt,
   });
 }

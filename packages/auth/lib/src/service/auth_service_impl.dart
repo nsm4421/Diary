@@ -67,18 +67,17 @@ class AuthServiceImpl implements AuthService {
   @override
   TaskEither<AuthFailure, AuthUserModel?> signUpWithEmail({
     required String email,
-    String? clientUsername,
+    required String username,
     required String password,
+    String? avatarUrl,
   }) {
     return TaskEither.tryCatch(
       () async {
-        final username = (clientUsername == null || clientUsername.isEmpty)
-            ? null
-            : clientUsername.trim();
         return await _authRepository.signUpWithEmail(
           email: email.trim(),
-          username: username,
+          username: username.trim(),
           password: password.trim(),
+          avatarUrl: avatarUrl,
         );
       },
       (error, stackTrace) {

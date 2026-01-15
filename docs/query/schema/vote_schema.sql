@@ -305,7 +305,8 @@ SELECT
   a.comment_count,
   a.created_at,
   a.updated_at,
-  latest.latest_comment
+  latest.latest_comment,
+  my_reaction.my_reaction
 FROM public.agendas a
 -- 작성자 프로필 + 최신 댓글 1개를 함께 조회
 LEFT JOIN public.profiles p ON p.id = a.created_by
@@ -328,4 +329,61 @@ LEFT JOIN LATERAL (
     ORDER BY c.created_at DESC
     LIMIT 1
   ) c
-) latest ON true;
+) latest ON true
+-- 로그인 유저의 반응(없으면 NULL)
+LEFT JOIN LATERAL (
+  SELECT r.reaction AS my_reaction
+  FROM public.agenda_reactions r
+  WHERE r.agenda_id = a.id
+    AND r.created_by = auth.uid()
+  LIMIT 1
+) my_reaction ON true;
+
+CREATE OR REPLACE FUNCTION public.create_agenda_with_choices(
+  p_agenda_id uuid,
+  p_agenda_title text,
+  p_agenda_description text DEFAULT NULL,
+  p_choices jsonb DEFAULT '[]'::jsonb
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  agenda_row public.agendas%ROWTYPE;
+  choices_json jsonb;
+BEGIN
+  INSERT INTO public.agendas (id, title, description)
+  VALUES (p_agenda_id, p_agenda_title, p_agenda_description)
+  RETURNING * INTO agenda_row;
+
+  INSERT INTO public.agenda_choices (id, agenda_id, label, position)
+  SELECT
+    (choice->>'id')::uuid,
+    agenda_row.id,
+    choice->>'label',
+    COALESCE((choice->>'position')::int, ordinality)
+  FROM jsonb_array_elements(COALESCE(p_choices, '[]'::jsonb))
+    WITH ORDINALITY AS t(choice, ordinality);
+
+  SELECT jsonb_agg(
+           jsonb_build_object('position', position, 'label', label)
+           ORDER BY position
+         )
+  INTO choices_json
+  FROM public.agenda_choices
+  WHERE agenda_id = agenda_row.id;
+
+  RETURN jsonb_build_object(
+    'id', agenda_row.id,
+    'created_at', agenda_row.created_at,
+    'updated_at', agenda_row.updated_at,
+    'title', agenda_row.title,
+    'description', agenda_row.description,
+    'created_by', agenda_row.created_by,
+    'like_count', agenda_row.like_count,
+    'dislike_count', agenda_row.dislike_count,
+    'comment_count', agenda_row.comment_count,
+    'choices', COALESCE(choices_json, '[]'::jsonb)
+  );
+END;
+$$;

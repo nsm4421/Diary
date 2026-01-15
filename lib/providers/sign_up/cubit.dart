@@ -70,7 +70,8 @@ class SignUpCubit extends Cubit<SignUpState> with SignUpValidationMixIn {
             .signUpWithEmail(
               email: state.email,
               password: state.password,
-              clientUsername: state.username.isEmpty ? null : state.username,
+              username: state.username,
+              // TODO : AvatarUrl 등록
             )
             .run())
         .match(

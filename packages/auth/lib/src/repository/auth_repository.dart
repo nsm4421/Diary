@@ -7,8 +7,9 @@ abstract interface class AuthRepository {
 
   Future<AuthUserModel?> signUpWithEmail({
     required String email,
-    String? username,
+    required String username,
     required String password,
+    String? avatarUrl
   });
 
   Future<AuthUserModel?> signInWithEmail({
