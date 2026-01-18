@@ -1,17 +1,22 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
+import 'package:shared/shared.dart';
+import 'package:vote/src/core/value_object/cursor.dart';
+import 'package:vote/vote.dart';
 
 import '../core/value_object/vote_failure.dart';
-import '../model/agenda_comment/agenda_comment_model.dart';
+import '../repository/agenda_rpc_repository.dart';
+import '../repository/agenda_tables_repository.dart';
 import '../model/agenda_feed/agenda_feed_model.dart';
-import '../model/agenda/agenda_model.dart';
+import '../model/agenda/agenda_with_choices_model.dart';
 import '../model/agenda_reaction/agenda_reaction_model.dart';
+import '../model/agenda_comment/agenda_comment_model.dart';
 
 part 'vote_service_impl.dart';
 
 abstract interface class VoteService {
   /// agenda & options
-  TaskEither<VoteFailure, AgendaModel> createAgenda({
+  TaskEither<VoteFailure, AgendaWithChoicesModel> createAgenda({
     required String agendaId,
     required String agendaTitle,
     String? agendaDescription,
@@ -21,23 +26,26 @@ abstract interface class VoteService {
   TaskEither<VoteFailure, void> deleteAgenda(String agendaId);
 
   TaskEither<VoteFailure, List<AgendaFeedModel>> fetchAgendaFeed({
-    int offset = 0,
+    required FetchAgendaFeedCursor cursor,
     int limit = 20,
   });
 
   /// reaction
-  TaskEither<VoteFailure, AgendaReactionModel> createAgendaReaction({
+  TaskEither<VoteFailure, void> createAgendaReaction({
     required String reactionId,
     required String agendaId,
     required VoteReaction reaction,
   });
 
-  TaskEither<VoteFailure, AgendaReactionModel> updateAgendaReaction({
+  TaskEither<VoteFailure, void> updateAgendaReaction({
+    required String reactionId,
     required String agendaId,
-    VoteReaction? reaction,
+    required VoteReaction reaction,
   });
 
-  TaskEither<VoteFailure, void> deleteAgendaReaction(String agendaId);
+  TaskEither<VoteFailure, void> deleteAgendaReaction({
+    required String reactionId,
+  });
 
   /// comments
   TaskEither<VoteFailure, void> createAgendaComment({
@@ -45,6 +53,11 @@ abstract interface class VoteService {
     required String agendaId,
     String? parentCommentId,
     required String content,
+  });
+
+  TaskEither<VoteFailure, List<AgendaCommentModel>> fetchAgendaComments({
+    required FetchAgendaCommentCursor cursor,
+    int limit = 20,
   });
 
   TaskEither<VoteFailure, void> deleteAgendaComment(String commentId);

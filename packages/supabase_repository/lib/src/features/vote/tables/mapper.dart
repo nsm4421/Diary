@@ -47,3 +47,18 @@ extension VoteReactionExtension on VoteReaction {
     };
   }
 }
+
+extension AgendaCommentExtension on db.AgendaCommentsRow {
+  AgendaCommentModel toModel() {
+    return AgendaCommentModel(
+      id: id,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      agendaId: agendaId,
+      parentId: parentId,
+      content: content,
+      deletedAt: deletedAt,
+      createdBy: createdBy,
+    );
+  }
+}

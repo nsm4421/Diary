@@ -2,71 +2,219 @@ part of 'vote_service.dart';
 
 @LazySingleton(as: VoteService)
 class VoteServiceImpl implements VoteService {
+  final AgendaTablesRepository _tablesRepository;
+  final AgendaRpcRepository _rpcRepository;
+
+  VoteServiceImpl(this._tablesRepository, this._rpcRepository);
+
+  /// agenda & options
   @override
-  TaskEither<VoteFailure, AgendaModel> createAgenda({
+  TaskEither<VoteFailure, AgendaWithChoicesModel> createAgenda({
     required String agendaId,
     required String agendaTitle,
     String? agendaDescription,
     required List<(String, String)> choices,
   }) {
-    // TODO: implement createAgenda
-    throw UnimplementedError();
+    return TaskEither.tryCatch(
+      () async {
+        if (choices.length < kMinChoiceCount) {
+          throw Exception('선택지는 최소 $kMinChoiceCount개 이상 사용해야 합니다');
+        } else if (choices.length > kMaxChoiceCount) {
+          throw Exception('선택지는 최대 $kMaxChoiceCount개 이상 사용해야 합니다');
+        }
+
+        return await _rpcRepository.createAgendaWithChoices(
+          agendaId: agendaId,
+          agendaTitle: agendaTitle,
+          agendaDescription: agendaDescription,
+          choices: choices,
+        );
+      },
+      (error, stackTrace) {
+        return VoteFailure(
+          message: 'create agenda failed',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
   }
 
   @override
-  TaskEither<VoteFailure, AgendaCommentModel> createAgendaComment({
+  TaskEither<VoteFailure, void> deleteAgenda(String agendaId) {
+    return TaskEither.tryCatch(
+      () async {
+        await _tablesRepository.deleteAgendaById(agendaId);
+      },
+      (error, stackTrace) {
+        return VoteFailure(
+          message: 'delete agenda failed',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
+  }
+
+  @override
+  TaskEither<VoteFailure, List<AgendaFeedModel>> fetchAgendaFeed({
+    required FetchAgendaFeedCursor cursor,
+    int limit = 20,
+  }) {
+    return TaskEither.tryCatch(
+      () async {
+        return await _tablesRepository
+            .fetchAgendaFeed(
+              lastAgendaId: cursor.lastAgendaId,
+              lastCreatedAt: cursor.lastCreatedAt,
+              limit: limit,
+            )
+            .then((res) => res.toList(growable: false));
+      },
+      (error, stackTrace) {
+        return VoteFailure(
+          message: 'fetch agendas failed',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
+  }
+
+  /// reaction
+  @override
+  TaskEither<VoteFailure, void> createAgendaReaction({
+    required String reactionId,
+    required String agendaId,
+    required VoteReaction reaction,
+  }) {
+    return TaskEither.tryCatch(
+      () async {
+        await _tablesRepository.insertReaction(
+          reactionId: reactionId,
+          agendaId: agendaId,
+          reaction: reaction,
+        );
+      },
+      (error, stackTrace) {
+        return VoteFailure(
+          message: 'create reaction failed',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
+  }
+
+  @override
+  TaskEither<VoteFailure, void> updateAgendaReaction({
+    required String reactionId,
+    required String agendaId,
+    required VoteReaction reaction,
+  }) {
+    return TaskEither.tryCatch(
+      () async {
+        await _tablesRepository.updateReaction(
+          reactionId: reactionId,
+          agendaId: agendaId,
+          reaction: reaction,
+        );
+      },
+      (error, stackTrace) {
+        return VoteFailure(
+          message: 'update reaction failed',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
+  }
+
+  @override
+  TaskEither<VoteFailure, void> deleteAgendaReaction({
+    required String reactionId,
+  }) {
+    return TaskEither.tryCatch(
+      () async {
+        await _tablesRepository.deleteReactionById(reactionId);
+      },
+      (error, stackTrace) {
+        return VoteFailure(
+          message: 'delete reaction failed',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
+  }
+
+  /// comments
+  @override
+  TaskEither<VoteFailure, void> createAgendaComment({
     required String commentId,
     required String agendaId,
     String? parentCommentId,
     required String content,
   }) {
-    // TODO: implement createAgendaComment
-    throw UnimplementedError();
+    return TaskEither.tryCatch(
+      () async {
+        await _tablesRepository.createAgendaComment(
+          commentId: commentId,
+          agendaId: agendaId,
+          parentCommentId: parentCommentId,
+          content: content,
+        );
+      },
+      (error, stackTrace) {
+        return VoteFailure(
+          message: 'create comment failed',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
   }
 
   @override
-  TaskEither<VoteFailure, AgendaReactionModel> createAgendaReaction({
-    required String reactionId,
-    required String agendaId,
-    required VoteReaction reaction,
+  TaskEither<VoteFailure, List<AgendaCommentModel>> fetchAgendaComments({
+    required FetchAgendaCommentCursor cursor,
+    int limit = 20,
   }) {
-    // TODO: implement createAgendaReaction
-    throw UnimplementedError();
-  }
-
-  @override
-  TaskEither<VoteFailure, void> deleteAgenda(String agendaId) {
-    // TODO: implement deleteAgenda
-    throw UnimplementedError();
+    return TaskEither.tryCatch(
+      () async {
+        return await _tablesRepository
+            .fetchAgendaComments(
+              agendaId: cursor.agendaId,
+              parentCommentId: cursor.parentCommentId,
+              lastCommentId: cursor.lastCommentId,
+              lastCommentCreatedAt: cursor.lastCommentCreatedAt,
+              limit: limit,
+            )
+            .then((res) => res.toList(growable: false));
+      },
+      (error, stackTrace) {
+        return VoteFailure(
+          message: 'fetch comment failed',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
   }
 
   @override
   TaskEither<VoteFailure, void> deleteAgendaComment(String commentId) {
-    // TODO: implement deleteAgendaComment
-    throw UnimplementedError();
-  }
-
-  @override
-  TaskEither<VoteFailure, void> deleteAgendaReaction(String agendaId) {
-    // TODO: implement deleteAgendaReaction
-    throw UnimplementedError();
-  }
-
-  @override
-  TaskEither<VoteFailure, List<AgendaFeedModel>> fetchAgendaFeed({
-    int offset = 0,
-    int limit = 20,
-  }) {
-    // TODO: implement fetchAgendaFeed
-    throw UnimplementedError();
-  }
-
-  @override
-  TaskEither<VoteFailure, AgendaReactionModel> updateAgendaReaction({
-    required String agendaId,
-    VoteReaction? reaction,
-  }) {
-    // TODO: implement updateAgendaReaction
-    throw UnimplementedError();
+    return TaskEither.tryCatch(
+      () async {
+        await _tablesRepository.deleteAgendaCommentById(commentId);
+      },
+      (error, stackTrace) {
+        return VoteFailure(
+          message: 'delete comment failed',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
   }
 }

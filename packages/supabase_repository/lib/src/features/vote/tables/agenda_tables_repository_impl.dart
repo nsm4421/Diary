@@ -14,11 +14,11 @@ class AgendaTablesRepositoryImpl
   final db.AgendaFeedTable _agendaFeedTable;
 
   AgendaTablesRepositoryImpl(
-      this._agendasTable,
-      this._agendaCommentsTable,
-      this._agendaReactionsTable,
-      this._agendaFeedTable,
-      );
+    this._agendasTable,
+    this._agendaCommentsTable,
+    this._agendaReactionsTable,
+    this._agendaFeedTable,
+  );
 
   @override
   Future<void> deleteAgendaById(String agendaId) async {
@@ -32,15 +32,29 @@ class AgendaTablesRepositoryImpl
 
   @override
   Future<Iterable<AgendaFeedModel>> fetchAgendaFeed({
-    int offset = 0,
+    String? lastAgendaId,
+    DateTime? lastCreatedAt,
     int limit = 20,
   }) async {
     try {
       return await _agendaFeedTable
           .queryRows(
-        queryFn: (q) => q.order('created_at').range(offset, offset + limit),
-        limit: limit,
-      )
+            queryFn: (q) {
+              var query = q;
+              query = lastCreatedAt == null
+                  ? query
+                  : query.lt(
+                      'created_at',
+                      lastCreatedAt.toUtc().toIso8601String(),
+                    );
+              query = lastAgendaId == null ? query : query.neq('id', lastAgendaId);
+              return query
+                  .order('created_at', ascending: false)
+                  .order('id', ascending: false)
+                  .limit(limit);
+            },
+            limit: limit,
+          )
           .then((res) => res.map((e) => e.toModel()));
     } catch (error, stackTrace) {
       logE('fetch agenda feeds failed', error, stackTrace);
@@ -93,9 +107,9 @@ class AgendaTablesRepositoryImpl
     try {
       await _agendaReactionsTable.delete(
         matchingRows: (q) => q.eq('id', reactionId),
-      );
+    );
     } catch (error, stackTrace) {
-      logE('delete comment failed', error, stackTrace);
+      logE('delete reaction failed', error, stackTrace);
       rethrow;
     }
   }
@@ -119,6 +133,43 @@ class AgendaTablesRepositoryImpl
       );
     } catch (error, stackTrace) {
       logE('create comment failed', error, stackTrace);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Iterable<AgendaCommentModel>> fetchAgendaComments({
+    required String agendaId,
+    String? parentCommentId,
+    String? lastCommentId,
+    DateTime? lastCommentCreatedAt,
+    int limit = 20,
+  }) async {
+    try {
+      return await _agendaCommentsTable
+          .queryRows(
+            queryFn: (q) {
+              var query = q;
+              query = lastCommentCreatedAt == null
+                  ? query
+                  : query.lt(
+                      'created_at',
+                      lastCommentCreatedAt.toUtc().toIso8601String(),
+                    );
+              query = lastCommentId == null
+                  ? query
+                  : query.neq('id', lastCommentId);
+              return query
+                  .eq('agenda_id', agendaId)
+                  .order('created_at', ascending: false)
+                  .order('id', ascending: false)
+                  .limit(limit);
+            },
+            limit: limit,
+          )
+          .then((res) => res.map((e) => e.toModel()));
+    } catch (error, stackTrace) {
+      logE('fetch comment failed', error, stackTrace);
       rethrow;
     }
   }
