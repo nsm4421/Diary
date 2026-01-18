@@ -18,27 +18,27 @@ class SignUpCubit extends Cubit<SignUpState> with SignUpValidationMixIn {
   SignUpCubit(this._authService, this._logger) : super(SignUpState());
 
   void resetStatus() {
-    if (state.status == Status.error) return;
+    if (state.status.isError) return;
     emit(state.copyWith(status: Status.initial, failure: null));
   }
 
   void updateEmail(String text) {
-    if (state.status == Status.loading) return;
+    if (state.status.isLoading) return;
     emit(state.copyWith(email: text));
   }
 
   void updatePassword(String text) {
-    if (state.status == Status.loading) return;
+    if (state.status.isLoading) return;
     emit(state.copyWith(password: text));
   }
 
   void updateUsername(String text) {
-    if (state.status == Status.loading) return;
+    if (state.status.isLoading) return;
     emit(state.copyWith(username: text));
   }
 
   Future<void> submit() async {
-    if (state.status == Status.loading) return;
+    if (state.status.isLoading) return;
     emit(
       state.copyWith(
         email: state.email.trim(),

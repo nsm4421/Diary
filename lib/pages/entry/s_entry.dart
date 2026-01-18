@@ -11,6 +11,12 @@ class _Screen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
+              context.router.push(VoteRoute());
+            },
+            icon: Icon(Icons.how_to_vote),
+          ),
+          IconButton(
+            onPressed: () {
               context.router.push(SignInRoute());
             },
             icon: Icon(Icons.login),

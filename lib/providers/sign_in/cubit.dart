@@ -18,22 +18,22 @@ class SignInCubit extends Cubit<SignInState> {
   SignInCubit(this._authService, this._logger) : super(SignInState());
 
   void resetStatus() {
-    if (state.status == Status.error) return;
+    if (state.status.isLoading) return;
     emit(state.copyWith(status: Status.initial, failure: null));
   }
 
   void updateEmail(String text) {
-    if (state.status == Status.loading) return;
+    if (state.status.isLoading) return;
     emit(state.copyWith(email: text));
   }
 
   void updatePassword(String text) {
-    if (state.status == Status.loading) return;
+    if (state.status.isLoading) return;
     emit(state.copyWith(password: text));
   }
 
   Future<void> submit() async {
-    if (state.status == Status.loading) return;
+    if (state.status.isLoading) return;
 
     /// call service
     emit(
