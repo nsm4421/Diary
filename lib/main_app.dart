@@ -19,7 +19,7 @@ class MainApp extends StatelessWidget {
         theme: GetIt.instance<AppTheme>().lightThemeData,
         darkTheme: GetIt.instance<AppTheme>().darkThemeData,
         routerConfig: GetIt.instance<AppRouter>().config(),
-        // scaffoldMessengerKey: appScaffoldMessengerKey,
+        scaffoldMessengerKey: appScaffoldMessengerKey,
       ),
     );
   }

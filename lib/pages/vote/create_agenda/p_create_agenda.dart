@@ -1,4 +1,3 @@
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:diary/core/core.dart';
 import 'package:flutter/material.dart';
@@ -29,11 +28,10 @@ class CreateAgendaPage extends StatelessWidget with UuidMixIn {
       child: BlocConsumer<CreateAgendaCubit, CreateAgendaState>(
         listener: (context, state) async {
           if (state.status.isSuccess) {
-            // TODO : pop
-            final created = state.created!;
-            await context.maybePop(created);
+            ToastUtil.success('투표 작성 완료');
+            context.maybePop(state.created!);
           } else if (state.status.isError) {
-            // TODO : snackbar 띄우기
+            ToastUtil.error(state.failure?.message ?? 'error occurs');
             context.read<CreateAgendaCubit>().resetStatus();
           }
         },
