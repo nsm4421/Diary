@@ -8,51 +8,48 @@ class _Screen extends StatelessWidget {
     final agendaFeed = _mockAgendaFeed();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('안건'),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.tune),
-            tooltip: '정렬 및 필터',
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final shortestSide = constraints.biggest.shortestSide;
-            final contentPadding = shortestSide * 0.05;
-            final textScale = MediaQuery.textScalerOf(context).textScaleFactor;
-            final headerHeight = (shortestSide * 0.85 * textScale)
-                .clamp(180,200)
-                .toDouble();
-
-            return CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  primary: false,
-                  floating: true,
-                  snap: true,
-                  pinned: false,
-                  toolbarHeight: 0,
-                  collapsedHeight: 0,
-                  expandedHeight: headerHeight,
-                  backgroundColor: context.colorScheme.surface,
-                  surfaceTintColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  scrolledUnderElevation: 0,
-                  flexibleSpace: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      contentPadding,
-                      16,
-                      contentPadding,
-                      20,
-                    ),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 200,
+            pinned: true,
+            backgroundColor: context.colorScheme.surface,
+            surfaceTintColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            scrolledUnderElevation: 0,
+            title: Text(
+              '안건 피드',
+              style: context.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  context.router.push(const CreateAgendaRoute());
+                },
+                icon: const Icon(Icons.add),
+                tooltip: '안건 만들기',
+              ),
+            ],
+            flexibleSpace: FlexibleSpaceBar(
+              collapseMode: CollapseMode.pin,
+              background: SafeArea(
+                bottom: false,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _FeedHeader(totalCount: agendaFeed.length),
+                        Text(
+                          '총 ${agendaFeed.length}건의 안건이 공유되고 있어요.',
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: context.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
                         const SizedBox(height: 12),
                         const _FilterChips(),
                         const SizedBox(height: 20),
@@ -60,27 +57,23 @@ class _Screen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SliverPadding(
-                  padding: EdgeInsets.fromLTRB(
-                    contentPadding,
-                    0,
-                    contentPadding,
-                    24,
-                  ),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _AgendaCard(agenda: agendaFeed[index]),
-                      ),
-                      childCount: agendaFeed.length,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
+              ),
+            ),
+          ),
+
+          SliverFillRemaining(
+            hasScrollBody: true,
+            child: ListView.builder(
+              primary: false,
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 20),
+              itemCount: agendaFeed.length,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _AgendaCard(agenda: agendaFeed[index]),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

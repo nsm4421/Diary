@@ -105,11 +105,21 @@ class _AgendaFormState extends State<_AgendaForm> {
           children: [
             SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
-              title: Text(
-                '상세설명(선택)',
-                style: context.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+              title: Row(
+                children: [
+                  Icon(
+                    Icons.description_outlined,
+                    size: 18,
+                    color: context.colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    '상세설명(제목)',
+                    style: context.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
               value: _showDescription,
               onChanged: _handleToggleShowDescription,
