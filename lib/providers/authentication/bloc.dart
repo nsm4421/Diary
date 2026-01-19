@@ -28,6 +28,14 @@ class AuthenticationBloc
     on<_onUnAuthenticatedEvent>(_onUnAuthenticated);
   }
 
+  Future<bool> resolveIsAuth() async {
+    return state.isIdle
+        ? await stream
+              .firstWhere((state) => !state.isIdle)
+              .then((state) => state.isAuth)
+        : state.isAuth;
+  }
+
   Future<void> _onStart(
     _startEvent event,
     Emitter<AuthenticationState> emit,

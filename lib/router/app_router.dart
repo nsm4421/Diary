@@ -1,11 +1,19 @@
+import 'package:auth/auth.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
 import 'app_router.gr.dart';
+import 'auth_guard.dart';
 
 @lazySingleton
 @AutoRouterConfig(replaceInRouteName: 'Screen|Page,Route')
 class AppRouter extends RootStackRouter {
+  AppRouter(this._guestOnlyGuard, this._authenticatedOnlyGuard);
+
+  final GuestOnlyGuard _guestOnlyGuard;
+  final AuthenticatedOnlyGuard _authenticatedOnlyGuard;
+
   @override
   List<AutoRoute> get routes => [
     AutoRoute(path: '/splash', page: SplashRoute.page, initial: true),
@@ -13,7 +21,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(
       path: '/auth',
       page: AuthRoute.page,
-      // TODO : auth guard
+      guards: [_guestOnlyGuard],
       children: [
         RedirectRoute(path: '', redirectTo: 'sign-in'),
         AutoRoute(path: 'sign-in', page: SignInRoute.page),
@@ -33,8 +41,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           path: 'create-agenda',
           page: CreateAgendaRoute.page,
-          // TODO : auth guard
-          guards: [],
+          guards: [_authenticatedOnlyGuard],
         ),
       ],
     ),
