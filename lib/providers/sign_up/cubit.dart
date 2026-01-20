@@ -18,7 +18,7 @@ class SignUpCubit extends Cubit<SignUpState> with SignUpValidationMixIn {
   SignUpCubit(this._authService, this._logger) : super(SignUpState());
 
   void resetStatus() {
-    if (state.status.isError) return;
+    if (state.status.isLoading) return;
     emit(state.copyWith(status: Status.initial, failure: null));
   }
 
@@ -53,12 +53,12 @@ class SignUpCubit extends Cubit<SignUpState> with SignUpValidationMixIn {
       emit(state.copyWith(status: Status.error, failure: emailError));
       return;
     }
-    final passwordError = validateEmail(state.password);
+    final passwordError = validatePassword(state.password);
     if (passwordError != null) {
       emit(state.copyWith(status: Status.error, failure: passwordError));
       return;
     }
-    final usernameError = validateEmail(state.username);
+    final usernameError = validateUsername(state.username);
     if (usernameError != null) {
       emit(state.copyWith(status: Status.error, failure: usernameError));
       return;

@@ -4,7 +4,7 @@ import 'package:shared/shared.dart';
 mixin class SignUpValidationMixIn {
   static const int minPasswordLength = 6;
   static const int maxPasswordLength = 20;
-  static const int minUsernameLength = 6;
+  static const int minUsernameLength = 2;
   static const int maxUsernameLength = 20;
 
   Failure? validateEmail(String text) {

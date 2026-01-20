@@ -14,10 +14,10 @@ class GuestOnlyGuard extends AutoRouteGuard {
   void onNavigation(NavigationResolver resolver, StackRouter router) async {
     final isAuth = await _authenticationBloc.resolveIsAuth();
     if (isAuth) {
-      resolver.next(true);
-    } else {
-      router.root.push(const EntryRoute());
       resolver.next(false);
+      router.root.replace(const EntryRoute());
+    } else {
+      resolver.next(true);
     }
   }
 }
