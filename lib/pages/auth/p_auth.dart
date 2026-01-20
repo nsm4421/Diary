@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:diary/providers/authentication/bloc.dart';
+import 'package:diary/router/app_router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,12 +10,16 @@ class AuthPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-      builder: (context, state) {
-        return state.isIdle
-            ? Center(child: CircularProgressIndicator())
-            : AutoRouter();
+    return BlocListener<AuthenticationBloc, AuthenticationState>(
+      listenWhen: (prev, curr) => !prev.isAuth & curr.isAuth,
+      listener: (context, state) {
+        if (context.router.canPop()) {
+          context.router.maybePop();
+        } else {
+          context.replaceRoute(EntryRoute());
+        }
       },
+      child: AutoRouter(),
     );
   }
 }

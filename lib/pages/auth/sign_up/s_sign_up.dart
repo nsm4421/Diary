@@ -48,8 +48,6 @@ class _Screen extends StatelessWidget {
                       _Form(),
                       const SizedBox(height: 12),
                       _SubmitButton(),
-                      const SizedBox(height: 6),
-                      _SignInButton(),
                     ],
                   ),
                 ),

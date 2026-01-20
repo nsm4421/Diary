@@ -1,6 +1,4 @@
-import 'package:auth/auth.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 
 import 'app_router.gr.dart';
@@ -17,7 +15,15 @@ class AppRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
     AutoRoute(path: '/splash', page: SplashRoute.page, initial: true),
-    AutoRoute(path: '/entry', page: EntryRoute.page),
+    AutoRoute(
+      path: '/entry',
+      page: EntryRoute.page,
+      children: [
+        AutoRoute(path: 'home', page: HomeRoute.page, initial: true),
+        AutoRoute(path: 'display-agendas', page: DisplayAgendasRoute.page),
+        AutoRoute(path: 'settings', page: SettingRoute.page),
+      ],
+    ),
     AutoRoute(
       path: '/auth',
       page: AuthRoute.page,
@@ -28,22 +34,11 @@ class AppRouter extends RootStackRouter {
         AutoRoute(path: 'sign-up', page: SignUpRoute.page),
       ],
     ),
+
     AutoRoute(
-      path: '/vote',
-      page: VoteRoute.page,
-      children: [
-        RedirectRoute(path: '', redirectTo: 'display-agendas'),
-        AutoRoute(
-          path: 'display-agendas',
-          page: DisplayAgendasRoute.page,
-          initial: true,
-        ),
-        AutoRoute(
-          path: 'create-agenda',
-          page: CreateAgendaRoute.page,
-          guards: [_authenticatedOnlyGuard],
-        ),
-      ],
+      path: '/create-agenda',
+      page: CreateAgendaRoute.page,
+      guards: [_authenticatedOnlyGuard],
     ),
   ];
 }

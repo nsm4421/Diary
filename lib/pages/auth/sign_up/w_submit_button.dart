@@ -13,9 +13,9 @@ class _SubmitButton extends StatelessWidget {
             onPressed: state.status == Status.initial
                 ? () async {
                     FocusScope.of(context).unfocus();
-                    await Future.delayed(500.durationInMilliSec, () {
+                    await Future.delayed(500.durationInMilliSec, ()async {
                       if (!context.mounted) return;
-                      context.read<SignUpCubit>().submit();
+                      await context.read<SignUpCubit>().submit();
                     });
                   }
                 : null,

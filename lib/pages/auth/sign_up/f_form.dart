@@ -56,17 +56,17 @@ class _FormState extends State<_Form> {
 
   void _handleEmailFocus() {
     if (_emailFocus.hasFocus) return;
-    context.read<SignUpCubit>().updateEmail(_emailController.text);
+    context.read<SignUpCubit>().updateEmail(_emailController.text.trim());
   }
 
   void _handlePasswordFocus() {
     if (_passwordFocus.hasFocus) return;
-    context.read<SignUpCubit>().updatePassword(_passwordController.text);
+    context.read<SignUpCubit>().updatePassword(_passwordController.text.trim());
   }
 
   void _handleUsernameFocus() {
     if (_usernameFocus.hasFocus) return;
-    context.read<SignUpCubit>().updateUsername(_usernameController.text);
+    context.read<SignUpCubit>().updateUsername(_usernameController.text.trim());
   }
 
   void _handleTogglePasswordObscured() {

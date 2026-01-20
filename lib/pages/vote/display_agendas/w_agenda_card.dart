@@ -1,4 +1,4 @@
-part of 'p_display_agendas.dart';
+part of 's_display_agendas.dart';
 
 class _AgendaCard extends StatelessWidget {
   final AgendaFeedModel agenda;
