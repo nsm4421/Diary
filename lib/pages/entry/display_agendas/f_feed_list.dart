@@ -1,4 +1,4 @@
-part of 's_display_agendas.dart';
+part of 'p_display_agendas.dart';
 
 class _FeedList extends StatelessWidget {
   const _FeedList({super.key});
@@ -29,7 +29,7 @@ class _FeedList extends StatelessWidget {
               if (state.canFetchMore && state.status.isSuccess) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   context.read<DisplayAgendasBloc>().add(
-                    const DisplayFetchMoreEvent(),
+                    DisplayAgendaEvent.fetch(),
                   );
                 });
               }
@@ -46,7 +46,7 @@ class _FeedList extends StatelessWidget {
 
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: _AgendaCard(agenda: state.items[index]),
+              child: _AgendaCard(state.items[index]),
             );
           }, childCount: state.items.length + (hasMoreTrigger ? 1 : 0)),
         );

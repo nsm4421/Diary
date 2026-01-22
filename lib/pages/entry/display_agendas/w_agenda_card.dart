@@ -1,17 +1,14 @@
-part of 's_display_agendas.dart';
+part of 'p_display_agendas.dart';
 
 class _AgendaCard extends StatelessWidget {
-  final AgendaFeedModel agenda;
+  final AgendaFeedModel _agenda;
 
-  const _AgendaCard({
-    super.key,
-    required this.agenda,
-  });
+  const _AgendaCard(this._agenda);
 
   @override
   Widget build(BuildContext context) {
-    final description = agenda.description ?? '';
-    final latestComment = agenda.latestComment;
+    final description = _agenda.description ?? '';
+    final latestComment = _agenda.latestComment;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -24,7 +21,7 @@ class _AgendaCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            agenda.title,
+            _agenda.title,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: context.textTheme.titleMedium?.copyWith(
@@ -33,7 +30,7 @@ class _AgendaCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            '${agenda.author.username} | ${agenda.createdAt.yyyymmdd}',
+            '${_agenda.author.username} | ${_agenda.createdAt.yyyymmdd}',
             style: context.textTheme.bodySmall?.copyWith(
               color: context.colorScheme.onSurfaceVariant,
             ),
@@ -50,13 +47,30 @@ class _AgendaCard extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 12),
-          _AgendaStatsRow(agenda: agenda),
+          Row(
+            children: [
+              BlocProvider(
+                create: (_) => GetIt.instance<AgendaReactionCubit>(
+                  param1: _agenda.id,
+                  param2: _agenda.reaction,
+                ),
+                child: _ReactionStat(_agenda),
+              ),
+              const SizedBox(width: 10),
+              _StatItem(
+                icon: Icons.chat_bubble_outline,
+                label: _agenda.commentCount.toString(),
+              ),
+            ],
+          ),
           if (latestComment != null) ...[
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: context.colorScheme.surfaceContainerHighest.withAlpha(70),
+                color: context.colorScheme.surfaceContainerHighest.withAlpha(
+                  70,
+                ),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -87,46 +101,11 @@ class _AgendaCard extends StatelessWidget {
   }
 }
 
-class _AgendaStatsRow extends StatelessWidget {
-  final AgendaFeedModel agenda;
-
-  const _AgendaStatsRow({
-    super.key,
-    required this.agenda,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _StatItem(
-          icon: Icons.thumb_up_outlined,
-          label: agenda.likeCount.toString(),
-        ),
-        const SizedBox(width: 10),
-        _StatItem(
-          icon: Icons.thumb_down_outlined,
-          label: agenda.dislikeCount.toString(),
-        ),
-        const SizedBox(width: 10),
-        _StatItem(
-          icon: Icons.chat_bubble_outline,
-          label: agenda.commentCount.toString(),
-        ),
-      ],
-    );
-  }
-}
-
 class _StatItem extends StatelessWidget {
   final IconData icon;
   final String label;
 
-  const _StatItem({
-    super.key,
-    required this.icon,
-    required this.label,
-  });
+  const _StatItem({super.key, required this.icon, required this.label});
 
   @override
   Widget build(BuildContext context) {

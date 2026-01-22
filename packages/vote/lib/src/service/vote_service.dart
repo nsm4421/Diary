@@ -32,19 +32,19 @@ abstract interface class VoteService {
 
   /// reaction
   TaskEither<VoteFailure, void> createAgendaReaction({
-    required String reactionId,
     required String agendaId,
     required VoteReaction reaction,
   });
 
   TaskEither<VoteFailure, void> updateAgendaReaction({
-    required String reactionId,
     required String agendaId,
     required VoteReaction reaction,
+    required String userId,
   });
 
   TaskEither<VoteFailure, void> deleteAgendaReaction({
-    required String reactionId,
+    required String agendaId,
+    required String userId,
   });
 
   /// comments

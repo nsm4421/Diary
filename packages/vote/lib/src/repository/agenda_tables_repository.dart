@@ -8,25 +8,27 @@ abstract interface class AgendaTablesRepository {
   Future<Iterable<AgendaFeedModel>> fetchAgendaFeed({
     String? lastAgendaId,
     DateTime? lastCreatedAt,
-    int limit = 20
+    int limit = 20,
   });
 
   Future<void> deleteAgendaById(String agendaId);
 
   /// reaction
   Future<void> insertReaction({
-    required String reactionId,
     required String agendaId,
     required VoteReaction reaction,
   });
 
   Future<void> updateReaction({
-    required String reactionId,
     required String agendaId,
     required VoteReaction reaction,
+    required String createdBy,
   });
 
-  Future<void> deleteReactionById(String reactionId);
+  Future<void> deleteReaction({
+    required String agendaId,
+    required String createdBy,
+  });
 
   /// comments
   Future<Iterable<AgendaCommentModel>> fetchAgendaComments({
@@ -34,7 +36,7 @@ abstract interface class AgendaTablesRepository {
     String? parentCommentId,
     String? lastCommentId,
     DateTime? lastCommentCreatedAt,
-    int limit = 20
+    int limit = 20,
   });
 
   Future<void> createAgendaComment({

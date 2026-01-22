@@ -84,14 +84,12 @@ class VoteServiceImpl implements VoteService {
   /// reaction
   @override
   TaskEither<VoteFailure, void> createAgendaReaction({
-    required String reactionId,
     required String agendaId,
     required VoteReaction reaction,
   }) {
     return TaskEither.tryCatch(
       () async {
         await _tablesRepository.insertReaction(
-          reactionId: reactionId,
           agendaId: agendaId,
           reaction: reaction,
         );
@@ -108,16 +106,16 @@ class VoteServiceImpl implements VoteService {
 
   @override
   TaskEither<VoteFailure, void> updateAgendaReaction({
-    required String reactionId,
     required String agendaId,
     required VoteReaction reaction,
+    required String userId,
   }) {
     return TaskEither.tryCatch(
       () async {
         await _tablesRepository.updateReaction(
-          reactionId: reactionId,
           agendaId: agendaId,
           reaction: reaction,
+          createdBy: userId,
         );
       },
       (error, stackTrace) {
@@ -132,11 +130,15 @@ class VoteServiceImpl implements VoteService {
 
   @override
   TaskEither<VoteFailure, void> deleteAgendaReaction({
-    required String reactionId,
+    required String agendaId,
+    required String userId,
   }) {
     return TaskEither.tryCatch(
       () async {
-        await _tablesRepository.deleteReactionById(reactionId);
+        await _tablesRepository.deleteReaction(
+          agendaId: agendaId,
+          createdBy: userId,
+        );
       },
       (error, stackTrace) {
         return VoteFailure(

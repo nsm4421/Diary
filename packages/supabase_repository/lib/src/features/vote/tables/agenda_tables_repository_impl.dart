@@ -47,7 +47,9 @@ class AgendaTablesRepositoryImpl
                       'created_at',
                       lastCreatedAt.toUtc().toIso8601String(),
                     );
-              query = lastAgendaId == null ? query : query.neq('id', lastAgendaId);
+              query = lastAgendaId == null
+                  ? query
+                  : query.neq('id', lastAgendaId);
               return query
                   .order('created_at', ascending: false)
                   .order('id', ascending: false)
@@ -64,17 +66,12 @@ class AgendaTablesRepositoryImpl
 
   @override
   Future<void> insertReaction({
-    required String reactionId,
     required String agendaId,
     required VoteReaction reaction,
   }) async {
     try {
       await _agendaReactionsTable.insertRow(
-        db.AgendaReactionsRow(
-          id: reactionId,
-          agendaId: agendaId,
-          reaction: reaction.dto,
-        ),
+        db.AgendaReactionsRow(agendaId: agendaId, reaction: reaction.dto),
       );
     } catch (error, stackTrace) {
       logE('create agenda reaction failed', error, stackTrace);
@@ -84,17 +81,15 @@ class AgendaTablesRepositoryImpl
 
   @override
   Future<void> updateReaction({
-    required String reactionId,
     required String agendaId,
     required VoteReaction reaction,
+    required String createdBy,
   }) async {
     try {
-      await _agendaReactionsTable.upsertRow(
-        db.AgendaReactionsRow(
-          id: reactionId,
-          agendaId: agendaId,
-          reaction: reaction.dto,
-        ),
+      await _agendaReactionsTable.update(
+        matchingRows: (q) =>
+            q.eq('agenda_id', agendaId).eq('created_by', createdBy),
+        data: {'reaction': reaction.name},
       );
     } catch (error, stackTrace) {
       logE('update reaction failed', error, stackTrace);
@@ -103,11 +98,15 @@ class AgendaTablesRepositoryImpl
   }
 
   @override
-  Future<void> deleteReactionById(String reactionId) async {
+  Future<void> deleteReaction({
+    required String agendaId,
+    required String createdBy,
+  }) async {
     try {
       await _agendaReactionsTable.delete(
-        matchingRows: (q) => q.eq('id', reactionId),
-    );
+        matchingRows: (q) =>
+            q.eq('agenda_id', agendaId).eq('created_by', createdBy),
+      );
     } catch (error, stackTrace) {
       logE('delete reaction failed', error, stackTrace);
       rethrow;

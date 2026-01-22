@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:diary/components/app_logo.dart';
 import 'package:diary/core/core.dart';
-import 'package:diary/providers/sign_in/cubit.dart';
+import 'package:diary/providers/auth/sign_in/cubit.dart';
 import 'package:diary/router/app_router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

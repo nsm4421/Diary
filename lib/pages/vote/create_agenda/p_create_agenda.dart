@@ -1,12 +1,11 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:diary/core/core.dart';
+import 'package:diary/providers/vote/create_agenda/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared/shared.dart';
 import 'package:vote/vote.dart';
-
-import '../../../providers/create_agenda/cubit.dart';
 
 part 's_create_agenda.dart';
 
@@ -29,7 +28,7 @@ class CreateAgendaPage extends StatelessWidget with UuidMixIn {
         listener: (context, state) async {
           if (state.status.isSuccess) {
             ToastUtil.success('투표 작성 완료');
-            context.maybePop(state.created!);
+            await context.maybePop<AgendaWithChoicesModel>(state.created!);
           } else if (state.status.isError) {
             ToastUtil.error(state.failure?.message ?? 'error occurs');
             context.read<CreateAgendaCubit>().resetStatus();
