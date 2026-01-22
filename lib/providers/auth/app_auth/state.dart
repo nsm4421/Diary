@@ -21,4 +21,10 @@ extension AuthenticationStateExtension on AuthenticationState {
   );
 
   bool get isIdle => mapOrNull(idle: (_) => true) ?? false;
+
+  AuthUserModel? get currentUser => map(
+    idle: (_) => null,
+    authenticated: (e) => e.authUser,
+    unAuthenticated: (_) => null,
+  );
 }

@@ -12,3 +12,15 @@ class AuthUserModel extends ProfileModel {
     super.updatedAt,
   });
 }
+
+extension AuthUserModelExtension on AuthUserModel {
+  ProfileModel toProfile() {
+    return ProfileModel(
+      id: id,
+      username: username,
+      avatarUrl: avatarUrl,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+    );
+  }
+}

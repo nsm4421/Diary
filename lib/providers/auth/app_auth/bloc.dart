@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -22,10 +23,10 @@ class AuthenticationBloc
 
   AuthenticationBloc(this._authService, this._logger)
     : super(AuthenticationState.idle()) {
-    on<_startEvent>(_onStart);
-    on<_signOutEvent>(_onSignOut);
-    on<_onAuthenticatedEvent>(_onAuthenticated);
-    on<_onUnAuthenticatedEvent>(_onUnAuthenticated);
+    on<_StartEvent>(_onStart);
+    on<_SignOutEvent>(_onSignOut, transformer: restartable());
+    on<_OnAuthenticatedEvent>(_onAuthenticated, transformer: restartable());
+    on<_OnUnAuthenticatedEvent>(_onUnAuthenticated, transformer: restartable());
   }
 
   Future<bool> resolveIsAuth() async {
@@ -37,7 +38,7 @@ class AuthenticationBloc
   }
 
   Future<void> _onStart(
-    _startEvent event,
+    _StartEvent event,
     Emitter<AuthenticationState> emit,
   ) async {
     (await _authService.getAuthUserStream().run()).match(
@@ -47,14 +48,14 @@ class AuthenticationBloc
       },
       (authStream) {
         _authStreamSubscription = authStream.listen((e) {
-          add(e == null ? _onUnAuthenticatedEvent() : _onAuthenticatedEvent(e));
+          add(e == null ? _OnUnAuthenticatedEvent() : _OnAuthenticatedEvent(e));
         });
       },
     );
   }
 
   Future<void> _onSignOut(
-    _signOutEvent event,
+    _SignOutEvent event,
     Emitter<AuthenticationState> emit,
   ) async {
     (await _authService.signOut().run()).match(
@@ -69,7 +70,7 @@ class AuthenticationBloc
   }
 
   Future<void> _onAuthenticated(
-    _onAuthenticatedEvent event,
+    _OnAuthenticatedEvent event,
     Emitter<AuthenticationState> emit,
   ) async {
     try {
@@ -89,7 +90,7 @@ class AuthenticationBloc
   }
 
   Future<void> _onUnAuthenticated(
-    _onUnAuthenticatedEvent event,
+    _OnUnAuthenticatedEvent event,
     Emitter<AuthenticationState> emit,
   ) async {
     try {

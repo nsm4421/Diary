@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shared/shared.dart';
+import 'package:vote/src/model/agenda_feed/agenda_feed_model.dart';
 
 part 'agenda_with_choices_model.g.dart';
 
@@ -51,4 +52,17 @@ class AgendaWithChoicesModel extends BaseModel with _$AgendaWithChoicesModel {
 
   factory AgendaWithChoicesModel.fromJson(Map<String, Object?> json) =>
       _$AgendaWithChoicesModelFromJson(json);
+}
+
+extension AgendaWithChoicesModelExtension on AgendaWithChoicesModel {
+  AgendaFeedModel toFeed(ProfileModel author) {
+    return AgendaFeedModel(
+      id: id,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      title: title,
+      description: description,
+      author: author,
+    );
+  }
 }

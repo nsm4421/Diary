@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shared/shared.dart';
-
-import '../agenda_comment/agenda_comment_model.dart';
+import 'package:vote/vote.dart';
 
 part 'agenda_feed_model.freezed.dart';
 
@@ -20,6 +19,8 @@ class AgendaFeedModel extends BaseModel with _$AgendaFeedModel {
   @override
   final ProfileModel author;
   @override
+  final VoteReaction? reaction;
+  @override
   final int likeCount;
   @override
   final int dislikeCount;
@@ -34,6 +35,7 @@ class AgendaFeedModel extends BaseModel with _$AgendaFeedModel {
     required this.updatedAt,
     required this.title,
     this.description,
+    this.reaction,
     this.likeCount = 0,
     this.dislikeCount = 0,
     this.commentCount = 0,

@@ -19,28 +19,10 @@ typedef DisplayFetchResult<T extends BaseModel, C> = ({
 abstract class DisplayBloc<T extends BaseModel, C>
     extends Bloc<DisplayEvent, DisplayState<T, C>> {
   DisplayBloc() : super(DisplayState()) {
-    on<DisplayRefreshEvent>(_onRefresh);
-    on<DisplayFetchMoreEvent>(_onFetchMore);
   }
 
   @protected
   TaskEither<Failure, DisplayFetchResult<T, C>> fetch({C? cursor});
-
-  Future<void> _onRefresh(
-    DisplayRefreshEvent event,
-    Emitter<DisplayState<T, C>> emit,
-  ) async {
-    if (state.status.isLoading) return;
-    await callApi(emit, cursor: state.cursor, append: false);
-  }
-
-  Future<void> _onFetchMore(
-    DisplayFetchMoreEvent event,
-    Emitter<DisplayState<T, C>> emit,
-  ) async {
-    if (!state.canFetchMore) return;
-    await callApi(emit, cursor: state.cursor, append: true);
-  }
 
   Future<void> callApi(
     Emitter<DisplayState<T, C>> emit, {

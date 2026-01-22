@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:diary/providers/authentication/bloc.dart';
+import 'package:diary/providers/auth/app_auth/bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import 'app_router.gr.dart';
