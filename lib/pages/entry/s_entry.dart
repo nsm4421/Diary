@@ -6,7 +6,7 @@ class _EntryTabsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AutoTabsRouter.pageView(
-      routes: const [HomeRoute(), DisplayAgendasRoute(), SettingRoute()],
+      routes: const [HomeRoute(), DisplayAgendasRoute(), SettingEntryRoute()],
       animatePageTransition: true,
       physics: NeverScrollableScrollPhysics(),
       duration: 250.durationInMilliSec,

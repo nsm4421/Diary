@@ -11,6 +11,20 @@ class AuthUserModel extends ProfileModel {
     super.createdAt,
     super.updatedAt,
   });
+
+  AuthUserModel copyWith({
+    required String username,
+    required String? avatarUrl,
+  }) {
+    return AuthUserModel(
+      id: id,
+      email: email,
+      username: username,
+      avatarUrl: avatarUrl,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+    );
+  }
 }
 
 extension AuthUserModelExtension on AuthUserModel {

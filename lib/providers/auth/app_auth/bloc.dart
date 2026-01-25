@@ -27,6 +27,7 @@ class AuthenticationBloc
     on<_SignOutEvent>(_onSignOut, transformer: restartable());
     on<_OnAuthenticatedEvent>(_onAuthenticated, transformer: restartable());
     on<_OnUnAuthenticatedEvent>(_onUnAuthenticated, transformer: restartable());
+    on<_ProfileUpdatedEvent>(_onProfileUpdated, transformer: restartable());
   }
 
   Future<bool> resolveIsAuth() async {
@@ -105,6 +106,23 @@ class AuthenticationBloc
           ),
         ),
       );
+    }
+  }
+
+  Future<void> _onProfileUpdated(
+    _ProfileUpdatedEvent event,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    try {
+      final temp = state.mapOrNull(authenticated: (e) => e.authUser);
+      if (temp == null) return;
+      final authUser = temp.copyWith(
+        username: event.profile.username,
+        avatarUrl: event.profile.avatarUrl,
+      );
+      emit(AuthenticationState.authenticated(authUser));
+    } catch (error, stackTrace) {
+      _logger.w('update profile fails', error: error, stackTrace: stackTrace);
     }
   }
 

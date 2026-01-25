@@ -9,5 +9,8 @@ sealed class AuthenticationEvent with _$AuthenticationEvent {
 
   factory AuthenticationEvent.onUnAuthenticated() = _OnUnAuthenticatedEvent;
 
+  factory AuthenticationEvent.profileUpdated(ProfileModel profile) =
+      _ProfileUpdatedEvent;
+
   factory AuthenticationEvent.signOut() = _SignOutEvent;
 }

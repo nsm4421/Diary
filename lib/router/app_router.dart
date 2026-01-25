@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:diary/components/page_not_found.dart';
 import 'package:injectable/injectable.dart';
 
 import 'app_router.gr.dart';
@@ -14,16 +15,26 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
+    /// splash
     AutoRoute(path: '/splash', page: SplashRoute.page, initial: true),
+
+    /// entry
     AutoRoute(
       path: '/entry',
       page: EntryRoute.page,
       children: [
         AutoRoute(path: 'home', page: HomeRoute.page, initial: true),
         AutoRoute(path: 'display-agendas', page: DisplayAgendasRoute.page),
-        AutoRoute(path: 'settings', page: SettingRoute.page),
+        AutoRoute(path: 'settings', page: SettingEntryRoute.page),
+        AutoRoute(
+          path: 'profile-edit',
+          page: EditProfileRoute.page,
+          guards: [_authenticatedOnlyGuard],
+        ),
       ],
     ),
+
+    /// auth
     AutoRoute(
       path: '/auth',
       page: AuthRoute.page,
@@ -35,10 +46,31 @@ class AppRouter extends RootStackRouter {
       ],
     ),
 
+    /// vote
     AutoRoute(
-      path: '/create-agenda',
-      page: CreateAgendaRoute.page,
-      guards: [_authenticatedOnlyGuard],
+      path: '/vote',
+      page: VoteRoute.page,
+      children: [
+        AutoRoute(
+          path: 'create',
+          page: CreateAgendaRoute.page,
+          guards: [_authenticatedOnlyGuard],
+        ),
+        AutoRoute(path: 'comment', page: DisplayAgendaCommentRoute.page),
+      ],
+    ),
+
+    /// setting
+    AutoRoute(
+      path: '/setting',
+      page: SettingRoute.page,
+      children: [
+        AutoRoute(
+          path: 'edit-profile',
+          page: EditProfileRoute.page,
+          guards: [_authenticatedOnlyGuard],
+        ),
+      ],
     ),
   ];
 }
