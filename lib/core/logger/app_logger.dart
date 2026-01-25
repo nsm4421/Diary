@@ -6,7 +6,7 @@ import 'package:logger/logger.dart';
 abstract class AppLoggerModule {
   @lazySingleton
   Logger get logger => Logger(
-    level: kReleaseMode ? Level.warning : Level.debug,
+    level: kReleaseMode ? Level.warning : Level.all,
     printer: PrettyPrinter(
       methodCount: 2,
       errorMethodCount: 5,

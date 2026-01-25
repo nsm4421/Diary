@@ -1,18 +1,33 @@
 part of 'cubit.dart';
 
+typedef VoteReactionParams = ({
+  String agendaId,
+  int likeCount,
+  int dislikeCount,
+  VoteReaction? myReaction,
+});
+
 @freezed
-sealed class AgendaReactionState with _$AgendaReactionState {
-  factory AgendaReactionState.idle() = _IdleState;
+class VoteReactonState with _$VoteReactonState {
+  @override
+  final Status status;
+  @override
+  final VoteReaction? reaction;
+  @override
+  final int likeCount;
+  @override
+  final int dislikeCount;
 
-  factory AgendaReactionState.onReaction(VoteReaction reaction) =
-      _OnReactionState;
-
-  factory AgendaReactionState.loading(VoteReaction? previous) = _LoadingState;
+  VoteReactonState({
+    this.status = Status.initial,
+    this.reaction,
+    this.likeCount = 0,
+    this.dislikeCount = 0,
+  });
 }
 
-extension AgendaReactionStateExtension on AgendaReactionState {
-  VoteReaction? get current =>
-      mapOrNull(onReaction: (s) => s.reaction, loading: (s) => s.previous);
+extension VoteReactonStateExtension on VoteReactonState {
+  bool get isLike => reaction == VoteReaction.like;
 
-  bool get isLoading => mapOrNull(loading: (_) => true) ?? false;
+  bool get isDislike => reaction == VoteReaction.dislike;
 }

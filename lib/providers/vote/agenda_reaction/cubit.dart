@@ -1,5 +1,4 @@
 import 'package:diary/core/core.dart';
-import 'package:diary/providers/auth/app_auth/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -11,91 +10,140 @@ part 'state.dart';
 part 'cubit.freezed.dart';
 
 @injectable
-class AgendaReactionCubit extends Cubit<AgendaReactionState> {
-  final String _agendaId;
+class VoteReactionCubit extends Cubit<VoteReactonState> {
+  late final String _agendaId;
   final VoteService _voteService;
-  final AuthenticationBloc _authBloc;
   final Logger _logger;
-  String? _currentUid;
 
-  AgendaReactionCubit(
-    @factoryParam this._agendaId,
-    @factoryParam VoteReaction? reaction,
+  VoteReactionCubit(
+    @factoryParam VoteReactionParams params,
     this._voteService,
-    this._authBloc,
     this._logger,
-  ) : super(AgendaReactionState.idle()) {
-    // TODO : _currentUid 세팅 안되는 버그 수정
-    _currentUid = _authBloc.state.currentUser?.id;
-    if (_currentUid != null && reaction != null) {
-      emit(AgendaReactionState.onReaction(reaction));
-    }
+  ) : super(
+        VoteReactonState(
+          reaction: params.myReaction,
+          likeCount: params.likeCount,
+          dislikeCount: params.dislikeCount,
+        ),
+      ) {
+    _agendaId = params.agendaId;
   }
 
-  Future<void> addReaction(VoteReaction reaction) async {
+  Future<void> handleReaction({
+    required VoteReaction tapped,
+    required String currentUid,
+  }) async {
     try {
-      if (state.isLoading || state.current == reaction || _currentUid == null) {
-        return;
+      if (state.status.isLoading) return;
+      emit(state.copyWith(status: Status.loading));
+
+      if (state.reaction == null) {
+        _logger.t(
+          'create reaction called|current${state.reaction},tapped:$tapped',
+        );
+
+        // Insert
+        await (_voteService
+                .createAgendaReaction(agendaId: _agendaId, reaction: tapped)
+                .run())
+            .then(
+              (res) => res.match(
+                (failure) {
+                  _logger.failure(failure);
+                  _resetState();
+                },
+                (_) {
+                  _logger.t('insert reaction success');
+                  emit(
+                    state.copyWith(
+                      status: Status.initial,
+                      reaction: tapped,
+                      likeCount: tapped == VoteReaction.like
+                          ? state.likeCount + 1
+                          : state.likeCount,
+                      dislikeCount: tapped == VoteReaction.dislike
+                          ? state.dislikeCount + 1
+                          : state.dislikeCount,
+                    ),
+                  );
+                },
+              ),
+            );
+      } else if (state.reaction == tapped) {
+        _logger.t(
+          'clear reaction called|current${state.reaction},tapped:$tapped',
+        );
+
+        // Delete
+        await (_voteService
+                .deleteAgendaReaction(agendaId: _agendaId, userId: currentUid)
+                .run())
+            .then(
+              (res) => res.match(
+                (failure) {
+                  _logger.failure(failure);
+                  _resetState();
+                },
+                (_) {
+                  _logger.t('delete reaction success');
+                  emit(
+                    state.copyWith(
+                      status: Status.initial,
+                      reaction: null,
+                      likeCount: tapped == VoteReaction.like
+                          ? state.likeCount - 1
+                          : state.likeCount,
+                      dislikeCount: tapped == VoteReaction.dislike
+                          ? state.dislikeCount - 1
+                          : state.dislikeCount,
+                    ),
+                  );
+                },
+              ),
+            );
+      } else if (state.reaction != tapped) {
+        _logger.t(
+          'update reaction called|current${state.reaction},tapped:$tapped',
+        );
+        // Update
+        await (_voteService
+                .updateAgendaReaction(
+                  agendaId: _agendaId,
+                  reaction: tapped,
+                  userId: currentUid,
+                )
+                .run())
+            .then(
+              (res) => res.match(
+                (failure) {
+                  _logger.failure(failure);
+                  _resetState();
+                },
+                (_) {
+                  _logger.t('update reaction success');
+                  emit(
+                    state.copyWith(
+                      status: Status.initial,
+                      reaction: tapped,
+                      likeCount: tapped == VoteReaction.like
+                          ? state.likeCount + 1
+                          : state.likeCount - 1,
+                      dislikeCount: tapped == VoteReaction.dislike
+                          ? state.dislikeCount + 1
+                          : state.dislikeCount - 1,
+                    ),
+                  );
+                },
+              ),
+            );
       }
-      emit(AgendaReactionState.loading(reaction));
-      await (_voteService
-              .updateAgendaReaction(
-                agendaId: _agendaId,
-                reaction: reaction,
-                userId: _currentUid!,
-              )
-              .run())
-          .then(
-            (res) => res.match(
-              (failure) {
-                _logger.failure(failure);
-                _resetState();
-              },
-              (_) {
-                emit(AgendaReactionState.onReaction(reaction));
-              },
-            ),
-          );
     } catch (error, stackTrace) {
       _resetState();
-      _logger.e('add emotion fails', error: error, stackTrace: stackTrace);
-    }
-  }
-
-  Future<void> clearReaction() async {
-    final previous = state.current;
-    if (state.isLoading || previous == null || _currentUid == null) {
-      return;
-    }
-
-    try {
-      emit(AgendaReactionState.loading(previous));
-      await (_voteService
-              .deleteAgendaReaction(agendaId: _agendaId, userId: _currentUid!)
-              .run())
-          .then(
-            (res) => res.match(
-              (failure) {
-                _logger.failure(failure);
-                emit(AgendaReactionState.onReaction(previous));
-              },
-              (_) {
-                emit(AgendaReactionState.idle());
-              },
-            ),
-          );
-    } catch (error, stackTrace) {
-      emit(AgendaReactionState.onReaction(previous));
-      _logger.e('add emotion fails', error: error, stackTrace: stackTrace);
+      _logger.e('handle emotion fails', error: error, stackTrace: stackTrace);
     }
   }
 
   void _resetState() {
-    final reaction = state.current;
-    emit(
-      reaction == null
-          ? AgendaReactionState.idle()
-          : AgendaReactionState.onReaction(reaction),
-    );
+    emit(state.copyWith(status: Status.initial));
   }
 }

@@ -50,9 +50,13 @@ class _AgendaCard extends StatelessWidget {
           Row(
             children: [
               BlocProvider(
-                create: (_) => GetIt.instance<AgendaReactionCubit>(
-                  param1: _agenda.id,
-                  param2: _agenda.reaction,
+                create: (_) => GetIt.instance<VoteReactionCubit>(
+                  param1: (
+                    agendaId: _agenda.id,
+                    likeCount: _agenda.likeCount,
+                    dislikeCount: _agenda.dislikeCount,
+                    myReaction: _agenda.reaction,
+                  ), // <- VoteReactionInitState
                 ),
                 child: _ReactionStat(_agenda),
               ),

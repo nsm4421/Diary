@@ -8,6 +8,14 @@ mixin class DevLoggerMixIn {
     return enabled;
   }
 
+  void logD(String message, [Object? error, StackTrace? stackTrace]) {
+    if (!_enabled) return;
+
+    print('[DEBUG] $message');
+    if (error != null) print(error);
+    if (stackTrace != null) print(stackTrace);
+  }
+
   void logE(String message, [Object? error, StackTrace? stackTrace]) {
     if (!_enabled) return;
 

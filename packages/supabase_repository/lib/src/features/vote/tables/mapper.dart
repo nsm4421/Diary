@@ -27,6 +27,13 @@ extension AgendaFeedRowExtension on db.AgendaFeedRow {
       updatedAt: updatedAt ?? DateTime.now(),
       title: title ?? '',
       description: description,
+      reaction: VoteReaction.values
+          .where(
+            (e) =>
+                e.toString().toUpperCase() ==
+                myReaction.toString().toUpperCase(),
+          )
+          .firstOrNull,
       likeCount: likeCount ?? 0,
       dislikeCount: dislikeCount ?? 0,
       commentCount: commentCount ?? 0,

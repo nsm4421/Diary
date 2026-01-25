@@ -1,7 +1,7 @@
 part of 'vote_service.dart';
 
 @LazySingleton(as: VoteService)
-class VoteServiceImpl implements VoteService {
+class VoteServiceImpl with DevLoggerMixIn implements VoteService {
   final AgendaTablesRepository _tablesRepository;
   final AgendaRpcRepository _rpcRepository;
 
@@ -89,12 +89,18 @@ class VoteServiceImpl implements VoteService {
   }) {
     return TaskEither.tryCatch(
       () async {
+        logD('[VoteServiceImpl]create agenda reaction called');
         await _tablesRepository.insertReaction(
           agendaId: agendaId,
           reaction: reaction,
         );
       },
       (error, stackTrace) {
+        logE(
+          '[VoteServiceImpl]create agenda reaction failed',
+          error,
+          stackTrace,
+        );
         return VoteFailure(
           message: 'create reaction failed',
           error: error,

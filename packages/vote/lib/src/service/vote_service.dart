@@ -2,8 +2,8 @@ import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared/shared.dart';
 import 'package:vote/src/core/value_object/cursor.dart';
-import 'package:vote/vote.dart';
 
+import '../core/value_object/constraint.dart';
 import '../core/value_object/vote_failure.dart';
 import '../repository/agenda_rpc_repository.dart';
 import '../repository/agenda_tables_repository.dart';
