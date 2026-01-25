@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:diary/components/app_logo.dart';
 import 'package:diary/core/core.dart';
 import 'package:diary/providers/auth/sign_up/cubit.dart';
+import 'package:diary/router/app_router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -26,6 +27,7 @@ class SignUpPage extends StatelessWidget {
         listener: (context, state) {
           if (state.status.isSuccess) {
             ToastUtil.success('회원가입 성공!');
+            context.router.replace(EntryRoute());
           } else if (state.status.isError) {
             ToastUtil.error(state.failure?.message ?? 'error occurs');
             context.read<SignUpCubit>().resetStatus();
