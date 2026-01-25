@@ -1,15 +1,11 @@
-part of 'p_display_agendas.dart';
+part of '../p_display_agendas.dart';
 
-class _ReactionStat extends StatefulWidget {
-  final AgendaFeedModel _agenda;
-
-  const _ReactionStat(this._agenda);
-
+class _ReactionButtons extends StatefulWidget {
   @override
-  State<_ReactionStat> createState() => _ReactionStatState();
+  State<_ReactionButtons> createState() => _ReactionButtonsState();
 }
 
-class _ReactionStatState extends State<_ReactionStat> {
+class _ReactionButtonsState extends State<_ReactionButtons> {
   late VoteReactionCubit _cubit;
 
   @override

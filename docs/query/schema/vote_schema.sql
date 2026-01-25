@@ -292,6 +292,30 @@ TO authenticated
 USING (auth.uid() = created_by)
 WITH CHECK (auth.uid() = created_by);
 
+CREATE OR REPLACE VIEW public.agenda_comment_feed AS
+SELECT
+  c.id,
+  c.agenda_id,
+  c.parent_id,
+  c.content,
+  c.created_by,
+  c.deleted_at,
+  c.created_at,
+  c.updated_at,
+  p.username AS created_by_username,
+  p.avatar_url AS created_by_avatar_url,
+  COALESCE(child.child_comment_count, 0) AS child_comment_count
+FROM public.agenda_comments c
+LEFT JOIN public.profiles p ON p.id = c.created_by
+LEFT JOIN (
+  SELECT
+    parent_id,
+    COUNT(*) AS child_comment_count
+  FROM public.agenda_comments
+  WHERE deleted_at IS NULL
+  GROUP BY parent_id
+) child ON child.parent_id = c.id;
+
 CREATE OR REPLACE VIEW public.agenda_feed AS
 SELECT
   a.id,

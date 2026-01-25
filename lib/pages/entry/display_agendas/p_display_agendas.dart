@@ -22,7 +22,11 @@ part 'w_agenda_card.dart';
 
 part 'w_navigate_button.dart';
 
-part 'w_reaction_stat.dart';
+part 'reaction/w_reaction_buttons.dart';
+
+part 'reaction/w_reaction_stat.dart';
+
+part 'comment/w_comment_stat.dart';
 
 @RoutePage()
 class DisplayAgendasPage extends StatelessWidget {

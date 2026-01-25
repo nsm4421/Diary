@@ -20,7 +20,7 @@ class AgendaCommentModel extends BaseModel with _$AgendaCommentModel {
   @override
   final DateTime? deletedAt;
   @override
-  final String createdBy;
+  final ProfileModel author;
 
   AgendaCommentModel({
     required this.id,
@@ -30,6 +30,6 @@ class AgendaCommentModel extends BaseModel with _$AgendaCommentModel {
     this.parentId,
     required this.content,
     this.deletedAt,
-    required this.createdBy,
+    required this.author,
   });
 }

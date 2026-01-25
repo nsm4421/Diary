@@ -49,22 +49,9 @@ class _AgendaCard extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              BlocProvider(
-                create: (_) => GetIt.instance<VoteReactionCubit>(
-                  param1: (
-                    agendaId: _agenda.id,
-                    likeCount: _agenda.likeCount,
-                    dislikeCount: _agenda.dislikeCount,
-                    myReaction: _agenda.reaction,
-                  ), // <- VoteReactionInitState
-                ),
-                child: _ReactionStat(_agenda),
-              ),
+              _ReactionStat(_agenda),
               const SizedBox(width: 10),
-              _StatItem(
-                icon: Icons.chat_bubble_outline,
-                label: _agenda.commentCount.toString(),
-              ),
+              _CommentStat(_agenda),
             ],
           ),
           if (latestComment != null) ...[

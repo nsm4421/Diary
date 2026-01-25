@@ -12,12 +12,14 @@ class AgendaTablesRepositoryImpl
   final db.AgendaCommentsTable _agendaCommentsTable;
   final db.AgendaReactionsTable _agendaReactionsTable;
   final db.AgendaFeedTable _agendaFeedTable;
+  final db.AgendaCommentFeedTable _agendaCommentFeedTable;
 
   AgendaTablesRepositoryImpl(
     this._agendasTable,
     this._agendaCommentsTable,
     this._agendaReactionsTable,
     this._agendaFeedTable,
+    this._agendaCommentFeedTable,
   );
 
   @override
@@ -70,6 +72,9 @@ class AgendaTablesRepositoryImpl
     required VoteReaction reaction,
   }) async {
     try {
+      logD(
+        '[AgendaTablesRepositoryImpl]insert reaction request|agenda id:$agendaId|reaction:${reaction.name}',
+      );
       await _agendaReactionsTable.insertRow(
         db.AgendaReactionsRow(agendaId: agendaId, reaction: reaction.dto),
       );
@@ -145,7 +150,7 @@ class AgendaTablesRepositoryImpl
     int limit = 20,
   }) async {
     try {
-      return await _agendaCommentsTable
+      return await _agendaCommentFeedTable
           .queryRows(
             queryFn: (q) {
               var query = q;
@@ -158,6 +163,9 @@ class AgendaTablesRepositoryImpl
               query = lastCommentId == null
                   ? query
                   : query.neq('id', lastCommentId);
+              query = parentCommentId == null
+                  ? query
+                  : query.eq('parent_comment_id', parentCommentId);
               return query
                   .eq('agenda_id', agendaId)
                   .order('created_at', ascending: false)

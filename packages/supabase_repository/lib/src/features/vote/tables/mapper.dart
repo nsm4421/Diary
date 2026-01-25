@@ -55,17 +55,21 @@ extension VoteReactionExtension on VoteReaction {
   }
 }
 
-extension AgendaCommentExtension on db.AgendaCommentsRow {
+extension AgendaCommentExtension on db.AgendaCommentFeedRow {
   AgendaCommentModel toModel() {
     return AgendaCommentModel(
-      id: id,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-      agendaId: agendaId,
+      id: id ?? '',
+      createdAt: createdAt ?? DateTime.now().toUtc(),
+      updatedAt: updatedAt ?? DateTime.now().toUtc(),
+      agendaId: agendaId ?? '',
       parentId: parentId,
-      content: content,
+      content: content ?? '',
       deletedAt: deletedAt,
-      createdBy: createdBy,
+      author: ProfileModel(
+        id: createdBy ?? '',
+        username: createdByUsername ?? '',
+        avatarUrl: createdByAvatarUrl,
+      ),
     );
   }
 }

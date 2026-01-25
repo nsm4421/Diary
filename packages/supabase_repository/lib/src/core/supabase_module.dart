@@ -18,5 +18,8 @@ abstract class SupabaseModule {
   AgendaCommentsTable get agendaCommentDao => AgendaCommentsTable();
 
   @lazySingleton
+  AgendaCommentFeedTable get agendaCommentFeedDao => AgendaCommentFeedTable();
+
+  @lazySingleton
   AgendaFeedTable get agendaFeedDao => AgendaFeedTable();
 }
