@@ -1,5 +1,4 @@
 import 'package:auth/auth.dart';
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:diary/core/core.dart';
 import 'package:diary/providers/auth/app_auth/bloc.dart';
@@ -40,7 +39,13 @@ class DisplayAgendaCommentPage extends StatelessWidget {
       create: (_) =>
           GetIt.instance<DisplayAgendaCommentBloc>(param1: params)
             ..add(DisplayAgendaCommentEvent.refreshed()),
-      child: _Screen(),
+      child: PopScope(
+        canPop: false, // true면 뒤로가기 허용
+        onPopInvokedWithResult: (didPop, result) {
+          debugPrint('DisplayAgendaCommentPage pop|result:$result');
+        },
+        child: _Screen(),
+      ),
     );
   }
 }

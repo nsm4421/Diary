@@ -24,6 +24,7 @@ class DisplayAgendaCommentBloc
   late final String? _parentCommentId;
   final Logger _logger;
   static const int _pageSize = 20;
+  int _commentCountDelta = 0; // 추가된 댓글 개수
 
   DisplayAgendaCommentBloc(
     @factoryParam DisplayAgendaCommentParams params,
@@ -40,6 +41,8 @@ class DisplayAgendaCommentBloc
   String get agendaId => _agendaId;
 
   String? get parentCommentId => _parentCommentId;
+
+  int get commentCountDelta => _commentCountDelta;
 
   @override
   TaskEither<
@@ -102,6 +105,8 @@ class DisplayAgendaCommentBloc
     _AppendEvent event,
     Emitter<DisplayAgendaCommentState> emit,
   ) async {
+    _commentCountDelta++;
+    _logger.t('comment appended|comment count delta:$_commentCountDelta');
     emit(state.copyWith(items: [event.comment, ...state.items]));
   }
 }

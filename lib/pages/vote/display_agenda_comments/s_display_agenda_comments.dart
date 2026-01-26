@@ -6,7 +6,18 @@ class _Screen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('댓글')),
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            final commentCountDelta = context
+                .read<DisplayAgendaCommentBloc>()
+                .commentCountDelta;
+            context.router.pop<int>(commentCountDelta);
+          },
+          icon: Icon(Icons.clear),
+        ),
+        title: Text('댓글'),
+      ),
       body: _CommentList(),
       bottomNavigationBar: _ShowCommentEditorButton(),
     );
