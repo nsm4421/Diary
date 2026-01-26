@@ -13,4 +13,7 @@ sealed class AuthenticationEvent with _$AuthenticationEvent {
       _ProfileUpdatedEvent;
 
   factory AuthenticationEvent.signOut() = _SignOutEvent;
+
+  factory AuthenticationEvent.deleteAccount() = _DeleteAccountEvent;
+
 }

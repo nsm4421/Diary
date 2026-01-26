@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:diary/core/core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -28,6 +29,7 @@ class AuthenticationBloc
     on<_OnAuthenticatedEvent>(_onAuthenticated, transformer: restartable());
     on<_OnUnAuthenticatedEvent>(_onUnAuthenticated, transformer: restartable());
     on<_ProfileUpdatedEvent>(_onProfileUpdated, transformer: restartable());
+    on<_DeleteAccountEvent>(_onAccountDeleted);
   }
 
   Future<bool> resolveIsAuth() async {
@@ -123,6 +125,28 @@ class AuthenticationBloc
       emit(AuthenticationState.authenticated(authUser));
     } catch (error, stackTrace) {
       _logger.w('update profile fails', error: error, stackTrace: stackTrace);
+    }
+  }
+
+  Future<void> _onAccountDeleted(
+    _DeleteAccountEvent event,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    if (!state.isAuth) return;
+    try {
+      (await _authService.deleteUser().run()).match(
+        (failure) {
+          _logger.failure(failure);
+          final authUser = state.currentUser;
+          if (authUser == null) return;
+          emit(_AuthenticatedState(authUser, failure: failure));
+        },
+        (_) {
+          emit(_UnAuthenticatedState());
+        },
+      );
+    } catch (error, stackTrace) {
+      _logger.e('delete profile fails', error: error, stackTrace: stackTrace);
     }
   }
 

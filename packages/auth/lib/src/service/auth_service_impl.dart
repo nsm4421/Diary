@@ -105,4 +105,20 @@ class AuthServiceImpl implements AuthService {
       },
     );
   }
+
+  @override
+  TaskEither<AuthFailure, void> deleteUser() {
+    return TaskEither.tryCatch(
+      () async {
+        await _authRepository.callDeleteUserApi();
+      },
+      (error, stackTrace) {
+        return AuthFailure(
+          message: 'delete user failed',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
+  }
 }

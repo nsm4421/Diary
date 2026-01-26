@@ -71,4 +71,21 @@ class AuthRepositoryImpl with DevLoggerMixIn implements AuthRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<void> callDeleteUserApi() async {
+    try {
+      // call edge function
+      final res = await _client.functions.invoke(
+        'delete-user',
+        method: HttpMethod.post,
+      );
+      if (res.status != 200) {
+        throw AuthException('Delete failed: ${res.data}');
+      }
+    } catch (error, stackTrace) {
+      logE('delete user fails', error, stackTrace);
+      rethrow;
+    }
+  }
 }

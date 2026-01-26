@@ -24,4 +24,6 @@ abstract interface class AuthService {
   });
 
   TaskEither<AuthFailure, void> signOut();
+
+  TaskEither<AuthFailure, void> deleteUser();
 }
