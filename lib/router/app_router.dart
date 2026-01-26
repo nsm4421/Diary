@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:diary/components/page_not_found.dart';
 import 'package:injectable/injectable.dart';
 
 import 'app_router.gr.dart';
@@ -25,12 +24,7 @@ class AppRouter extends RootStackRouter {
       children: [
         AutoRoute(path: 'home', page: HomeRoute.page, initial: true),
         AutoRoute(path: 'display-agendas', page: DisplayAgendasRoute.page),
-        AutoRoute(path: 'settings', page: SettingEntryRoute.page),
-        AutoRoute(
-          path: 'profile-edit',
-          page: EditProfileRoute.page,
-          guards: [_authenticatedOnlyGuard],
-        ),
+        AutoRoute(path: 'setting-entry', page: SettingEntryRoute.page),
       ],
     ),
 
@@ -48,29 +42,26 @@ class AppRouter extends RootStackRouter {
 
     /// vote
     AutoRoute(
-      path: '/vote',
-      page: VoteRoute.page,
-      children: [
-        AutoRoute(
-          path: 'create',
-          page: CreateAgendaRoute.page,
-          guards: [_authenticatedOnlyGuard],
-        ),
-        AutoRoute(path: 'comment', page: DisplayAgendaCommentRoute.page),
-      ],
+      path: '/vote/create',
+      page: CreateAgendaRoute.page,
+      guards: [_authenticatedOnlyGuard],
+    ),
+    AutoRoute(
+      path: '/vote/display-comment',
+      page: DisplayAgendaCommentRoute.page,
+      guards: [_authenticatedOnlyGuard],
     ),
 
-    /// setting
+    /// account
     AutoRoute(
-      path: '/setting',
-      page: SettingRoute.page,
-      children: [
-        AutoRoute(
-          path: 'edit-profile',
-          page: EditProfileRoute.page,
-          guards: [_authenticatedOnlyGuard],
-        ),
-      ],
+      path: '/account/edit',
+      page: EditProfileRoute.page,
+      guards: [_authenticatedOnlyGuard],
+    ),
+    AutoRoute(
+      path: '/account/delete',
+      page: DeleteAccountRoute.page,
+      guards: [_authenticatedOnlyGuard],
     ),
   ];
 }
