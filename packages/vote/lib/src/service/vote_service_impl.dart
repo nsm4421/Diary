@@ -31,8 +31,10 @@ class VoteServiceImpl with DevLoggerMixIn implements VoteService {
         );
       },
       (error, stackTrace) {
+        final message = 'create agenda failed';
+        logE(message, error, stackTrace);
         return VoteFailure(
-          message: 'create agenda failed',
+          message: message,
           error: error,
           stackTrace: stackTrace,
         );
@@ -47,8 +49,10 @@ class VoteServiceImpl with DevLoggerMixIn implements VoteService {
         await _tablesRepository.deleteAgendaById(agendaId);
       },
       (error, stackTrace) {
+        final message = 'delete agenda failed';
+        logE(message, error, stackTrace);
         return VoteFailure(
-          message: 'delete agenda failed',
+          message: message,
           error: error,
           stackTrace: stackTrace,
         );
@@ -72,8 +76,28 @@ class VoteServiceImpl with DevLoggerMixIn implements VoteService {
             .then((res) => res.toList(growable: false));
       },
       (error, stackTrace) {
+        final message = 'fetch agendas failed';
+        logE(message, error, stackTrace);
         return VoteFailure(
-          message: 'fetch agendas failed',
+          message: message,
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
+  }
+
+  @override
+  TaskEither<VoteFailure, AgendaDetailModel> getAgendaDetail(String agendaId) {
+    return TaskEither.tryCatch(
+      () async {
+        return await _rpcRepository.getAgendaDetail(agendaId);
+      },
+      (error, stackTrace) {
+        final message = 'get agenda detail failed';
+        logE(message, error, stackTrace);
+        return VoteFailure(
+          message: message,
           error: error,
           stackTrace: stackTrace,
         );
@@ -96,13 +120,10 @@ class VoteServiceImpl with DevLoggerMixIn implements VoteService {
         );
       },
       (error, stackTrace) {
-        logE(
-          '[VoteServiceImpl]create agenda reaction failed',
-          error,
-          stackTrace,
-        );
+        final message = 'create reaction failed';
+        logE(message, error, stackTrace);
         return VoteFailure(
-          message: 'create reaction failed',
+          message: message,
           error: error,
           stackTrace: stackTrace,
         );
@@ -125,8 +146,10 @@ class VoteServiceImpl with DevLoggerMixIn implements VoteService {
         );
       },
       (error, stackTrace) {
+        final message = 'update reaction failed';
+        logE(message, error, stackTrace);
         return VoteFailure(
-          message: 'update reaction failed',
+          message: message,
           error: error,
           stackTrace: stackTrace,
         );
@@ -147,8 +170,10 @@ class VoteServiceImpl with DevLoggerMixIn implements VoteService {
         );
       },
       (error, stackTrace) {
+        final message = 'delete reaction failed';
+        logE(message, error, stackTrace);
         return VoteFailure(
-          message: 'delete reaction failed',
+          message: message,
           error: error,
           stackTrace: stackTrace,
         );
@@ -174,8 +199,10 @@ class VoteServiceImpl with DevLoggerMixIn implements VoteService {
         );
       },
       (error, stackTrace) {
+        final message = 'create comment failed';
+        logE(message, error, stackTrace);
         return VoteFailure(
-          message: 'create comment failed',
+          message: message,
           error: error,
           stackTrace: stackTrace,
         );
@@ -201,8 +228,10 @@ class VoteServiceImpl with DevLoggerMixIn implements VoteService {
             .then((res) => res.toList(growable: false));
       },
       (error, stackTrace) {
+        final message = 'fetch comment failed';
+        logE(message, error, stackTrace);
         return VoteFailure(
-          message: 'fetch comment failed',
+          message: message,
           error: error,
           stackTrace: stackTrace,
         );
@@ -217,8 +246,10 @@ class VoteServiceImpl with DevLoggerMixIn implements VoteService {
         await _tablesRepository.deleteAgendaCommentById(commentId);
       },
       (error, stackTrace) {
+        final message = 'delete comment failed';
+        logE(message, error, stackTrace);
         return VoteFailure(
-          message: 'delete comment failed',
+          message: message,
           error: error,
           stackTrace: stackTrace,
         );

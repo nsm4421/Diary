@@ -363,6 +363,40 @@ LEFT JOIN LATERAL (
   LIMIT 1
 ) my_reaction ON true;
 
+CREATE OR REPLACE FUNCTION public.get_agenda_detail(
+  p_agenda_id uuid
+)
+RETURNS jsonb
+LANGUAGE sql
+AS $$
+  SELECT jsonb_build_object(
+    'id', a.id,
+    'created_at', a.created_at,
+    'updated_at', a.updated_at,
+    'title', a.title,
+    'description', a.description,
+    'like_count', a.like_count,
+    'dislike_count', a.dislike_count,
+    'comment_count', a.comment_count,
+    'author_id', a.created_by,
+    'author_username', p.username,
+    'author_avatar_url', p.avatar_url,
+    'my_reaction', my_reaction.my_reaction,
+    'my_choice_id', NULL::uuid
+  )
+  FROM public.agendas a
+  LEFT JOIN public.profiles p ON p.id = a.created_by
+  LEFT JOIN LATERAL (
+    SELECT r.reaction AS my_reaction
+    FROM public.agenda_reactions r
+    WHERE r.agenda_id = a.id
+      AND r.created_by = auth.uid()
+    LIMIT 1
+  ) my_reaction ON true
+  WHERE a.id = p_agenda_id
+  LIMIT 1;
+$$;
+
 CREATE OR REPLACE FUNCTION public.create_agenda_with_choices(
   p_agenda_id uuid,
   p_agenda_title text,

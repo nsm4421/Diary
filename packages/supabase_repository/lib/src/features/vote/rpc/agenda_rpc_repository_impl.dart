@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:shared/shared.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:vote/src/model/agenda/agenda_detail_model.dart';
 import 'package:vote/vote.dart';
 
 @LazySingleton(as: AgendaRpcRepository)
@@ -40,6 +41,21 @@ class AgendaRpcRepositoryImpl
           .then(AgendaWithChoicesModel.fromJson);
     } catch (error, stackTrace) {
       logE('create agenda with choices fails', error, stackTrace);
+      rethrow;
+    }
+  }
+
+  @override
+  Future<AgendaDetailModel> getAgendaDetail(String agendaId) async {
+    try {
+      return await _client
+          .rpc<Map<String, dynamic>>(
+            'get_agenda_detail',
+            params: {'p_agenda_id': agendaId},
+          )
+          .then(AgendaDetailModel.fromJson);
+    } catch (error, stackTrace) {
+      logE('get agenda fails', error, stackTrace);
       rethrow;
     }
   }

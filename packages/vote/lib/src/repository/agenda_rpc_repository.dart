@@ -1,3 +1,4 @@
+import '../model/agenda/agenda_detail_model.dart';
 import '../model/agenda/agenda_with_choices_model.dart';
 
 abstract interface class AgendaRpcRepository {
@@ -7,4 +8,6 @@ abstract interface class AgendaRpcRepository {
     String? agendaDescription,
     required List<(String choiceId, String label)> choices,
   });
+
+  Future<AgendaDetailModel> getAgendaDetail(String agendaId);
 }

@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared/shared.dart';
 import 'package:vote/src/core/value_object/cursor.dart';
+import 'package:vote/src/model/agenda/agenda_detail_model.dart';
 
 import '../core/value_object/constraint.dart';
 import '../core/value_object/vote_failure.dart';
@@ -29,6 +30,8 @@ abstract interface class VoteService {
     required FetchAgendaFeedCursor cursor,
     int limit = 20,
   });
+
+  TaskEither<VoteFailure, AgendaDetailModel> getAgendaDetail(String agendaId);
 
   /// reaction
   TaskEither<VoteFailure, void> createAgendaReaction({
