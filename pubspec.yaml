@@ -59,13 +59,13 @@ dependencies:
   shared:
     path : packages/shared
   supabase_repository:
-    path: packages/supabase_repository
+    path: packages/features/supabase_repository
   app_theme:
     path: packages/app_theme
   auth:
-    path: packages/auth
+    path: packages/features/auth
   vote:
-    path: packages/vote
+    path: packages/features/vote
 
 dev_dependencies:
   flutter_test:
