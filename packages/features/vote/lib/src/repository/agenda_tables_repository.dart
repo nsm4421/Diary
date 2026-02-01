@@ -4,7 +4,7 @@ import '../model/agenda_feed/agenda_feed_model.dart';
 import '../model/agenda_reaction/agenda_reaction_model.dart';
 
 abstract interface class AgendaTablesRepository {
-  /// agenda & choice
+  /// agenda
   Future<Iterable<AgendaFeedModel>> fetchAgendaFeed({
     String? lastAgendaId,
     DateTime? lastCreatedAt,
@@ -12,6 +12,24 @@ abstract interface class AgendaTablesRepository {
   });
 
   Future<void> deleteAgendaById(String agendaId);
+
+  /// choices
+  Future<void> insertUserChoice({
+    required String agendaId,
+    required String agendaChoiceId,
+    required String createdBy,
+  });
+
+  Future<void> upsertUserChoice({
+    required String agendaId,
+    required String agendaChoiceId,
+    required String createdBy,
+  });
+
+  Future<void> deleteUserChoice({
+    required String agendaId,
+    required String createdBy,
+  });
 
   /// reaction
   Future<void> insertReaction({

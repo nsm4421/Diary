@@ -16,7 +16,7 @@ import '../model/agenda_comment/agenda_comment_model.dart';
 part 'vote_service_impl.dart';
 
 abstract interface class VoteService {
-  /// agenda & options
+  /// agenda
   TaskEither<VoteFailure, AgendaWithChoicesModel> createAgenda({
     required String agendaId,
     required String agendaTitle,
@@ -32,6 +32,18 @@ abstract interface class VoteService {
   });
 
   TaskEither<VoteFailure, AgendaDetailModel> getAgendaDetail(String agendaId);
+
+  /// choices
+  TaskEither<VoteFailure, void> createUserChoice({
+    required String agendaId,
+    required String agendaChoiceId,
+    required String userId,
+  });
+
+  TaskEither<VoteFailure, void> deleteUserChoice({
+    required String agendaId,
+    required String userId,
+  });
 
   /// reaction
   TaskEither<VoteFailure, void> createAgendaReaction({

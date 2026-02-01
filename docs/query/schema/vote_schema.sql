@@ -99,6 +99,49 @@ USING (
   )
 );
 
+CREATE TABLE IF NOT EXISTS public.user_agenda_choices (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  agenda_choice_id uuid NOT NULL REFERENCES public.agenda_choices(id) ON DELETE CASCADE,
+  agenda_id uuid NOT NULL REFERENCES public.agendas(id) ON DELETE CASCADE,
+  created_by uuid NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id),
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS user_agenda_choices_agenda_choice_id_idx
+ON public.user_agenda_choices (agenda_choice_id);
+
+CREATE INDEX IF NOT EXISTS user_agenda_choices_created_by_idx
+ON public.user_agenda_choices (created_by);
+
+CREATE INDEX IF NOT EXISTS user_agenda_choices_agenda_id_created_by_idx
+ON public.user_agenda_choices (agenda_id, created_by);
+
+ALTER TABLE public.user_agenda_choices ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "user_agenda_choices_select_all"
+ON public.user_agenda_choices
+FOR SELECT
+USING (true);
+
+CREATE POLICY "user_agenda_choices_insert_own"
+ON public.user_agenda_choices
+FOR INSERT
+TO authenticated
+WITH CHECK (auth.uid() = created_by);
+
+CREATE POLICY "user_agenda_choices_update_own"
+ON public.user_agenda_choices
+FOR UPDATE
+TO authenticated
+USING (auth.uid() = created_by)
+WITH CHECK (auth.uid() = created_by);
+
+CREATE POLICY "user_agenda_choices_delete_own"
+ON public.user_agenda_choices
+FOR DELETE
+TO authenticated
+USING (auth.uid() = created_by);
+
 CREATE TYPE public.vote_reaction AS ENUM ('like', 'dislike');
 
 CREATE TABLE IF NOT EXISTS public.agenda_reactions (

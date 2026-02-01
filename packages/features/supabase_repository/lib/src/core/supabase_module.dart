@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_repository/src/features/vote/tables/agenda_tables_repository_impl.dart';
 
 import '../generated/database.dart';
 
@@ -9,17 +10,20 @@ abstract class SupabaseModule {
   SupabaseClient get supabaseClient => Supabase.instance.client;
 
   @lazySingleton
-  AgendasTable get agendaDao => AgendasTable();
+  AgendaDao get agendaDao => AgendaDao(AgendasTable());
 
   @lazySingleton
-  AgendaReactionsTable get agendaReactionDao => AgendaReactionsTable();
+  AgendaFeedDao get agendaFeedDao => AgendaFeedDao(AgendaFeedTable());
 
   @lazySingleton
-  AgendaCommentsTable get agendaCommentDao => AgendaCommentsTable();
+  AgendaReactionDao get agendaReactionDao =>
+      AgendaReactionDao(AgendaReactionsTable());
 
   @lazySingleton
-  AgendaCommentFeedTable get agendaCommentFeedDao => AgendaCommentFeedTable();
+  AgendaCommentDao get agendaCommentDao =>
+      AgendaCommentDao(AgendaCommentsTable());
 
   @lazySingleton
-  AgendaFeedTable get agendaFeedDao => AgendaFeedTable();
+  AgendaCommentFeedDao get agendaCommentFeedDao =>
+      AgendaCommentFeedDao(AgendaCommentFeedTable());
 }

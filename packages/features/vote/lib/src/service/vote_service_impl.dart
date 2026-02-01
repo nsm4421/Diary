@@ -7,7 +7,7 @@ class VoteServiceImpl with DevLoggerMixIn implements VoteService {
 
   VoteServiceImpl(this._tablesRepository, this._rpcRepository);
 
-  /// agenda & options
+  /// agenda
   @override
   TaskEither<VoteFailure, AgendaWithChoicesModel> createAgenda({
     required String agendaId,
@@ -95,6 +95,57 @@ class VoteServiceImpl with DevLoggerMixIn implements VoteService {
       },
       (error, stackTrace) {
         final message = 'get agenda detail failed';
+        logE(message, error, stackTrace);
+        return VoteFailure(
+          message: message,
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
+  }
+
+  /// choices
+  @override
+  TaskEither<VoteFailure, void> createUserChoice({
+    required String agendaId,
+    required String agendaChoiceId,
+    required String userId,
+  }) {
+    return TaskEither.tryCatch(
+      () async {
+        return await _tablesRepository.insertUserChoice(
+          agendaId: agendaId,
+          agendaChoiceId: agendaChoiceId,
+          createdBy: userId,
+        );
+      },
+      (error, stackTrace) {
+        final message = 'create user choice failed';
+        logE(message, error, stackTrace);
+        return VoteFailure(
+          message: message,
+          error: error,
+          stackTrace: stackTrace,
+        );
+      },
+    );
+  }
+
+  @override
+  TaskEither<VoteFailure, void> deleteUserChoice({
+    required String agendaId,
+    required String userId,
+  }) {
+    return TaskEither.tryCatch(
+      () async {
+        return await _tablesRepository.deleteUserChoice(
+          agendaId: agendaId,
+          createdBy: userId,
+        );
+      },
+      (error, stackTrace) {
+        final message = 'delete user choice failed';
         logE(message, error, stackTrace);
         return VoteFailure(
           message: message,
