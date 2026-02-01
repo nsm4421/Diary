@@ -13,6 +13,10 @@ abstract class SupabaseModule {
   AgendaDao get agendaDao => AgendaDao(AgendasTable());
 
   @lazySingleton
+  UserAgendaChoiceDao get userChoiceDao =>
+      UserAgendaChoiceDao(UserAgendaChoicesTable());
+
+  @lazySingleton
   AgendaFeedDao get agendaFeedDao => AgendaFeedDao(AgendaFeedTable());
 
   @lazySingleton

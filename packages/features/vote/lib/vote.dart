@@ -3,6 +3,7 @@ library;
 export 'src/repository/agenda_tables_repository.dart';
 export 'src/repository/agenda_rpc_repository.dart';
 export 'src/model/agenda/agenda_model.dart';
+export 'src/model/agenda_choice/agenda_choice_model.dart';
 export 'src/model/agenda/agenda_with_choices_model.dart';
 export 'src/model/agenda_comment/agenda_comment_model.dart';
 export 'src/model/agenda_feed/agenda_feed_model.dart';

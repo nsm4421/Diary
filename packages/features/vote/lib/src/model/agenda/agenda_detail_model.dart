@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shared/shared.dart';
+import 'package:vote/src/model/agenda_choice/agenda_choice_model.dart';
 
 import '../../../vote.dart';
 
@@ -46,6 +47,12 @@ class AgendaDetailModel extends BaseModel with _$AgendaDetailModel {
   @override
   @JsonKey(name: 'my_choice_id')
   final String? myChoiceId;
+  @override
+  @JsonKey(name: 'choices')
+  final List<AgendaChoiceModel> choices;
+  @override
+  @JsonKey(name: 'latest_comment')
+  final String? latestComment;
 
   ProfileModel get author => ProfileModel(
     id: authorId,
@@ -67,6 +74,8 @@ class AgendaDetailModel extends BaseModel with _$AgendaDetailModel {
     this.authorAvatarUrl,
     this.myReaction,
     this.myChoiceId,
+    this.choices = const [],
+    this.latestComment,
   });
 
   factory AgendaDetailModel.fromJson(Map<String, Object?> json) =>

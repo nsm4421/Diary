@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:postgrest/postgrest.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supabase_repository/src/features/vote/rpc/agenda_rpc_repository_impl.dart';
 import 'package:test/test.dart';
@@ -85,11 +86,73 @@ void main() {
     expect(result.title, 'Integration Agenda');
     expect(result.description, 'Created via integration test.');
     expect(result.createdBy, client.auth.currentUser!.id);
+    expect(result.likeCount, 0);
+    expect(result.dislikeCount, 0);
+    expect(result.commentCount, 0);
+    expect(result.createdAt, isNotNull);
+    expect(result.updatedAt, isNotNull);
+    expect(result.createdAt.isAfter(result.updatedAt), isFalse);
     expect(result.choices, hasLength(2));
     expect(result.choices.first.position, 1);
     expect(result.choices.first.label, 'Option A');
     expect(result.choices.last.position, 2);
     expect(result.choices.last.label, 'Option B');
+  });
+
+  test('createAgendaWithChoices returns empty choices when none provided', () async {
+    final agendaId = _uuidV4();
+
+    final result = await repository.createAgendaWithChoices(
+      agendaId: agendaId,
+      agendaTitle: 'No Choices Agenda',
+      agendaDescription: 'Created without choices.',
+      choices: const [],
+    );
+    createdAgendaIds.add(agendaId);
+
+    expect(result.id, agendaId);
+    expect(result.title, 'No Choices Agenda');
+    expect(result.choices, isEmpty);
+  });
+
+  test('getAgendaDetail returns details for a created agenda', () async {
+    final agendaId = _uuidV4();
+    final choices = [
+      (_uuidV4(), 'Option A'),
+      (_uuidV4(), 'Option B'),
+    ];
+
+    await repository.createAgendaWithChoices(
+      agendaId: agendaId,
+      agendaTitle: 'Detail Agenda',
+      agendaDescription: 'Detail created via integration test.',
+      choices: choices,
+    );
+    createdAgendaIds.add(agendaId);
+
+    final detail = await repository.getAgendaDetail(agendaId);
+
+    expect(detail.id, agendaId);
+    expect(detail.title, 'Detail Agenda');
+    expect(detail.description, 'Detail created via integration test.');
+    expect(detail.authorId, client.auth.currentUser!.id);
+    expect(detail.createdAt, isNotNull);
+    expect(detail.updatedAt, isNotNull);
+    expect(detail.createdAt.isAfter(detail.updatedAt), isFalse);
+    expect(detail.likeCount, 0);
+    expect(detail.dislikeCount, 0);
+    expect(detail.commentCount, 0);
+    expect(detail.myReaction, isNull);
+    expect(detail.myChoiceId, isNull);
+    expect(detail.latestComment, isNull);
+    expect(detail.authorUsername, isNotEmpty);
+  });
+
+  test('getAgendaDetail throws when agendaId is not a uuid', () async {
+    await expectLater(
+      () => repository.getAgendaDetail('not-a-uuid'),
+      throwsA(isA<PostgrestException>()),
+    );
   });
 }
 

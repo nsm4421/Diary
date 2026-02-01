@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS public.agenda_choices (
   label text NOT NULL,
   description text,
   position int NOT NULL,
+  vote_count integer NOT NULL DEFAULT 0,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
   CONSTRAINT agenda_choices_unique_position UNIQUE (agenda_id, position),
@@ -141,6 +142,34 @@ ON public.user_agenda_choices
 FOR DELETE
 TO authenticated
 USING (auth.uid() = created_by);
+
+CREATE OR REPLACE FUNCTION public.handle_agenda_choice_vote_counts()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+-- 투표 추가/삭제에 따라 choice 카운터 갱신
+BEGIN
+  IF TG_OP = 'INSERT' THEN
+    UPDATE public.agenda_choices
+    SET vote_count = vote_count + 1
+    WHERE id = NEW.agenda_choice_id;
+    RETURN NEW;
+  ELSIF TG_OP = 'DELETE' THEN
+    UPDATE public.agenda_choices
+    SET vote_count = vote_count - 1
+    WHERE id = OLD.agenda_choice_id;
+    RETURN OLD;
+  END IF;
+  RETURN NULL;
+END;
+$$;
+
+CREATE TRIGGER user_agenda_choices_update_vote_count
+AFTER INSERT OR DELETE ON public.user_agenda_choices
+FOR EACH ROW
+EXECUTE PROCEDURE public.handle_agenda_choice_vote_counts();
 
 CREATE TYPE public.vote_reaction AS ENUM ('like', 'dislike');
 
@@ -425,10 +454,41 @@ AS $$
     'author_username', p.username,
     'author_avatar_url', p.avatar_url,
     'my_reaction', my_reaction.my_reaction,
-    'my_choice_id', NULL::uuid
+    'my_choice_id', my_choice.my_choice_id,
+    'choices', COALESCE(choices.choices, '[]'::jsonb),
+    'latest_comment', latest.latest_comment
   )
   FROM public.agendas a
   LEFT JOIN public.profiles p ON p.id = a.created_by
+  LEFT JOIN LATERAL (
+    SELECT c.content AS latest_comment
+    FROM public.agenda_comments c
+    WHERE c.agenda_id = a.id
+    ORDER BY c.created_at DESC
+    LIMIT 1
+  ) latest ON true
+  LEFT JOIN LATERAL (
+    SELECT uac.agenda_choice_id AS my_choice_id
+    FROM public.user_agenda_choices uac
+    WHERE uac.agenda_id = a.id
+      AND uac.created_by = auth.uid()
+    ORDER BY uac.created_at DESC
+    LIMIT 1
+  ) my_choice ON true
+  LEFT JOIN LATERAL (
+    SELECT jsonb_agg(
+             jsonb_build_object(
+               'id', c.id,
+               'label', c.label,
+               'description', c.description,
+               'position', c.position,
+               'vote_count', c.vote_count
+             )
+             ORDER BY c.position
+           ) AS choices
+    FROM public.agenda_choices c
+    WHERE c.agenda_id = a.id
+  ) choices ON true
   LEFT JOIN LATERAL (
     SELECT r.reaction AS my_reaction
     FROM public.agenda_reactions r
