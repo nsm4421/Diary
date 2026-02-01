@@ -25,6 +25,7 @@ class DisplayAgendaCommentBloc
   final Logger _logger;
   static const int _pageSize = 20;
   int _commentCountDelta = 0; // 추가된 댓글 개수
+  String? _commentWrittenContent; // 유저가 작성한 최신 댓글
 
   DisplayAgendaCommentBloc(
     @factoryParam DisplayAgendaCommentParams params,
@@ -41,6 +42,8 @@ class DisplayAgendaCommentBloc
   String get agendaId => _agendaId;
 
   String? get parentCommentId => _parentCommentId;
+
+  String? get commentWrittenContent => _commentWrittenContent;
 
   int get commentCountDelta => _commentCountDelta;
 
@@ -106,7 +109,10 @@ class DisplayAgendaCommentBloc
     Emitter<DisplayAgendaCommentState> emit,
   ) async {
     _commentCountDelta++;
-    _logger.t('comment appended|comment count delta:$_commentCountDelta');
+    _commentWrittenContent = event.comment.content;
+    _logger.t(
+      'comment appended|comment count delta:$_commentCountDelta|latest comment:$_commentWrittenContent',
+    );
     emit(state.copyWith(items: [event.comment, ...state.items]));
   }
 }

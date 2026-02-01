@@ -18,31 +18,33 @@ class _CommentStatState extends State<_CommentStat> {
     _commentCount = widget._agenda.commentCount;
   }
 
-  void _handleNavigateToComment() async {
+  void _handleNavigateToComment(BuildContext ctx) async {
     // 인증여부 검사
-    final currentUid = context.read<AuthenticationBloc>().state.currentUser?.id;
-    if (currentUid == null) {
+    final isAuth = await ctx.read<AuthenticationBloc>().resolveIsAuth();
+    if (!isAuth) {
       ToastUtil.warning('로그인후에 사용할 수 있어요');
       return;
     }
+    if (!ctx.mounted) return;
 
-    final commentCountDelta = await context.router.push<int>(
+    final result = await ctx.router.push<AgendaCommentPageResult>(
       DisplayAgendaCommentRoute(agendaId: widget._agenda.id),
     );
-    if (commentCountDelta == null || !context.mounted) return;
+    if (result == null || !ctx.mounted) return;
     setState(() {
-      _commentCount += commentCountDelta;
+      _commentCount += result.commentCountDelta;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _handleNavigateToComment,
-      child: _StatItem(
+      onTap: () => _handleNavigateToComment(context),
+      child: IconWithTextWidget(
         icon: Icons.chat_bubble_outline,
         label: _commentCount.toString(),
       ),
     );
   }
 }
+

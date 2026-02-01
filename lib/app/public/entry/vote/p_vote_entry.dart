@@ -1,6 +1,9 @@
 import 'package:auth/auth.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:diary/app/authenticated/vote/display_agenda_comments/p_display_agenda_comment.dart';
 import 'package:diary/components/auth_required_dialog.dart';
+import 'package:diary/components/icon_with_text.dart';
+import 'package:diary/components/agenda_reaction_buttons.dart';
 import 'package:diary/core/core.dart';
 import 'package:diary/providers/auth/app_auth/bloc.dart';
 import 'package:diary/providers/base/display/bloc.dart';
@@ -21,8 +24,6 @@ part 'w_filter_chips.dart';
 part 'w_agenda_card.dart';
 
 part 'w_navigate_button.dart';
-
-part 'w_reaction_buttons.dart';
 
 part 'w_reaction_stat.dart';
 

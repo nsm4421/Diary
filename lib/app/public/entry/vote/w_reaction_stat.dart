@@ -17,7 +17,7 @@ class _ReactionStat extends StatelessWidget {
         );
         return GetIt.instance<VoteReactionCubit>(param1: params);
       },
-      child: _ReactionButtons(),
+      child: AgendaReactionButtons(),
     );
   }
 }

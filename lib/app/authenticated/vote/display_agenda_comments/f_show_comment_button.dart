@@ -11,6 +11,12 @@ class _ShowCommentEditorButton extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
         child: TextFormField(
           onTap: () async {
+            // 인증여부 검사
+            final isAuth = await context
+                .read<AuthenticationBloc>()
+                .resolveIsAuth();
+            if (!isAuth || !context.mounted) return;
+
             final profile = context
                 .read<AuthenticationBloc>()
                 .state

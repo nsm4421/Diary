@@ -17,6 +17,11 @@ part 'f_show_comment_button.dart';
 
 part 'f_comment_editor.dart';
 
+typedef AgendaCommentPageResult = ({
+  int commentCountDelta,
+  String? commentWrittenContent,
+});
+
 @RoutePage()
 class DisplayAgendaCommentPage extends StatelessWidget {
   const DisplayAgendaCommentPage({

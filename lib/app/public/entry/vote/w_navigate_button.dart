@@ -8,6 +8,10 @@ class _NavigateToCreatePageButton extends StatelessWidget {
     return IconButton(
       onPressed: () async {
         // 인증여부 검사
+        final isAuth = await context
+            .read<AuthenticationBloc>()
+            .resolveIsAuth();
+        if (!isAuth || !context.mounted) return;
         final currentUserProfile = context
             .read<AuthenticationBloc>()
             .state

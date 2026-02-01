@@ -11,8 +11,17 @@ class _AgendaCard extends StatelessWidget {
     final latestComment = _agenda.latestComment;
 
     return GestureDetector(
-      onTap: (){
-        // context.router.push(AgendaDetailPage)
+      onTap: () async {
+        // 인증여부 검사
+        final isAuth = await context.read<AuthenticationBloc>().resolveIsAuth();
+        if (!isAuth) {
+          ToastUtil.warning('로그인후에 사용할 수 있어요');
+          return;
+        }
+        // 상세페이지로 라우팅
+        if (context.mounted) {
+          await context.router.push(AgendaDetailRoute(agendaId: _agenda.id));
+        }
       },
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -93,30 +102,6 @@ class _AgendaCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _StatItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const _StatItem({super.key, required this.icon, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 16, color: context.colorScheme.onSurfaceVariant),
-        const SizedBox(width: 6),
-        Text(
-          label,
-          style: context.textTheme.labelMedium?.copyWith(
-            color: context.colorScheme.onSurfaceVariant,
-          ),
-        ),
-      ],
     );
   }
 }

@@ -9,10 +9,17 @@ class _Screen extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
+            // 유저가 작성한 댓글과 수를 원래 화면으로 보냄
             final commentCountDelta = context
                 .read<DisplayAgendaCommentBloc>()
                 .commentCountDelta;
-            context.router.pop<int>(commentCountDelta);
+            final commentWrittenContent = context
+                .read<DisplayAgendaCommentBloc>()
+                .commentWrittenContent;
+            context.router.pop<AgendaCommentPageResult>((
+              commentCountDelta: commentCountDelta,
+              commentWrittenContent: commentWrittenContent,
+            ));
           },
           icon: Icon(Icons.clear),
         ),
