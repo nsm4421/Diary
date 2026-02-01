@@ -29,27 +29,21 @@ dependencies:
   # Routing
   auto_route: ^10.2.0
 
-  # Backend
-  supabase_flutter: ^2.12.0
-  supabase_codegen: ^3.0.1
-
   # Env
   envied: ^1.3.2
+
+  shared_preferences: ^2.5.4
 
   # Codegen/serialization runtime
   freezed_annotation: 3.1.0
   json_annotation: ^4.9.0
-
-  # Storage
-  shared_preferences: ^2.3.2
-  flutter_secure_storage: ^9.2.2
-  path_provider: ^2.1.4
 
   # Device/Permissions
   image_picker: ^1.0.7
   permission_handler: ^11.3.1
 
   # Misc
+  path_provider: ^2.1.4
   image: ^4.2.0
   fpdart: ^1.2.0
   crypto: ^3.0.3
@@ -58,14 +52,8 @@ dependencies:
 
   shared:
     path : packages/shared
-  supabase_repository:
-    path: packages/features/supabase_repository
   app_theme:
     path: packages/app_theme
-  auth:
-    path: packages/features/auth
-  vote:
-    path: packages/features/vote
 
 dev_dependencies:
   flutter_test:

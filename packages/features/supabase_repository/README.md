@@ -1,1 +1,0 @@
-dart run supabase_codegen:generate_types
